@@ -23,9 +23,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <div
         className={cn(
           // Layout & Sizing
-          "flex items-center w-full max-w-[478px] rounded-[10px] transition-all duration-200 border shadow-black",
-          // Paddings (mobile: px-16, py-12; desktop/medium+: px-5, py-4) and Gap (10px)
-          "px-16 py-12 md:px-5 md:py-4 gap-[10px]",
+          "flex items-center w-full rounded-[10px] transition-all duration-200 border-2 shadow-black",
+          // Paddings (mobile: px-3, py-1.5; desktop/medium+: px-4, py-2) and Gap (10px)
+          "px-3 py-1.5 md:px-4 md:py-2 gap-[10px]",
           // Default State (white background, transparent border so no visible border, shadow-black)
           "bg-white border-transparent",
           // Hover State (smooth transition to primary red border)
@@ -53,7 +53,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           disabled={disabled}
           className={cn(
             // Inner input visual reset
-            "bg-transparent outline-none w-full font-satoshi text-sm text-primary-navy placeholder:text-gray focus:ring-0 focus:outline-none",
+            "bg-transparent outline-none w-full font-satoshi text-sm md:text-base text-primary-navy placeholder:text-gray focus:ring-0 focus:outline-none",
             // Disabled style for text
             disabled && "text-primary-navy/50 placeholder:text-gray/40",
             // Error style for text
