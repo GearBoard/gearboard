@@ -1,5 +1,4 @@
 import * as React from "react";
-
 import { cn } from "@/shared/lib/utils";
 
 function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
@@ -7,9 +6,31 @@ function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
     <textarea
       data-slot="textarea"
       className={cn(
-        "w-full h-[133px] rounded-lg border border-input bg-transparent px-[16px] py-[12px] text-base transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-[#8B0020] focus-visible:ring-2 focus-visible:ring-[#8B0020]/40 focus-visible:ring-inset hover:border-[#8B0020] hover:ring-2 hover:ring-[#8B0020]/30 hover:ring-inset aria-invalid:border-[#8B0020] aria-invalid:ring-2 aria-invalid:ring-[#8B0020]/20 aria-invalid:ring-inset aria-invalid:bg-[#8B0020]/10 md:px-[20px] md:py-[16px] md:text-sm disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 dark:bg-input/30 dark:disabled:bg-input/80 dark:aria-invalid:border-[#8B0020]/50 dark:aria-invalid:ring-[#8B0020]/40",
+        // Base Styles (Mobile First / Default)
+        "w-full min-h-[132px] rounded-[8px] border border-input bg-transparent px-5 py-4 text-lg transition-colors outline-none",
+        "placeholder:text-muted-foreground",
+
+        // Focus States (Using CSS Variables)
+        "focus-visible:border-brand focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-inset",
+
+        // Hover States (Enabled only)
+        "enabled:hover:border-brand enabled:hover:ring-2 enabled:hover:ring-brand/30 enabled:hover:ring-inset",
+
+        // Validation / Invalid States
+        "aria-invalid:border-brand aria-invalid:ring-2 aria-invalid:ring-brand/20 aria-invalid:ring-inset aria-invalid:bg-brand/10",
+
+        // Responsive (sm breakpoint)
+        "sm:px-5 sm:py-4 sm:text-sm",
+
+        // Disabled States
+        "disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50",
+
+        // Dark Mode Adjustments
+        "dark:bg-input/30 dark:disabled:bg-input/80 dark:aria-invalid:border-brand/50 dark:aria-invalid:ring-brand/40",
+
         className
       )}
+      style={{ fontFamily: "var(--font-noto-thai), sans-serif", ...props.style }}
       {...props}
     />
   );
