@@ -73,6 +73,9 @@ export const postService = {
       throw new ForbiddenError("Forbidden");
     }
 
-    await postRepository.delete(id);
+    const deleted = await postRepository.softDelete(id);
+    if (!deleted) {
+      throw new NotFoundError("Post not found");
+    }
   },
 };
