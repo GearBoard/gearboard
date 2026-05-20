@@ -1,15 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { LucideIcon } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 
 export interface InputProps extends React.ComponentProps<"input"> {
   /**
-   * Optional Lucide icon to display on the left.
-   * Restricts icons to only those from the lucide-react package.
+   * Optional icon content to display on the left.
+   * Accepts any React node while preserving the component's icon styling.
    */
-  icon?: LucideIcon;
+  icon?: React.ReactNode;
   /**
    * Whether the input is in an error or invalid state.
    * If true, changes the background color and applies a primary red border.
@@ -18,7 +17,18 @@ export interface InputProps extends React.ComponentProps<"input"> {
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type = "text", icon: Icon, error, disabled, ...props }, ref) => {
+  ({ className, type = "text", icon, error, disabled, ...props }, ref) => {
+    const renderedIcon = React.isValidElement<{ className?: string }>(icon)
+      ? React.cloneElement(icon, {
+          className: cn(
+            "w-5 h-5 shrink-0 transition-colors duration-200 text-darker-red",
+            disabled && "text-dark-gray/70",
+            error && "text-darker-red",
+            icon.props.className
+          ),
+        })
+      : icon;
+
     return (
       <div
         className={cn(
@@ -39,23 +49,15 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           className
         )}
       >
-        {Icon && (
-          <Icon
-            className={cn(
-              "w-5 h-5 shrink-0 transition-colors duration-200 text-darker-red",
-              disabled && "text-darker-red/50",
-              error && "text-darker-red"
-            )}
-          />
-        )}
+        {renderedIcon && <span className="shrink-0">{renderedIcon}</span>}
         <input
           type={type}
           disabled={disabled}
           className={cn(
             // Inner input visual reset
-            "bg-transparent outline-none w-full font-satoshi text-sm md:text-base text-primary-navy placeholder:text-gray focus:ring-0 focus:outline-none",
+            "bg-transparent outline-none w-full font-satoshi text-sm md:text-base text-black placeholder:text-dark-gray focus:ring-0 focus:outline-none",
             // Disabled style for text
-            disabled && "text-primary-navy/50 placeholder:text-gray/40",
+            disabled && "text-black/50 placeholder:text-dark-gray/70",
             // Error style for text
             error && "text-primary-red placeholder:text-primary-red/60"
           )}
