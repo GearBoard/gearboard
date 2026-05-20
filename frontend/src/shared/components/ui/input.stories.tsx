@@ -27,14 +27,14 @@ export const Default: Story = {
 export const WithIcon: Story = {
   args: {
     placeholder: "ค้นหาวิชา, อาจารย์ หรือข้อสอบ",
-    icon: Search,
+    icon: <Search />,
   },
 };
 
 export const ErrorState: Story = {
   args: {
     placeholder: "ค้นหาวิชา, อาจารย์ หรือข้อสอบ",
-    icon: Search,
+    icon: <Search />,
     error: true,
   },
 };
@@ -42,7 +42,7 @@ export const ErrorState: Story = {
 export const DisabledState: Story = {
   args: {
     placeholder: "ค้นหาวิชา, อาจารย์ หรือข้อสอบ",
-    icon: Search,
+    icon: <Search />,
     disabled: true,
   },
 };
@@ -56,15 +56,15 @@ export const AllStates: Story = {
       </div>
       <div>
         <span className="text-xs font-bold text-primary-navy mb-2 block">With Icon (Search)</span>
-        <Input placeholder="ค้นหาวิชา, อาจารย์ หรือข้อสอบ" icon={Search} />
+        <Input placeholder="ค้นหาวิชา, อาจารย์ หรือข้อสอบ" icon={<Search />} />
       </div>
       <div>
         <span className="text-xs font-bold text-primary-navy mb-2 block">Error State</span>
-        <Input placeholder="ค้นหาวิชา, อาจารย์ หรือข้อสอบ" icon={Search} error />
+        <Input placeholder="ค้นหาวิชา, อาจารย์ หรือข้อสอบ" icon={<Search />} error />
       </div>
       <div>
         <span className="text-xs font-bold text-primary-navy mb-2 block">Disabled State</span>
-        <Input placeholder="ค้นหาวิชา, อาจารย์ หรือข้อสอบ" icon={Search} disabled />
+        <Input placeholder="ค้นหาวิชา, อาจารย์ หรือข้อสอบ" icon={<Search />} disabled />
       </div>
     </div>
   ),
