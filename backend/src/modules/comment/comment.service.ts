@@ -1,6 +1,6 @@
 import { ForbiddenError, NotFoundError } from "../../common/errors/app-error.js";
 import { commentRepository } from "./comment.repository.js";
-import { toDto, type CommentWithRelations } from "./comment.mapper.js";
+import { toDto } from "./comment.mapper.js";
 import type {
   CommentResponseDto,
   CreateCommentRequestDto,
@@ -9,27 +9,36 @@ import type {
 
 export const commentService = {
   async getById(id: string): Promise<CommentResponseDto> {
-    const comment = await commentRepository.getById(id);
+    const comment = await commentRepository.findById(id);
     if (!comment) {
       throw new NotFoundError("Comment not found");
     }
 
-    return toDto(comment as CommentWithRelations);
+    return toDto(comment);
   },
 
-  async getByPostId(postId: string) {
-    const comments = await commentRepository.getByPostId(postId);
-    return comments.map((c: unknown) => toDto(c as CommentWithRelations));
+  async getByPostId(postId: string): Promise<CommentResponseDto[]> {
+    const comments = await commentRepository.findManyByPostId(postId);
+    return comments.map(toDto);
   },
 
-  async createComment(userId: string, postId: string, data: CreateCommentRequestDto) {
-    const comment = await commentRepository.createComment(userId, postId, data);
-    return toDto(comment as CommentWithRelations);
+  async createComment(
+    userId: string,
+    postId: string,
+    data: CreateCommentRequestDto
+  ): Promise<CommentResponseDto> {
+    const comment = await commentRepository.create(userId, postId, data);
+    return toDto(comment);
   },
 
-  async createReply(userId: string, postId: string, parentId: string, data: CreateReplyRequestDto) {
+  async createReply(
+    userId: string,
+    postId: string,
+    parentId: string,
+    data: CreateReplyRequestDto
+  ): Promise<CommentResponseDto> {
     const comment = await commentRepository.createReply(userId, postId, parentId, data);
-    return toDto(comment as CommentWithRelations);
+    return toDto(comment);
   },
 
   async createReplyFromParent(
@@ -37,7 +46,7 @@ export const commentService = {
     userId: string,
     data: CreateReplyRequestDto
   ): Promise<CommentResponseDto> {
-    const parentComment = await commentRepository.getById(parentId);
+    const parentComment = await commentRepository.findById(parentId);
     if (!parentComment) {
       throw new NotFoundError("Comment doesn't exist");
     }
@@ -48,11 +57,11 @@ export const commentService = {
       parentId,
       data
     );
-    return toDto(comment as CommentWithRelations);
+    return toDto(comment);
   },
 
   async deleteComment(id: string, userId: string): Promise<void> {
-    const comment = await commentRepository.getById(id);
+    const comment = await commentRepository.findById(id);
     if (!comment) {
       throw new NotFoundError("Comment not found");
     }
@@ -61,6 +70,9 @@ export const commentService = {
       throw new ForbiddenError("Forbidden");
     }
 
-    await commentRepository.deleteComment(id);
+    const deleted = await commentRepository.softDelete(id);
+    if (!deleted) {
+      throw new NotFoundError("Comment not found");
+    }
   },
 };

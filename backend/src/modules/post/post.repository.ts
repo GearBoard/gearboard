@@ -1,7 +1,7 @@
 import { Prisma } from "../../../generated/prisma/client.js";
 import { prisma } from "../../config/prisma.js";
-import { CreatePostRequestDto, UpdatePostRequestDto } from "./post.dto.js";
-import { PostWithRelations } from "./post.mapper.js";
+import type { CreatePostRequestDto, UpdatePostRequestDto } from "./post.dto.js";
+import type { PostWithRelations } from "./post.mapper.js";
 
 const postInclude = {
   user: {
@@ -36,7 +36,7 @@ export const postRepository = {
     search?: string;
     tagName?: string;
     userId?: string;
-  }) {
+  }): Promise<{ posts: PostWithRelations[]; total: number }> {
     const { skip, take, search, tagName, userId } = options;
 
     const whereConditions: Prisma.PostWhereInput = { deletedAt: null };
@@ -125,77 +125,67 @@ export const postRepository = {
   },
 
   async update(id: string, data: UpdatePostRequestDto): Promise<PostWithRelations | null> {
-    return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-      const post = await tx.post.findUnique({
-        where: { id, deletedAt: null },
-      });
+    const updateData: Prisma.PostUpdateInput = {};
+    if (data.title !== undefined) updateData.title = data.title;
+    if (data.description !== undefined) updateData.description = data.description;
+    if (data.isClosed !== undefined) updateData.isClosed = data.isClosed;
 
-      if (!post) {
-        return null;
-      }
+    try {
+      return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+        if (data.tags !== undefined) {
+          await tx.postTag.deleteMany({
+            where: { postId: id },
+          });
 
-      // Handle tags update
-      if (data.tags !== undefined) {
-        // Delete existing tags
-        await tx.postTag.deleteMany({
-          where: { postId: id },
-        });
-
-        // Create new tags
-        if (data.tags.length > 0) {
-          await Promise.all(
-            data.tags.map(async (tagName) => {
-              await tx.postTag.create({
-                data: {
-                  post: {
-                    connect: { id },
-                  },
-                  tag: {
-                    connectOrCreate: {
-                      where: { name: tagName },
-                      create: { name: tagName },
+          if (data.tags.length > 0) {
+            await Promise.all(
+              data.tags.map(async (tagName) => {
+                await tx.postTag.create({
+                  data: {
+                    post: {
+                      connect: { id },
+                    },
+                    tag: {
+                      connectOrCreate: {
+                        where: { name: tagName },
+                        create: { name: tagName },
+                      },
                     },
                   },
-                },
-              });
-            })
-          );
+                });
+              })
+            );
+          }
         }
-      }
 
-      // Update post fields
-      const updateData: Prisma.PostUpdateInput = {};
-      if (data.title !== undefined) updateData.title = data.title;
-      if (data.description !== undefined) updateData.description = data.description;
-      if (data.isClosed !== undefined) updateData.isClosed = data.isClosed;
+        const updatedPost = await tx.post.update({
+          where: { id, deletedAt: null },
+          data: updateData,
+          include: postInclude,
+        });
 
-      const updatedPost = await tx.post.update({
-        where: { id },
-        data: updateData,
-        include: postInclude,
+        return updatedPost as PostWithRelations;
       });
-
-      return updatedPost as PostWithRelations;
-    });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+        return null;
+      }
+      throw error;
+    }
   },
 
-  async delete(id: string): Promise<boolean> {
-    return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-      const post = await tx.post.findUnique({
+  async softDelete(id: string): Promise<{ id: string } | null> {
+    try {
+      return await prisma.post.update({
         where: { id, deletedAt: null },
+        data: { deletedAt: new Date() },
         select: { id: true },
       });
-
-      if (!post) {
-        return false;
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+        return null;
       }
-
-      await tx.post.update({
-        where: { id },
-        data: { deletedAt: new Date() },
-      });
-
-      return true;
-    });
+      throw error;
+    }
   },
 };
