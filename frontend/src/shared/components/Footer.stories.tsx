@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { Footer } from "./footer";
+import { Footer } from "./Footer";
 
 const meta: Meta<typeof Footer> = {
   title: "Shared/UI/Footer",
