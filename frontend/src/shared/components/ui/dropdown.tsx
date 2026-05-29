@@ -81,6 +81,7 @@ export function Dropdown(props: DropdownProps) {
         <button
           className={cn(
             "flex w-full items-center justify-between rounded-[10px] border-2 border-transparent px-3 py-1.5 sm:px-4 sm:py-2",
+            // text-[#262626]: no matching token in globals.css yet — add e.g. --color-foreground when team aligns on name
             "text-sm font-bold text-[#262626] outline-none shadow-black transition-colors sm:text-base",
             "hover:border-primary-red focus-visible:border-primary-red",
             open && "border-primary-red",
