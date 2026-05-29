@@ -125,6 +125,7 @@ export function Dropdown(props: DropdownProps) {
                       isChecked ? "border-primary-red bg-primary-red" : "border-primary-red"
                     )}
                   >
+                    {/* lucide Check shape differs slightly from Figma — use custom SVG if exact match needed */}
                     {isChecked && <Check className="size-3 text-white" strokeWidth={3} />}
                   </span>
                   {option.label}
