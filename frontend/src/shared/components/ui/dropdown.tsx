@@ -1,22 +1,9 @@
 "use client";
 
-import * as React from "react";
+import { useState, useMemo } from "react";
 import { Popover } from "radix-ui";
+import { Check } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
-
-function CheckIcon() {
-  return (
-    <svg viewBox="-1 -1 14 14" fill="none" className="size-3" aria-hidden>
-      <polyline
-        points="0.75,6 4.25,9.5 11.25,2.5"
-        stroke="white"
-        strokeWidth="2"
-        strokeLinecap="butt"
-        strokeLinejoin="miter"
-      />
-    </svg>
-  );
-}
 
 function TriangleIcon({ className }: { className?: string }) {
   return (
@@ -53,13 +40,13 @@ export type DropdownProps = SingleProps | MultiProps;
 
 export function Dropdown(props: DropdownProps) {
   const { options, placeholder = "Dropdown", className } = props;
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   const multiple = props.multiple;
   const multiValues = props.multiple ? props.values : undefined;
   const singleValue = !props.multiple ? props.value : undefined;
 
-  const triggerLabel = React.useMemo(() => {
+  const triggerLabel = useMemo(() => {
     if (multiple) {
       const selected = multiValues ?? [];
       if (selected.length === 0) return placeholder;
@@ -93,8 +80,8 @@ export function Dropdown(props: DropdownProps) {
       <Popover.Trigger asChild>
         <button
           className={cn(
-            "flex w-full items-center justify-between rounded-[10px] border-2 border-transparent px-5 py-2.5",
-            "text-lg font-[700] tracking-[-0.02em] text-[#262626] outline-none transition-colors shadow-black",
+            "flex w-full items-center justify-between rounded-[10px] border-2 border-transparent px-3 py-1.5 sm:px-4 sm:py-2",
+            "text-sm font-bold text-[#262626] outline-none shadow-black transition-colors sm:text-base",
             "hover:border-primary-red focus-visible:border-primary-red",
             open && "border-primary-red",
             className
@@ -103,7 +90,7 @@ export function Dropdown(props: DropdownProps) {
           <span className="truncate">{triggerLabel}</span>
           <TriangleIcon
             className={cn(
-              "w-[10px] h-[5px] shrink-0 text-primary-red transition-transform duration-200",
+              "h-[5px] w-[10px] shrink-0 text-primary-red transition-transform duration-200",
               open && "rotate-180"
             )}
           />
@@ -130,7 +117,7 @@ export function Dropdown(props: DropdownProps) {
                 <button
                   key={option.value}
                   onClick={() => handleMultiToggle(option.value)}
-                  className="flex w-full items-center gap-[15px] rounded-[10px] px-5 py-1.5 text-lg font-[700] tracking-[-0.02em] text-[#262626] transition-colors hover:bg-light-gray"
+                  className="flex w-full items-center gap-3 rounded-[10px] px-3 py-1.5 text-sm font-bold text-[#262626] transition-colors hover:bg-light-gray sm:px-4 sm:py-2 sm:text-base"
                 >
                   <span
                     className={cn(
@@ -138,7 +125,7 @@ export function Dropdown(props: DropdownProps) {
                       isChecked ? "border-primary-red bg-primary-red" : "border-primary-red"
                     )}
                   >
-                    {isChecked && <CheckIcon />}
+                    {isChecked && <Check className="size-3 text-white" strokeWidth={3} />}
                   </span>
                   {option.label}
                 </button>
@@ -151,7 +138,7 @@ export function Dropdown(props: DropdownProps) {
                 key={option.value}
                 onClick={() => handleSingleSelect(option.value)}
                 className={cn(
-                  "block w-full rounded-[10px] px-5 py-2 text-left text-lg font-[700] tracking-[-0.02em] transition-colors",
+                  "block w-full rounded-[10px] px-3 py-1.5 text-left text-sm font-bold transition-colors sm:px-4 sm:py-2 sm:text-base",
                   isSelected ? "bg-primary-red text-white" : "text-[#262626] hover:bg-light-gray"
                 )}
               >
