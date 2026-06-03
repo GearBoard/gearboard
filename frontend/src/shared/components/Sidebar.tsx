@@ -20,6 +20,7 @@ export interface SidebarAction {
 
 export interface SidebarProps {
   avatarSrc?: string;
+  greeting?: string;
   displayName: string;
   items: SidebarItem[];
   mobileActions?: SidebarAction[];
@@ -28,6 +29,7 @@ export interface SidebarProps {
 
 export const Sidebar = ({
   avatarSrc,
+  greeting = "สวัสดี !",
   displayName,
   items,
   mobileActions,
@@ -79,7 +81,7 @@ export const Sidebar = ({
       <div className="hidden md:flex flex-col items-center gap-3 mb-8">
         {avatar(80, "w-20 h-20")}
         <div className="text-center text-white">
-          <p className="font-bold text-base">สวัสดี !</p>
+          <p className="font-bold text-base">{greeting}</p>
           <p className="font-bold text-base">{displayName}</p>
         </div>
       </div>
@@ -90,9 +92,9 @@ export const Sidebar = ({
       {/* Mobile: account actions */}
       {mobileActions && mobileActions.length > 0 && (
         <div className="md:hidden flex flex-col gap-1 mb-6">
-          {mobileActions.map((action, i) => (
+          {mobileActions.map((action) => (
             <button
-              key={i}
+              key={action.label}
               type="button"
               onClick={action.onClick}
               className="flex items-center gap-3 px-4 py-3 rounded-lg text-white text-base font-medium transition-colors hover:bg-dark-red w-full text-left"

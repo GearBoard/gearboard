@@ -9,9 +9,9 @@ const defaultItems = [
 ];
 
 const defaultMobileActions = [
-  { icon: <ArrowLeftRight className="w-5 h-5" />, label: "Switch Account", onClick: () => {} },
-  { icon: <Settings className="w-5 h-5" />, label: "Setting", onClick: () => {} },
-  { icon: <LogOut className="w-5 h-5" />, label: "Log out", onClick: () => {} },
+  { icon: <ArrowLeftRight className="w-5 h-5" />, label: "สลับบัญชี", onClick: () => {} },
+  { icon: <Settings className="w-5 h-5" />, label: "การตั้งค่า", onClick: () => {} },
+  { icon: <LogOut className="w-5 h-5" />, label: "ออกจากระบบ", onClick: () => {} },
 ];
 
 const meta: Meta<typeof Sidebar> = {
@@ -42,6 +42,16 @@ export const DesktopExpanded: Story = {
 export const DesktopItemSelected: Story = {
   parameters: {
     nextjs: { navigation: { pathname: "/home" } },
+    viewport: { defaultViewport: "desktop" },
+  },
+};
+
+export const WithAvatar: Story = {
+  args: {
+    avatarSrc: "/logo.svg",
+  },
+  parameters: {
+    nextjs: { navigation: { pathname: "/other" } },
     viewport: { defaultViewport: "desktop" },
   },
 };
