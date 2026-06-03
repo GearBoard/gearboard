@@ -82,7 +82,7 @@ export const Navbar = () => {
               placeholder="ค้นหาวิชา, อาจารย์ หรือข้อสอบ"
               aria-label="ค้นหา"
               icon={<Search className="text-primary-red" />}
-              className="shadow-[0_0_15px_rgba(0,0,0,0.05)]"
+              className="shadow-black"
               autoFocus
             />
           </div>
