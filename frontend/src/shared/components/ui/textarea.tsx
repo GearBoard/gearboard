@@ -7,11 +7,11 @@ function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
       data-slot="textarea"
       className={cn(
         // Base Styles (Mobile First / Default)
-        "w-[478px] h-[133px] gap-2.5 rounded-[10px] border-2 border-[#808080] bg-white px-[20px] py-[16px] text-xl transition-colors outline-none",
+        "w-[478px] min-h-[132px] gap-2.5 rounded-[10px] border-2 border-gray bg-white px-5 py-4 text-xl transition-colors outline-none",
         "placeholder:text-muted-foreground",
         "shadow-[0px_0px_30px_0px_rgba(139,0,32,0.08)]",
         // Width 478px
-        // Height 133px
+        // Height 132px
         // Gap 2.5
         // Rounded 10px
         // Border 2px
@@ -30,13 +30,13 @@ function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
         // Color: #8B0020 (8%)
 
         // Hover States (Enabled only)
-        "enabled:hover:border-[#8B0020]",
+        "enabled:hover:border-primary-red",
 
         // Focus States (Using CSS Variables)
-        "focus-visible:border-[#8B0020]",
+        "focus-visible:border-primary-red",
 
         // Validation / Invalid States
-        "aria-invalid:cursor-not-allowed aria-invalid:border-[#8B0020] aria-invalid:bg-[#8B0020]/10",
+        "aria-invalid:cursor-not-allowed aria-invalid:border-primary-red aria-invalid:bg-primary-red/10",
 
         // Responsive (sm breakpoint)
         //"sm:px-5 sm:py-4 sm:text-sm", <-- What is it IDK
