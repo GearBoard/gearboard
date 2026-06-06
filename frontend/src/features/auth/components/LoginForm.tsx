@@ -18,32 +18,42 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
     e.preventDefault();
     setError("");
     setIsLoading(true);
-    await authClient.signIn.email(
-      { email: formData.email, password: formData.password },
-      {
-        onSuccess: () => {
-          router.push("/");
-        },
-        onError: (ctx: { error: { message: string } }) => {
-          setError(ctx.error.message);
-        },
-      }
-    );
-    setIsLoading(false);
+    try {
+      await authClient.signIn.email(
+        { email: formData.email, password: formData.password },
+        {
+          onSuccess: () => {
+            router.push("/");
+          },
+          onError: (ctx: { error: { message: string } }) => {
+            setError(ctx.error.message);
+          },
+        }
+      );
+    } catch {
+      setError("เกิดข้อผิดพลาด กรุณาลองใหม่");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleGoogleSignIn = async () => {
     setError("");
     setIsGoogleLoading(true);
-    await authClient.signIn.social(
-      { provider: "google", callbackURL: "/" },
-      {
-        onError: (ctx: { error: { message: string } }) => {
-          setError(ctx.error.message);
-          setIsGoogleLoading(false);
-        },
-      }
-    );
+    try {
+      await authClient.signIn.social(
+        { provider: "google", callbackURL: "/" },
+        {
+          onError: (ctx: { error: { message: string } }) => {
+            setError(ctx.error.message);
+          },
+        }
+      );
+    } catch {
+      setError("เกิดข้อผิดพลาด กรุณาลองใหม่");
+    } finally {
+      setIsGoogleLoading(false);
+    }
   };
 
   return (
