@@ -18,10 +18,10 @@ const buttonVariants = cva(
           "bg-primary-yellow text-primary-navy hover:bg-dark-yellow active:bg-darker-yellow focus-visible:ring-primary-yellow",
       },
       size: {
-        lg: "px-5 py-3 text-lg gap-2 [&_svg:not([class*='size-'])]:size-5", // Rename the existing default size variant to lg
-        md: "px-4 py-2 text-base gap-2 [&_svg:not([class*='size-'])]:size-4",
-        sm: "px-3 py-1.5 text-sm gap-2 [&_svg:not([class*='size-'])]:size-3.5", // Update the sm size variant horizontal padding to px-3
-        xs: "px-2 py-1 text-xs gap-2 [&_svg:not([class*='size-'])]:size-3",
+        lg: "px-5 py-3 text-lg gap-2 [&_svg:not([class*='size-'])]:size-[16px]", // Rename the existing default size variant to lg
+        md: "px-4 py-2 text-base gap-2 [&_svg:not([class*='size-'])]:size-[16px]",
+        sm: "px-3 py-1.5 text-sm gap-2 [&_svg:not([class*='size-'])]:size-[14px]", // Update the sm size variant horizontal padding to px-3
+        xs: "px-2 py-1 text-xs gap-2 [&_svg:not([class*='size-'])]:size-[12px]",
       },
     },
     defaultVariants: {
@@ -35,6 +35,8 @@ type ButtonProps = React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
     loading?: boolean;
+    iconLeft?: React.ReactNode;
+    iconRight?: React.ReactNode;
     icon?: React.ReactNode;
   };
 
@@ -48,6 +50,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       loading = false,
       disabled,
       icon,
+      iconLeft,
+      iconRight,
       children,
       ...props
     },
@@ -55,6 +59,16 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const Comp = asChild ? Slot.Root : "button";
     const isDisabled = disabled || loading;
+
+    // Select the one to display on the left side
+    const leftIconSlot = loading ? (
+      <>
+        <Loader2 className="animate-spin" />
+        <span className="sr-only">Loading…</span>
+      </>
+    ) : (
+      icon || iconLeft
+    );
 
     return (
       <Comp
@@ -75,16 +89,14 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           props.onClick?.(e);
         }}
       >
-        {loading ? (
-          <>
-            <Loader2 className="animate-spin" />
-            <span className="sr-only">Loading…</span>
-          </>
-        ) : (
-          icon // change to icon
-        )}
+        {/* แสดงผลไอคอนฝั่งซ้าย (หรือ Loader) */}
+        {leftIconSlot}
+
+        {/* แสดงผลข้อความหลักของปุ่ม */}
         <Slot.Slottable>{children}</Slot.Slottable>
-        {/* remove iconRight */}
+
+        {/* แสดงผลไอคอนฝั่งขวา (เฉพาะกรณีที่ไม่ได้อยู่ในสถานะกำลังโหลด เพื่อป้องกัน UI เบียดกัน) */}
+        {!loading && iconRight}
       </Comp>
     );
   }
