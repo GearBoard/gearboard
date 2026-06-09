@@ -71,6 +71,7 @@ export function Dropdown(props: DropdownProps) {
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger asChild>
         <button
+          type="button"
           className={cn(
             "flex w-full items-center justify-between rounded-[10px] border-2 border-transparent px-3 py-1.5 sm:px-4 sm:py-2",
             // text-[#262626]: no matching token in globals.css yet — add e.g. --color-foreground when team aligns on name
@@ -108,6 +109,7 @@ export function Dropdown(props: DropdownProps) {
               const isChecked = (props.values ?? []).includes(option.value);
               return (
                 <button
+                  type="button"
                   key={option.value}
                   onClick={() => handleMultiToggle(option.value)}
                   className="flex w-full items-center gap-3 rounded-[10px] px-3 py-1.5 text-sm font-bold text-[#262626] transition-colors hover:bg-light-gray sm:px-4 sm:py-2 sm:text-base"
@@ -128,6 +130,7 @@ export function Dropdown(props: DropdownProps) {
             const isSelected = props.value === option.value;
             return (
               <button
+                type="button"
                 key={option.value}
                 onClick={() => handleSingleSelect(option.value)}
                 className={cn(
