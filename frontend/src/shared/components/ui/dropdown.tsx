@@ -1,0 +1,149 @@
+"use client";
+
+import { useState, useMemo } from "react";
+import { Popover } from "radix-ui";
+import { Check, ChevronDown } from "lucide-react";
+import { cn } from "@/shared/lib/utils";
+
+export interface DropdownOption {
+  value: string;
+  label: string;
+}
+
+interface BaseProps {
+  options: DropdownOption[];
+  placeholder?: string;
+  className?: string;
+}
+
+interface SingleProps extends BaseProps {
+  multiple?: false;
+  value?: string;
+  onChange?: (value: string) => void;
+}
+
+interface MultiProps extends BaseProps {
+  multiple: true;
+  values?: string[];
+  onChange?: (values: string[]) => void;
+}
+
+export type DropdownProps = SingleProps | MultiProps;
+
+export function Dropdown(props: DropdownProps) {
+  const { options, placeholder = "Dropdown", className } = props;
+  const [open, setOpen] = useState(false);
+
+  const multiple = props.multiple;
+  const multiValues = props.multiple ? props.values : undefined;
+  const singleValue = !props.multiple ? props.value : undefined;
+
+  const triggerLabel = useMemo(() => {
+    if (multiple) {
+      const selected = multiValues ?? [];
+      if (selected.length === 0) return placeholder;
+      if (selected.length === 1)
+        return options.find((o) => o.value === selected[0])?.label ?? placeholder;
+      return `${selected.length} selected`;
+    }
+    if (!singleValue) return placeholder;
+    return options.find((o) => o.value === singleValue)?.label ?? placeholder;
+  }, [multiple, multiValues, singleValue, options, placeholder]);
+
+  function handleSingleSelect(value: string) {
+    if (!props.multiple) {
+      props.onChange?.(value);
+      setOpen(false);
+    }
+  }
+
+  function handleMultiToggle(value: string) {
+    if (props.multiple) {
+      const current = props.values ?? [];
+      const next = current.includes(value)
+        ? current.filter((v) => v !== value)
+        : [...current, value];
+      props.onChange?.(next);
+    }
+  }
+
+  return (
+    <Popover.Root open={open} onOpenChange={setOpen}>
+      <Popover.Trigger asChild>
+        <button
+          type="button"
+          className={cn(
+            "flex w-full items-center justify-between rounded-[10px] border-2 border-transparent px-3 py-1.5 sm:px-4 sm:py-2",
+            // text-[#262626]: no matching token in globals.css yet — add e.g. --color-foreground when team aligns on name
+            "text-sm font-bold text-[#262626] outline-none shadow-black transition-colors sm:text-base",
+            "hover:border-primary-red focus-visible:border-primary-red",
+            open && "border-primary-red",
+            className
+          )}
+        >
+          <span className="truncate">{triggerLabel}</span>
+          <ChevronDown
+            className={cn(
+              "size-4 shrink-0 text-primary-red transition-transform duration-200",
+              open && "rotate-180"
+            )}
+          />
+        </button>
+      </Popover.Trigger>
+
+      <Popover.Portal>
+        <Popover.Content
+          align="start"
+          sideOffset={10}
+          style={{ width: "var(--radix-popover-trigger-width)" }}
+          className={cn(
+            "z-50 flex flex-col gap-2 overflow-hidden rounded-[15px] bg-white p-[5px] shadow-black",
+            "data-[state=open]:animate-in data-[state=closed]:animate-out",
+            "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+            "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+            "data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2"
+          )}
+        >
+          {options.map((option) => {
+            if (props.multiple) {
+              const isChecked = (props.values ?? []).includes(option.value);
+              return (
+                <button
+                  type="button"
+                  key={option.value}
+                  onClick={() => handleMultiToggle(option.value)}
+                  className="flex w-full items-center gap-3 rounded-[10px] px-3 py-1.5 text-sm font-bold text-[#262626] transition-colors hover:bg-light-gray sm:px-4 sm:py-2 sm:text-base"
+                >
+                  <span
+                    className={cn(
+                      "flex size-4 shrink-0 items-center justify-center rounded-[2px] border-2 transition-colors",
+                      isChecked ? "border-primary-red bg-primary-red" : "border-primary-red"
+                    )}
+                  >
+                    {isChecked && <Check className="size-3 text-white" strokeWidth={3} />}
+                  </span>
+                  {option.label}
+                </button>
+              );
+            }
+
+            const isSelected = props.value === option.value;
+            return (
+              <button
+                type="button"
+                key={option.value}
+                onClick={() => handleSingleSelect(option.value)}
+                className={cn(
+                  "block w-full rounded-[10px] px-3 py-1.5 text-left text-sm font-bold transition-colors sm:px-4 sm:py-2 sm:text-base",
+                  isSelected ? "bg-primary-red text-white" : "text-[#262626] hover:bg-light-gray"
+                )}
+              >
+                {option.label}
+              </button>
+            );
+          })}
+        </Popover.Content>
+      </Popover.Portal>
+    </Popover.Root>
+  );
+}
