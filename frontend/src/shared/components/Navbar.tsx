@@ -38,7 +38,6 @@ export const Navbar = () => {
               placeholder="ค้นหาวิชา, อาจารย์ หรือข้อสอบ"
               aria-label="ค้นหา"
               icon={<Search className="text-primary-red" />}
-              className="shadow-black"
             />
           </div>
         </div>
@@ -82,7 +81,6 @@ export const Navbar = () => {
               placeholder="ค้นหาวิชา, อาจารย์ หรือข้อสอบ"
               aria-label="ค้นหา"
               icon={<Search className="text-primary-red" />}
-              className="shadow-black"
               autoFocus
             />
           </div>

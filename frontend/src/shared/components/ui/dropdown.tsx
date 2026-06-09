@@ -73,9 +73,8 @@ export function Dropdown(props: DropdownProps) {
         <button
           type="button"
           className={cn(
-            "flex w-full items-center justify-between rounded-[10px] border-2 border-transparent px-3 py-1.5 sm:px-4 sm:py-2",
-            // text-[#262626]: no matching token in globals.css yet — add e.g. --color-foreground when team aligns on name
-            "text-sm font-bold text-[#262626] outline-none shadow-black transition-colors sm:text-base",
+            "flex w-full items-center justify-between rounded-lg border-[1.5px] border-gray px-3 py-1.5 md:px-4 md:py-2",
+            "text-sm text-black outline-none shadow-primary-red transition-colors md:text-base",
             "hover:border-primary-red focus-visible:border-primary-red",
             open && "border-primary-red",
             className
@@ -97,7 +96,7 @@ export function Dropdown(props: DropdownProps) {
           sideOffset={10}
           style={{ width: "var(--radix-popover-trigger-width)" }}
           className={cn(
-            "z-50 flex flex-col gap-2 overflow-hidden rounded-[15px] bg-white p-[5px] shadow-black",
+            "z-50 flex flex-col gap-2 overflow-hidden rounded-2xl bg-white p-[5px] shadow-primary-red",
             "data-[state=open]:animate-in data-[state=closed]:animate-out",
             "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
             "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
@@ -112,11 +111,11 @@ export function Dropdown(props: DropdownProps) {
                   type="button"
                   key={option.value}
                   onClick={() => handleMultiToggle(option.value)}
-                  className="flex w-full items-center gap-3 rounded-[10px] px-3 py-1.5 text-sm font-bold text-[#262626] transition-colors hover:bg-light-gray sm:px-4 sm:py-2 sm:text-base"
+                  className="flex w-full items-center gap-3 rounded-lg px-3 py-1.5 text-sm text-black transition-colors hover:bg-light-gray md:px-4 md:py-2 md:text-base"
                 >
                   <span
                     className={cn(
-                      "flex size-4 shrink-0 items-center justify-center rounded-[2px] border-2 transition-colors",
+                      "flex size-4 shrink-0 items-center justify-center rounded-xs border-2 transition-colors",
                       isChecked ? "border-primary-red bg-primary-red" : "border-primary-red"
                     )}
                   >
@@ -134,8 +133,8 @@ export function Dropdown(props: DropdownProps) {
                 key={option.value}
                 onClick={() => handleSingleSelect(option.value)}
                 className={cn(
-                  "block w-full rounded-[10px] px-3 py-1.5 text-left text-sm font-bold transition-colors sm:px-4 sm:py-2 sm:text-base",
-                  isSelected ? "bg-primary-red text-white" : "text-[#262626] hover:bg-light-gray"
+                  "block w-full rounded-lg px-3 py-1.5 text-left text-sm transition-colors md:px-4 md:py-2 md:text-base",
+                  isSelected ? "bg-primary-red text-white" : "text-black hover:bg-light-gray"
                 )}
               >
                 {option.label}
