@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { Download, ArrowRight } from "lucide-react";
+import { Download } from "lucide-react";
 
 import { Button } from "./button";
 
@@ -14,7 +14,7 @@ const meta: Meta<typeof Button> = {
     },
     size: {
       control: "select",
-      options: ["default", "md", "sm", "xs"],
+      options: ["lg", "md", "sm", "xs"],
     },
     loading: { control: "boolean" },
     disabled: { control: "boolean" },
@@ -28,7 +28,7 @@ export const Default: Story = {
   args: {
     children: "Click me",
     color: "red",
-    size: "default",
+    size: "md",
   },
 };
 
@@ -45,7 +45,7 @@ export const AllColors: Story = {
 export const AllSizes: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-4">
-      <Button size="default">Default</Button>
+      <Button size="lg">Large</Button>
       <Button size="md">Medium</Button>
       <Button size="sm">Small</Button>
       <Button size="xs">XSmall</Button>
@@ -53,29 +53,10 @@ export const AllSizes: Story = {
   ),
 };
 
-export const WithIconLeft: Story = {
+export const WithIcon: Story = {
   args: {
     children: "Download",
-    iconLeft: <Download />,
-    color: "navy",
-    size: "md",
-  },
-};
-
-export const WithIconRight: Story = {
-  args: {
-    children: "Next",
-    iconRight: <ArrowRight />,
-    color: "red",
-    size: "md",
-  },
-};
-
-export const WithBothIcons: Story = {
-  args: {
-    children: "Download",
-    iconLeft: <Download />,
-    iconRight: <ArrowRight />,
+    icon: <Download />,
     color: "navy",
     size: "md",
   },
@@ -85,7 +66,7 @@ export const Loading: Story = {
   args: {
     children: "Saving…",
     loading: true,
-    iconLeft: <Download />,
+    icon: <Download />,
     color: "red",
   },
 };
