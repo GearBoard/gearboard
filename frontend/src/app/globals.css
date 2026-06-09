@@ -1,4 +1,4 @@
-@import url("https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,400,300&display=swap");
+@import url("https://api.fontshare.com/v2/css?f[]=satoshi@1,2&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -109,7 +109,7 @@
    ============================================================ */
 @layer base {
   body {
-    @apply bg-bg-white antialiased;
+    @apply bg-bg-white;
     font-family: "Satoshi", var(--font-noto-thai), sans-serif;
   }
 }

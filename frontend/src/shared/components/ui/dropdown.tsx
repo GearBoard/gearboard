@@ -2,16 +2,8 @@
 
 import { useState, useMemo } from "react";
 import { Popover } from "radix-ui";
-import { Check } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
-
-function TriangleIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 10 6" className={className} fill="currentColor" aria-hidden>
-      <polygon points="0,0 10,0 5,6" />
-    </svg>
-  );
-}
 
 export interface DropdownOption {
   value: string;
@@ -89,9 +81,9 @@ export function Dropdown(props: DropdownProps) {
           )}
         >
           <span className="truncate">{triggerLabel}</span>
-          <TriangleIcon
+          <ChevronDown
             className={cn(
-              "h-[5px] w-[10px] shrink-0 text-primary-red transition-transform duration-200",
+              "size-4 shrink-0 text-primary-red transition-transform duration-200",
               open && "rotate-180"
             )}
           />
@@ -126,7 +118,6 @@ export function Dropdown(props: DropdownProps) {
                       isChecked ? "border-primary-red bg-primary-red" : "border-primary-red"
                     )}
                   >
-                    {/* lucide Check shape differs slightly from Figma — use custom SVG if exact match needed */}
                     {isChecked && <Check className="size-3 text-white" strokeWidth={3} />}
                   </span>
                   {option.label}
