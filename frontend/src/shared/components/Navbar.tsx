@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Search, Menu } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
+import { Input } from "@/shared/components/ui/input";
 
 export const Navbar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -31,13 +32,13 @@ export const Navbar = () => {
           </div>
 
           {/* Search Bar (Desktop) */}
-          <div className="hidden md:flex items-center bg-white shadow-[0_0_15px_rgba(0,0,0,0.05)] rounded-[10px] px-4 py-2.5 w-full max-w-[500px]">
-            <Search className="w-5 h-5 text-primary-red mr-3" />
-            <input
+          <div className="hidden md:block w-full max-w-[500px]">
+            <Input
               type="text"
               placeholder="ค้นหาวิชา, อาจารย์ หรือข้อสอบ"
               aria-label="ค้นหา"
-              className="bg-transparent outline-none w-full font-satoshi text-sm text-primary-navy placeholder:text-gray/60"
+              icon={<Search className="text-primary-red" />}
+              className="shadow-black"
             />
           </div>
         </div>
@@ -75,13 +76,13 @@ export const Navbar = () => {
       {/* Mobile Search Bar Toggle */}
       {isSearchOpen && (
         <div className="md:hidden flex justify-center mt-[10px]">
-          <div className="flex items-center bg-white shadow-[0_0_15px_rgba(0,0,0,0.05)] rounded-[10px] px-4 py-2.5 w-[374px] max-w-full">
-            <Search className="w-5 h-5 text-primary-red mr-3" />
-            <input
+          <div className="w-[374px] max-w-full">
+            <Input
               type="text"
               placeholder="ค้นหาวิชา, อาจารย์ หรือข้อสอบ"
               aria-label="ค้นหา"
-              className="bg-transparent outline-none w-full font-satoshi text-sm text-primary-navy placeholder:text-gray/60"
+              icon={<Search className="text-primary-red" />}
+              className="shadow-black"
               autoFocus
             />
           </div>
