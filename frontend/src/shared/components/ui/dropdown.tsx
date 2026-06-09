@@ -96,7 +96,7 @@ export function Dropdown(props: DropdownProps) {
           sideOffset={10}
           style={{ width: "var(--radix-popover-trigger-width)" }}
           className={cn(
-            "z-50 flex flex-col gap-[10px] overflow-hidden rounded-lg bg-white p-2 shadow-primary-red",
+            "z-50 flex flex-col gap-2.5 overflow-hidden rounded-lg bg-white p-2 shadow-primary-red",
             "data-[state=open]:animate-in data-[state=closed]:animate-out",
             "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
             "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
