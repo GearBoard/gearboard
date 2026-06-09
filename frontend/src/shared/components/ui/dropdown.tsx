@@ -73,7 +73,7 @@ export function Dropdown(props: DropdownProps) {
         <button
           type="button"
           className={cn(
-            "flex w-full items-center justify-between rounded-lg border-[1.5px] border-gray px-3 py-1.5 md:px-4 md:py-2",
+            "flex w-full items-center justify-between rounded-lg border-[1.5px] border-gray px-3 py-3 md:px-4 md:py-3",
             "text-sm text-black outline-none shadow-primary-red transition-colors md:text-base",
             "hover:border-primary-red focus-visible:border-primary-red",
             open && "border-primary-red",
@@ -96,7 +96,7 @@ export function Dropdown(props: DropdownProps) {
           sideOffset={10}
           style={{ width: "var(--radix-popover-trigger-width)" }}
           className={cn(
-            "z-50 flex flex-col gap-2 overflow-hidden rounded-2xl bg-white p-[5px] shadow-primary-red",
+            "z-50 flex flex-col gap-[10px] overflow-hidden rounded-lg bg-white p-2 shadow-primary-red",
             "data-[state=open]:animate-in data-[state=closed]:animate-out",
             "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
             "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
@@ -111,7 +111,7 @@ export function Dropdown(props: DropdownProps) {
                   type="button"
                   key={option.value}
                   onClick={() => handleMultiToggle(option.value)}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-1.5 text-sm text-black transition-colors hover:bg-light-gray md:px-4 md:py-2 md:text-base"
+                  className="flex w-full items-center gap-3 rounded-xl px-2 py-3 text-sm text-black transition-colors hover:bg-light-gray md:px-3 md:text-base"
                 >
                   <span
                     className={cn(
@@ -133,7 +133,7 @@ export function Dropdown(props: DropdownProps) {
                 key={option.value}
                 onClick={() => handleSingleSelect(option.value)}
                 className={cn(
-                  "block w-full rounded-lg px-3 py-1.5 text-left text-sm transition-colors md:px-4 md:py-2 md:text-base",
+                  "block w-full rounded-xl px-2 py-3 text-left text-sm transition-colors md:px-3 md:text-base",
                   isSelected ? "bg-primary-red text-white" : "text-black hover:bg-light-gray"
                 )}
               >
