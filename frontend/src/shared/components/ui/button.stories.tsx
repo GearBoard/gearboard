@@ -71,6 +71,24 @@ export const Loading: Story = {
   },
 };
 
+export const WithIconLeft: Story = {
+  args: {
+    children: "Download",
+    iconLeft: <Download />,
+    color: "navy",
+    size: "md",
+  },
+};
+
+export const WithIconRight: Story = {
+  args: {
+    children: "Download",
+    iconRight: <Download />,
+    color: "navy",
+    size: "md",
+  },
+};
+
 export const Disabled: Story = {
   args: {
     children: "Disabled",
