@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import { Download } from "lucide-react";
+import { Download, ArrowRight } from "lucide-react";
 
 import { Button } from "./button";
 
@@ -53,24 +53,6 @@ export const AllSizes: Story = {
   ),
 };
 
-export const WithIcon: Story = {
-  args: {
-    children: "Download",
-    icon: <Download />,
-    color: "navy",
-    size: "md",
-  },
-};
-
-export const Loading: Story = {
-  args: {
-    children: "Saving…",
-    loading: true,
-    icon: <Download />,
-    color: "red",
-  },
-};
-
 export const WithIconLeft: Story = {
   args: {
     children: "Download",
@@ -82,10 +64,29 @@ export const WithIconLeft: Story = {
 
 export const WithIconRight: Story = {
   args: {
+    children: "Next",
+    iconRight: <ArrowRight />,
+    color: "red",
+    size: "md",
+  },
+};
+
+export const WithBothIcons: Story = {
+  args: {
     children: "Download",
-    iconRight: <Download />,
+    iconLeft: <Download />,
+    iconRight: <ArrowRight />,
     color: "navy",
     size: "md",
+  },
+};
+
+export const Loading: Story = {
+  args: {
+    children: "Saving…",
+    loading: true,
+    iconLeft: <Download />,
+    color: "red",
   },
 };
 

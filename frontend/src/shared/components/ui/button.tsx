@@ -37,7 +37,6 @@ type ButtonProps = React.ComponentProps<"button"> &
     loading?: boolean;
     iconLeft?: React.ReactNode;
     iconRight?: React.ReactNode;
-    icon?: React.ReactNode;
   };
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -49,7 +48,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       asChild = false,
       loading = false,
       disabled,
-      icon,
       iconLeft,
       iconRight,
       children,
@@ -59,16 +57,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const Comp = asChild ? Slot.Root : "button";
     const isDisabled = disabled || loading;
-
-    // Select the one to display on the left side
-    const leftIconSlot = loading ? (
-      <>
-        <Loader2 className="animate-spin" />
-        <span className="sr-only">Loading…</span>
-      </>
-    ) : (
-      icon || iconLeft
-    );
 
     return (
       <Comp
@@ -89,14 +77,16 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           props.onClick?.(e);
         }}
       >
-        {/* แสดงผลไอคอนฝั่งซ้าย (หรือ Loader) */}
-        {leftIconSlot}
-
-        {/* แสดงผลข้อความหลักของปุ่ม */}
+        {loading ? (
+          <>
+            <Loader2 className="animate-spin" />
+            <span className="sr-only">Loading…</span>
+          </>
+        ) : (
+          iconLeft
+        )}
         <Slot.Slottable>{children}</Slot.Slottable>
-
-        {/* แสดงผลไอคอนฝั่งขวา (เฉพาะกรณีที่ไม่ได้อยู่ในสถานะกำลังโหลด เพื่อป้องกัน UI เบียดกัน) */}
-        {!loading && iconRight}
+        {iconRight}
       </Comp>
     );
   }
