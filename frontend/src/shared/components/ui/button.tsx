@@ -18,15 +18,15 @@ const buttonVariants = cva(
           "bg-primary-yellow text-primary-navy hover:bg-dark-yellow active:bg-darker-yellow focus-visible:ring-primary-yellow",
       },
       size: {
-        default: "px-5 py-3 text-lg gap-2",
-        md: "px-4 py-2 text-base gap-2",
-        sm: "px-4 py-1.5 text-sm gap-2",
-        xs: "px-2 py-1 text-xs gap-2 [&_svg:not([class*='size-'])]:size-3",
+        lg: "px-5 py-3 text-lg gap-2 [&_svg:not([class*='size-'])]:size-[16px]", // Rename the existing default size variant to lg
+        md: "px-4 py-2 text-base gap-2 [&_svg:not([class*='size-'])]:size-[16px]",
+        sm: "px-3 py-1.5 text-sm gap-2 [&_svg:not([class*='size-'])]:size-[14px]", // Update the sm size variant horizontal padding to px-3
+        xs: "px-2 py-1 text-xs gap-2 [&_svg:not([class*='size-'])]:size-[12px]",
       },
     },
     defaultVariants: {
       color: "red",
-      size: "default",
+      size: "md", //Change the default size fallback from the current default variant to md
     },
   }
 );
@@ -44,7 +44,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     {
       className,
       color = "red",
-      size = "default",
+      size = "md", // change to md
       asChild = false,
       loading = false,
       disabled,
