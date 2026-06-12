@@ -39,8 +39,8 @@ function ModalDemo({
 }
 
 export const Default: Story = {
-  render: () => (
-    <ModalDemo>
+  render: (args) => (
+    <ModalDemo showCloseButton={args.showCloseButton}>
       <div className="flex flex-col gap-2">
         <h2 className="text-lg font-bold text-[#262626]">Modal Title</h2>
         <p className="text-sm text-dark-gray">
@@ -52,8 +52,9 @@ export const Default: Story = {
 };
 
 export const WithoutCloseButton: Story = {
-  render: () => (
-    <ModalDemo showCloseButton={false}>
+  args: { showCloseButton: false },
+  render: (args) => (
+    <ModalDemo showCloseButton={args.showCloseButton}>
       <div className="flex flex-col gap-2">
         <h2 className="text-lg font-bold text-[#262626]">No Close Button</h2>
         <p className="text-sm text-dark-gray">Close button is hidden. Click outside to dismiss.</p>
@@ -63,8 +64,8 @@ export const WithoutCloseButton: Story = {
 };
 
 export const WithLongContent: Story = {
-  render: () => (
-    <ModalDemo>
+  render: (args) => (
+    <ModalDemo showCloseButton={args.showCloseButton}>
       <div className="flex flex-col gap-3">
         <h2 className="text-lg font-bold text-[#262626]">Long Content Modal</h2>
         {Array.from({ length: 6 }, (_, i) => (
