@@ -67,7 +67,7 @@ export const WithLongContent: Story = {
   render: (args) => (
     <ModalDemo showCloseButton={args.showCloseButton}>
       <div className="flex flex-col gap-3">
-        <h2 className="text-lg font-bold text-[#262626]">Long Content Modal</h2>
+        <h2 className="text-xl font-bold text-[#262626]">Long Content Modal</h2>
         {Array.from({ length: 6 }, (_, i) => (
           <p key={i} className="text-sm text-dark-gray">
             Paragraph {i + 1}: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do

@@ -23,7 +23,14 @@ export function Modal({
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/50" />
+        <Dialog.Overlay
+          className={cn(
+            "fixed inset-0 z-50 bg-black/50",
+            "data-[state=open]:animate-in data-[state=open]:fade-in-0",
+            "data-[state=closed]:animate-out data-[state=closed]:fade-out-0",
+            "duration-200"
+          )}
+        />
         <Dialog.Content
           className={cn(
             "fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2",
@@ -32,6 +39,9 @@ export function Modal({
             "p-4 sm:p-6",
             "shadow-[0_0_30px_rgba(139,0,32,0.08)]",
             "focus:outline-none",
+            "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
+            "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
+            "duration-200",
             className
           )}
         >
@@ -42,14 +52,13 @@ export function Modal({
               aria-label="Close"
               className={cn(
                 "absolute right-4 top-4 sm:right-6 sm:top-6",
-                "flex items-center justify-center",
-                "size-[38px]",
-                "rounded-[20px] sm:rounded-[8px]",
-                "bg-primary-red transition-colors hover:bg-dark-red active:bg-darker-red",
-                "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-red focus-visible:ring-offset-2"
+                "flex items-center justify-center"
               )}
             >
-              <X className="size-6 text-white" strokeWidth={2} />
+              <X
+                className="size-6 text-dark-gray hover:text-primary-red transition-color cursor-pointer"
+                strokeWidth={2}
+              />
             </button>
           )}
           {children}
