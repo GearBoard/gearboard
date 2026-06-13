@@ -37,7 +37,7 @@ export function Modal({
             "w-[282px] sm:w-[564px]",
             "rounded-[10px] bg-white",
             "p-4 sm:p-6",
-            "shadow-[0_0_30px_rgba(139,0,32,0.08)]",
+            "shadow-primary-red",
             "focus:outline-none",
             "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
             "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
