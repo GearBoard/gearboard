@@ -34,7 +34,7 @@ export function Modal({
         <Dialog.Content
           className={cn(
             "fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2",
-            "w-[282px] sm:w-[564px]",
+            "w-[90%] max-w-[343px] sm:max-w-[800px]",
             "rounded-[10px] bg-white",
             "p-4 sm:p-6",
             "shadow-primary-red",
