@@ -6,3 +6,6 @@ export type { DropdownProps, DropdownOption } from "./ui/dropdown";
 
 export { Input } from "./ui/input";
 export type { InputProps } from "./ui/input";
+
+export { Modal } from "./ui/modal";
+export type { ModalProps } from "./ui/modal";
