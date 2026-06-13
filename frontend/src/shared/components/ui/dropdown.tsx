@@ -14,6 +14,10 @@ interface BaseProps {
   options: DropdownOption[];
   placeholder?: string;
   className?: string;
+  label?: string;
+  error?: boolean;
+  errorMessage?: string;
+  required?: boolean;
 }
 
 interface SingleProps extends BaseProps {
@@ -31,7 +35,16 @@ interface MultiProps extends BaseProps {
 export type DropdownProps = SingleProps | MultiProps;
 
 export function Dropdown(props: DropdownProps) {
-  const { options, placeholder = "Dropdown", className } = props;
+  const {
+    options,
+    placeholder = "Dropdown",
+    className,
+    label,
+    error,
+    errorMessage,
+    required,
+  } = props;
+  const hasError = error || !!errorMessage;
   const [open, setOpen] = useState(false);
 
   const multiple = props.multiple;
@@ -67,7 +80,7 @@ export function Dropdown(props: DropdownProps) {
     }
   }
 
-  return (
+  const trigger = (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger asChild>
         <button
@@ -77,7 +90,8 @@ export function Dropdown(props: DropdownProps) {
             "text-sm bg-white text-black outline-none shadow-primary-red transition-colors md:text-base",
             "hover:border-primary-red focus-visible:border-primary-red",
             open && "border-primary-red",
-            className
+            hasError && "border-primary-red bg-primary-red/10",
+            !label && !errorMessage ? className : undefined
           )}
         >
           <span className="truncate">{triggerLabel}</span>
@@ -144,5 +158,20 @@ export function Dropdown(props: DropdownProps) {
         </Popover.Content>
       </Popover.Portal>
     </Popover.Root>
+  );
+
+  if (!label && !errorMessage) return trigger;
+
+  return (
+    <div className={cn("flex flex-col gap-2", className)}>
+      {label && (
+        <label className="text-sm sm:text-base font-satoshi font-medium">
+          {label}
+          {required && <span className="text-primary-red"> *</span>}
+        </label>
+      )}
+      {trigger}
+      {errorMessage && <p className="text-xs sm:text-sm text-primary-red">{errorMessage}</p>}
+    </div>
   );
 }

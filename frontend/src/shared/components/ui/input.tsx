@@ -27,10 +27,28 @@ const inputVariants = cva(
 export interface InputProps extends React.ComponentProps<"input"> {
   icon?: React.ReactNode;
   error?: boolean;
+  label?: string;
+  errorMessage?: string;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type = "text", icon, error, disabled, ...props }, ref) => {
+  (
+    {
+      className,
+      type = "text",
+      icon,
+      error,
+      errorMessage,
+      label,
+      disabled,
+      id,
+      required,
+      ...props
+    },
+    ref
+  ) => {
+    const hasError = error || !!errorMessage;
+
     const renderedIcon = React.isValidElement<{ className?: string }>(icon)
       ? React.cloneElement(icon, {
           className: cn(
@@ -40,12 +58,15 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         })
       : icon;
 
-    return (
+    const inputWrapper = (
       <div
         data-slot="input-wrapper"
-        data-error={error || undefined}
+        data-error={hasError || undefined}
         data-disabled={disabled || undefined}
-        className={cn(inputVariants({ error, disabled }), className)}
+        className={cn(
+          inputVariants({ error: hasError, disabled }),
+          !label && !errorMessage ? className : undefined
+        )}
       >
         {renderedIcon && (
           <span data-slot="input-icon" className="shrink-0">
@@ -55,15 +76,32 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <input
           data-slot="input"
           type={type}
+          id={id}
           disabled={disabled}
           className={cn(
             "bg-transparent outline-none w-full font-satoshi text-sm md:text-base text-black placeholder:text-dark-gray focus:placeholder-transparent focus:ring-0 focus:outline-none",
             disabled && "text-black/50 placeholder:text-dark-gray/50",
-            error && "text-primary-red placeholder:text-primary-red"
+            hasError && "placeholder:text-primary-red"
           )}
+          required={required}
           ref={ref}
           {...props}
         />
+      </div>
+    );
+
+    if (!label && !errorMessage) return inputWrapper;
+
+    return (
+      <div className={cn("flex flex-col gap-2", className)}>
+        {label && (
+          <label htmlFor={id} className="text-sm sm:text-base font-satoshi font-medium">
+            {label}
+            {required && <span className="text-primary-red"> *</span>}
+          </label>
+        )}
+        {inputWrapper}
+        {errorMessage && <p className="text-xs sm:text-sm text-primary-red">{errorMessage}</p>}
       </div>
     );
   }

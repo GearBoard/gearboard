@@ -45,6 +45,29 @@ function MultiWithSelectionDemo() {
   return <Dropdown multiple options={OPTIONS} values={values} onChange={setValues} />;
 }
 
+function WithLabelDemo() {
+  const [value, setValue] = useState<string | undefined>(undefined);
+  return <Dropdown options={OPTIONS} value={value} onChange={setValue} label="Category" />;
+}
+
+function WithLabelAndErrorDemo() {
+  const [value, setValue] = useState<string | undefined>(undefined);
+  return (
+    <Dropdown
+      options={OPTIONS}
+      value={value}
+      onChange={setValue}
+      label="Category"
+      errorMessage="Please select a category."
+    />
+  );
+}
+
+function WithLabelRequiredDemo() {
+  const [value, setValue] = useState<string | undefined>(undefined);
+  return <Dropdown options={OPTIONS} value={value} onChange={setValue} label="Category" required />;
+}
+
 function AllVariantsDemo() {
   const [single, setSingle] = useState<string | undefined>(undefined);
   const [multi, setMulti] = useState<string[]>([]);
@@ -58,6 +81,35 @@ function AllVariantsDemo() {
       <div className="flex w-56 flex-col gap-2">
         <span className="text-xs text-gray-400">Multi-Dropdown</span>
         <Dropdown multiple options={OPTIONS} values={multi} onChange={setMulti} />
+      </div>
+      <div className="flex w-56 flex-col gap-2">
+        <span className="text-xs text-gray-400">With Label</span>
+        <Dropdown options={OPTIONS} value={single} onChange={setSingle} label="Category" />
+      </div>
+      <div className="flex w-56 flex-col gap-2">
+        <span className="text-xs text-gray-400">With Label + Error</span>
+        <Dropdown
+          options={OPTIONS}
+          value={single}
+          onChange={setSingle}
+          label="Category"
+          errorMessage="Please select a category."
+        />
+      </div>
+      <div className="flex w-56 flex-col gap-2">
+        <span className="text-xs text-gray-400">With Label + Required</span>
+        <Dropdown options={OPTIONS} value={single} onChange={setSingle} label="Category" required />
+      </div>
+      <div className="flex w-56 flex-col gap-2">
+        <span className="text-xs text-gray-400">With Label + Required + Error</span>
+        <Dropdown
+          options={OPTIONS}
+          value={single}
+          onChange={setSingle}
+          label="Category"
+          required
+          errorMessage="Please select a category."
+        />
       </div>
     </div>
   );
@@ -77,6 +129,18 @@ export const MultiDefault: Story = {
 
 export const MultiWithSelection: Story = {
   render: () => <MultiWithSelectionDemo />,
+};
+
+export const WithLabel: Story = {
+  render: () => <WithLabelDemo />,
+};
+
+export const WithLabelAndError: Story = {
+  render: () => <WithLabelAndErrorDemo />,
+};
+
+export const WithLabelRequired: Story = {
+  render: () => <WithLabelRequiredDemo />,
 };
 
 export const AllVariants: Story = {

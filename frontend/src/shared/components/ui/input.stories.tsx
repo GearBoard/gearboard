@@ -9,7 +9,10 @@ const meta: Meta<typeof Input> = {
   tags: ["autodocs"],
   argTypes: {
     placeholder: { control: "text" },
+    label: { control: "text" },
     error: { control: "boolean" },
+    errorMessage: { control: "text" },
+    required: { control: "boolean" },
     disabled: { control: "boolean" },
     type: { control: "text" },
   },
@@ -47,6 +50,32 @@ export const DisabledState: Story = {
   },
 };
 
+export const WithLabel: Story = {
+  args: {
+    placeholder: "Enter text...",
+    label: "Email",
+    id: "email",
+  },
+};
+
+export const WithLabelAndError: Story = {
+  args: {
+    placeholder: "Enter text...",
+    label: "Email",
+    id: "email-error",
+    errorMessage: "Please enter a valid email address.",
+  },
+};
+
+export const WithLabelRequired: Story = {
+  args: {
+    placeholder: "Enter text...",
+    label: "Email",
+    id: "email-required",
+    required: true,
+  },
+};
+
 export const AllStates: Story = {
   render: () => (
     <div className="flex flex-col gap-6 p-6 max-w-[500px] bg-bg-white rounded-xl">
@@ -65,6 +94,37 @@ export const AllStates: Story = {
       <div>
         <span className="text-xs font-bold text-primary-navy mb-2 block">Disabled State</span>
         <Input placeholder="ค้นหาวิชา, อาจารย์ หรือข้อสอบ" icon={<Search />} disabled />
+      </div>
+      <div>
+        <span className="text-xs font-bold text-primary-navy mb-2 block">With Label</span>
+        <Input placeholder="Enter your email" label="Email" id="story-email" />
+      </div>
+      <div>
+        <span className="text-xs font-bold text-primary-navy mb-2 block">With Label + Error</span>
+        <Input
+          placeholder="Enter your email"
+          label="Email"
+          id="story-email-err"
+          errorMessage="Please enter a valid email address."
+        />
+      </div>
+      <div>
+        <span className="text-xs font-bold text-primary-navy mb-2 block">
+          With Label + Required
+        </span>
+        <Input placeholder="Enter your email" label="Email" id="story-email-req" required />
+      </div>
+      <div>
+        <span className="text-xs font-bold text-primary-navy mb-2 block">
+          With Label + Required + Error
+        </span>
+        <Input
+          placeholder="Enter your email"
+          label="Email"
+          id="story-email-req-err"
+          required
+          errorMessage="Please enter a valid email address."
+        />
       </div>
     </div>
   ),
