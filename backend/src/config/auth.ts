@@ -34,6 +34,9 @@ export const auth = betterAuth({
           google: {
             clientId: env.GOOGLE_CLIENT_ID,
             clientSecret: env.GOOGLE_CLIENT_SECRET,
+            mapProfileToUser: (profile: { email: string }) => ({
+              username: profile.email.split("@")[0],
+            }),
           },
         },
       }
