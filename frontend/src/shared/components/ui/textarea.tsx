@@ -25,7 +25,7 @@ function Textarea({
       aria-invalid={hasError || undefined}
       required={required}
       className={cn(
-        "w-full min-h-[132px] gap-2.5 rounded-lg border-[1.5px] border-gray bg-white px-3 py-1.5 md:px-4 md:py-2 text-sm md:text-base transition-colors outline-none",
+        "w-full min-h-[132px] gap-2.5 rounded-lg border-[1.5px] border-gray bg-white px-3 py-2 md:px-4text-sm md:text-base transition-colors outline-none",
         "placeholder:text-dark-gray",
         "shadow-primary-red",
         "enabled:hover:border-primary-red",

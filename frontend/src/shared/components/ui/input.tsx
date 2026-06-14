@@ -5,7 +5,7 @@ import { cva } from "class-variance-authority";
 import { cn } from "@/shared/lib/utils";
 
 const inputVariants = cva(
-  "flex items-center w-full rounded-lg transition-all duration-200 border-[1.5px] border-gray shadow-primary-red px-3 py-3 md:px-4 md:py-3 gap-[10px] bg-white hover:border-primary-red focus-within:border-primary-red",
+  "flex items-center w-full rounded-lg transition-all duration-200 border-[1.5px] border-gray shadow-primary-red px-3 py-2 md:px-4 h-10 gap-[10px] bg-white hover:border-primary-red focus-within:border-primary-red",
   {
     variants: {
       error: {
@@ -93,7 +93,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     if (!label && !errorMessage) return inputWrapper;
 
     return (
-      <div className={cn("flex flex-col gap-2", className)}>
+      <div className={cn("flex flex-col gap-1.5", className)}>
         {label && (
           <label htmlFor={id} className="text-sm sm:text-base font-satoshi font-medium">
             {label}
