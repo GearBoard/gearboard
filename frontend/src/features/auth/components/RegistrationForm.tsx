@@ -17,7 +17,7 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
   };
 
   return (
-    <div className="bg-white rounded-xl border-[1.5px] border-gray shadow-primary-red px-6 py-6 md:px-8 md:py-8 flex flex-col gap-6 w-full">
+    <div className="bg-white rounded-xl border-[1.5px] border-gray shadow-primary-red px-6 py-6 md:px-8 md:py-8 flex flex-col gap-4 md:gap-5 w-full">
       <div>
         <h1 className="text-[32px] md:text-4xl font-bold text-primary-red">ลงทะเบียน</h1>
         <p className="text-sm md:text-base text-dark-gray mt-1">
@@ -25,49 +25,37 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2">
-          <label htmlFor="register-username" className="text-sm md:text-base font-medium">
-            ชื่อผู้ใช้
-          </label>
-          <Input
-            id="register-username"
-            placeholder="กรอกชื่อผู้ใช้"
-            value={formData.username}
-            onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-            required
-          />
-        </div>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <Input
+          label="ชื่อผู้ใช้"
+          id="register-username"
+          placeholder="กรอกชื่อผู้ใช้"
+          value={formData.username}
+          onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+          required
+        />
 
-        <div className="flex flex-col gap-2">
-          <label htmlFor="register-email" className="text-sm md:text-base font-medium">
-            อีเมล
-          </label>
-          <Input
-            id="register-email"
-            type="email"
-            placeholder="user@example.com"
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            required
-          />
-        </div>
+        <Input
+          label="อีเมล"
+          id="register-email"
+          type="email"
+          placeholder="user@example.com"
+          value={formData.email}
+          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          required
+        />
 
-        <div className="flex flex-col gap-2">
-          <label htmlFor="register-password" className="text-sm md:text-base font-medium">
-            รหัสผ่าน
-          </label>
-          <Input
-            id="register-password"
-            type="password"
-            placeholder="กรอกรหัสผ่าน"
-            value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            required
-          />
-        </div>
+        <Input
+          label="รหัสผ่าน"
+          id="register-password"
+          type="password"
+          placeholder="กรอกรหัสผ่าน"
+          value={formData.password}
+          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+          required
+        />
 
-        <Button type="submit" loading={isLoading} className="w-full py-3 text-sm md:text-base">
+        <Button type="submit" loading={isLoading} size="lg">
           ลงทะเบียน
         </Button>
 
@@ -81,7 +69,7 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
 
         <button
           type="button"
-          className="w-full flex items-center justify-center gap-2.5 border-[1.5px] border-gray rounded-lg py-3 text-base md:text-lg font-medium hover:bg-light-gray transition-colors cursor-pointer"
+          className="w-full flex items-center justify-center gap-3 border-[1.5px] border-gray rounded-[10px] px-3.75 py-2 md:py-3 text-base md:text-base font-medium hover:bg-light-gray transition-colors cursor-pointer text-black/54"
         >
           <GoogleIcon />
           ดำเนินการต่อด้วย Google
