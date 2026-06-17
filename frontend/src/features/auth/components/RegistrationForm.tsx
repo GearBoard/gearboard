@@ -67,7 +67,7 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
 
       <div className="flex items-center gap-3">
         <div className="flex-1 border-t border-gray" />
-        <span className="text-xs md:text-sm text-dark-gray whitespace-nowrap">
+        <span className="text-sm md:text-base text-dark-gray whitespace-nowrap">
           หรือดำเนินการต่อด้วย
         </span>
         <div className="flex-1 border-t border-gray" />
