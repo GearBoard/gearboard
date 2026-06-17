@@ -55,37 +55,42 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
           required
         />
 
-        <Button type="submit" loading={isLoading} size="lg">
+        <Button
+          type="submit"
+          loading={isLoading}
+          size="md"
+          className="md:px-5 md:py-3 md:h-12 md:text-base md:gap-2"
+        >
           ลงทะเบียน
         </Button>
+      </form>
 
-        <div className="flex items-center gap-3">
-          <div className="flex-1 border-t border-gray" />
-          <span className="text-xs md:text-sm text-dark-gray whitespace-nowrap">
-            หรือดำเนินการต่อด้วย
-          </span>
-          <div className="flex-1 border-t border-gray" />
-        </div>
+      <div className="flex items-center gap-3">
+        <div className="flex-1 border-t border-gray" />
+        <span className="text-xs md:text-sm text-dark-gray whitespace-nowrap">
+          หรือดำเนินการต่อด้วย
+        </span>
+        <div className="flex-1 border-t border-gray" />
+      </div>
 
+      <button
+        type="button"
+        className="h-9.5 md:h-12 w-full flex items-center justify-center gap-3 border-[1.5px] border-gray rounded-[10px] bg-white px-3.75 py-2 md:py-3 text-base md:text-base font-medium hover:bg-light-gray transition-colors cursor-pointer text-black/54"
+      >
+        <GoogleIcon />
+        ดำเนินการต่อด้วย Google
+      </button>
+
+      <p className="text-center text-sm md:text-base">
+        มีบัญชีอยู่แล้ว ?{" "}
         <button
           type="button"
-          className="w-full flex items-center justify-center gap-3 border-[1.5px] border-gray rounded-[10px] px-3.75 py-2 md:py-3 text-base md:text-base font-medium hover:bg-light-gray transition-colors cursor-pointer text-black/54"
+          onClick={onSwitchToLogin}
+          className="text-primary-red underline font-medium cursor-pointer"
         >
-          <GoogleIcon />
-          ดำเนินการต่อด้วย Google
+          เข้าสู่ระบบ
         </button>
-
-        <p className="text-center text-sm md:text-base">
-          มีบัญชีอยู่แล้ว ?{" "}
-          <button
-            type="button"
-            onClick={onSwitchToLogin}
-            className="text-primary-red underline font-medium cursor-pointer"
-          >
-            เข้าสู่ระบบ
-          </button>
-        </p>
-      </form>
+      </p>
     </div>
   );
 }
