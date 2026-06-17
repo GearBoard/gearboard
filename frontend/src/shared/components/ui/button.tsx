@@ -18,10 +18,10 @@ const buttonVariants = cva(
           "bg-primary-yellow text-primary-navy hover:bg-dark-yellow active:bg-darker-yellow focus-visible:ring-primary-yellow",
       },
       size: {
-        lg: "px-5 py-3 text-lg gap-2 [&_svg:not([class*='size-'])]:size-[16px]", // Rename the existing default size variant to lg
-        md: "px-4 py-2 text-base gap-2 [&_svg:not([class*='size-'])]:size-[16px]",
-        sm: "px-3 py-1.5 text-sm gap-2 [&_svg:not([class*='size-'])]:size-[14px]", // Update the sm size variant horizontal padding to px-3
-        xs: "px-2 py-1 text-xs gap-2 [&_svg:not([class*='size-'])]:size-[12px]",
+        lg: "px-5 py-3 h-12 text-base gap-2 [&_svg:not([class*='size-'])]:size-[16px]", // Rename the existing default size variant to lg
+        md: "px-4 py-2 h-10 text-base gap-2 [&_svg:not([class*='size-'])]:size-[16px]",
+        sm: "px-3 py-1.5 h-8 text-sm gap-2 [&_svg:not([class*='size-'])]:size-[14px]", // Update the sm size variant horizontal padding to px-3
+        xs: "px-2 py-1 h-6 text-xs gap-2 [&_svg:not([class*='size-'])]:size-[12px]",
       },
     },
     defaultVariants: {

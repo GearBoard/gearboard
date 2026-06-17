@@ -51,6 +51,40 @@ export const Disabled: Story = {
   ),
 };
 
+export const WithLabel: Story = {
+  render: () => (
+    <div className="w-full max-w-[478px]">
+      <Textarea placeholder="Type your message here..." label="Message" id="message" />
+    </div>
+  ),
+};
+
+export const WithLabelAndError: Story = {
+  render: () => (
+    <div className="w-full max-w-[478px]">
+      <Textarea
+        placeholder="Type your message here..."
+        label="Message"
+        id="message-error"
+        errorMessage="This field is required."
+      />
+    </div>
+  ),
+};
+
+export const WithLabelRequired: Story = {
+  render: () => (
+    <div className="w-full max-w-[478px]">
+      <Textarea
+        placeholder="Type your message here..."
+        label="Message"
+        id="message-required"
+        required
+      />
+    </div>
+  ),
+};
+
 export const AllStates: Story = {
   render: () => (
     <div className="flex flex-col gap-4 w-full max-w-[478px]">
@@ -59,6 +93,26 @@ export const AllStates: Story = {
       <Textarea placeholder="Focused" autoFocus />
       <Textarea placeholder="Error" aria-invalid />
       <Textarea placeholder="Disabled" disabled />
+      <Textarea placeholder="With label" label="Message" id="all-message" />
+      <Textarea
+        placeholder="With label and error"
+        label="Message"
+        id="all-message-err"
+        errorMessage="This field is required."
+      />
+      <Textarea
+        placeholder="With label and required"
+        label="Message"
+        id="all-message-req"
+        required
+      />
+      <Textarea
+        placeholder="With label, required and error"
+        label="Message"
+        id="all-message-req-err"
+        required
+        errorMessage="This field is required."
+      />
     </div>
   ),
 };
