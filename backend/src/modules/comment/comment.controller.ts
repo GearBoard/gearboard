@@ -53,4 +53,32 @@ export const commentController = {
       res.status(500).json(errorResponse("Failed to delete comment"));
     }
   },
+
+  async getComments(req: Request, res: Response) {
+    const { postId } = (req as Request & { validatedParams: { postId: bigint } }).validatedParams;
+
+    try {
+      const data = await commentService.getByPostId(postId);
+      res.status(200).json(successResponse(data));
+    } catch {
+      res.status(500).json(errorResponse("Failed to fetch comments"));
+    }
+  },
+
+  async createComment(req: Request, res: Response) {
+    const { postId } = (req as Request & { validatedParams: { postId: bigint } }).validatedParams;
+    const userId = (req as Request & { user: { id: bigint } }).user.id;
+
+    try {
+      const data = await commentService.createComment(userId, postId, req.body);
+      res.status(201).json(successResponse(data));
+    } catch (e: unknown) {
+      const err = e as { code?: string };
+      if (err.code === "P2003") {
+        res.status(400).json(errorResponse("Post or User doesn't exist"));
+        return;
+      }
+      throw e;
+    }
+  },
 };

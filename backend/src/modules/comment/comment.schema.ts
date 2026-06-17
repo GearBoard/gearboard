@@ -10,6 +10,16 @@ export const commentIdValidateSchema = z.object({
     }),
 });
 
+export const postIdParamsSchema = z.object({
+  postId: z
+    .string()
+    .min(1)
+    .transform((s) => BigInt(s))
+    .refine((n) => n >= 1n, {
+      message: "Invalid post id",
+    }),
+});
+
 export const createCommentSchema = z.object({
   content: z.string().min(1, "Content of comment is require"),
   images: z

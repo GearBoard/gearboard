@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { commentRoute } from "../comment/comment.route.js";
 import {
   validateBody,
   validateParams,
@@ -45,3 +46,6 @@ postRoute.delete(
   validateParams(getPostByIdSchema),
   postController.delete.bind(postController)
 );
+
+// Mount comment routes under /posts/:postId/comments
+postRoute.use("/:postId/comments", commentRoute);
