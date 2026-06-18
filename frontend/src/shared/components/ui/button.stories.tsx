@@ -14,7 +14,7 @@ const meta: Meta<typeof Button> = {
     },
     size: {
       control: "select",
-      options: ["default", "md", "sm", "xs"],
+      options: ["lg", "md", "sm", "xs"],
     },
     loading: { control: "boolean" },
     disabled: { control: "boolean" },
@@ -28,7 +28,7 @@ export const Default: Story = {
   args: {
     children: "Click me",
     color: "red",
-    size: "default",
+    size: "md",
   },
 };
 
@@ -45,7 +45,7 @@ export const AllColors: Story = {
 export const AllSizes: Story = {
   render: () => (
     <div className="flex flex-wrap items-center gap-4">
-      <Button size="default">Default</Button>
+      <Button size="lg">Large</Button>
       <Button size="md">Medium</Button>
       <Button size="sm">Small</Button>
       <Button size="xs">XSmall</Button>

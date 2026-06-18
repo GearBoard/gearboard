@@ -1,69 +1,107 @@
 "use client";
 
 import * as React from "react";
+import { cva } from "class-variance-authority";
 import { cn } from "@/shared/lib/utils";
 
+const inputVariants = cva(
+  "flex items-center w-full rounded-lg transition-all duration-200 border-[1.5px] border-gray px-3 py-2 md:px-4 h-10 gap-[10px] bg-white hover:border-primary-red focus-within:border-primary-red",
+  {
+    variants: {
+      error: {
+        true: "bg-primary-red/10 border-primary-red",
+        false: "",
+      },
+      disabled: {
+        true: "opacity-50 pointer-events-none",
+        false: "",
+      },
+    },
+    defaultVariants: {
+      error: false,
+      disabled: false,
+    },
+  }
+);
+
 export interface InputProps extends React.ComponentProps<"input"> {
-  /**
-   * Optional icon content to display on the left.
-   * Accepts any React node while preserving the component's icon styling.
-   */
   icon?: React.ReactNode;
-  /**
-   * Whether the input is in an error or invalid state.
-   * If true, changes the background color and applies a primary red border.
-   */
   error?: boolean;
+  label?: string;
+  errorMessage?: string;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type = "text", icon, error, disabled, ...props }, ref) => {
+  (
+    {
+      className,
+      type = "text",
+      icon,
+      error,
+      errorMessage,
+      label,
+      disabled,
+      id,
+      required,
+      ...props
+    },
+    ref
+  ) => {
+    const hasError = error || !!errorMessage;
+
     const renderedIcon = React.isValidElement<{ className?: string }>(icon)
       ? React.cloneElement(icon, {
           className: cn(
-            "w-5 h-5 shrink-0 transition-colors duration-200 text-darker-red",
-            disabled && "text-dark-gray/70",
-            error && "text-darker-red",
+            "w-4 h-4 shrink-0 transition-colors duration-200 text-primary-red",
             icon.props.className
           ),
         })
       : icon;
 
-    return (
+    const inputWrapper = (
       <div
+        data-slot="input-wrapper"
+        data-error={hasError || undefined}
+        data-disabled={disabled || undefined}
         className={cn(
-          // Layout & Sizing
-          "flex items-center w-full rounded-[10px] transition-all duration-200 border-2 shadow-black",
-          // Paddings (mobile: px-3, py-1.5; desktop/medium+: px-4, py-2) and Gap (10px)
-          "px-3 py-1.5 md:px-4 md:py-2 gap-[10px]",
-          // Default State (white background, transparent border so no visible border, shadow-black)
-          "bg-white border-transparent",
-          // Hover State (smooth transition to primary red border)
-          "hover:border-primary-red",
-          // Focus State (focused nested input, keeping primary red border and shadow-black)
-          "focus-within:border-primary-red focus-within:ring-0 focus-within:shadow-black",
-          // Error or Invalid State (bg is primary red with 10% transparent, border is primary red)
-          error && "bg-primary-red/10 border-primary-red",
-          // Disabled State (lowered opacity, ignore mouse events)
-          disabled && "opacity-50 pointer-events-none",
-          className
+          inputVariants({ error: hasError, disabled }),
+          !label && !errorMessage ? className : undefined
         )}
       >
-        {renderedIcon && <span className="shrink-0">{renderedIcon}</span>}
+        {renderedIcon && (
+          <span data-slot="input-icon" className="shrink-0">
+            {renderedIcon}
+          </span>
+        )}
         <input
+          data-slot="input"
           type={type}
+          id={id}
           disabled={disabled}
           className={cn(
-            // Inner input visual reset
-            "bg-transparent outline-none w-full font-satoshi text-sm md:text-base text-black placeholder:text-dark-gray focus:ring-0 focus:outline-none",
-            // Disabled style for text
-            disabled && "text-black/50 placeholder:text-dark-gray/70",
-            // Error style for text
-            error && "text-primary-red placeholder:text-primary-red/60"
+            "bg-transparent outline-none w-full text-sm md:text-base text-black placeholder:text-dark-gray focus:placeholder-transparent focus:ring-0 focus:outline-none",
+            disabled && "text-black/50 placeholder:text-dark-gray/50",
+            hasError && "placeholder:text-primary-red"
           )}
+          required={required}
           ref={ref}
           {...props}
         />
+      </div>
+    );
+
+    if (!label && !errorMessage) return inputWrapper;
+
+    return (
+      <div className={cn("flex flex-col gap-1.5", className)}>
+        {label && (
+          <label htmlFor={id} className="text-sm sm:text-base font-medium">
+            {label}
+            {required && <span className="text-primary-red"> *</span>}
+          </label>
+        )}
+        {inputWrapper}
+        {errorMessage && <p className="text-xs sm:text-sm text-primary-red">{errorMessage}</p>}
       </div>
     );
   }

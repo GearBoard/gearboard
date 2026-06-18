@@ -30,6 +30,7 @@
      ---------------------------------------------------------- */
   --font-satoshi: "Satoshi", sans-serif;
   --font-noto: var(--font-noto-thai), sans-serif;
+  --font-sans: "Satoshi", var(--font-noto-thai), sans-serif;
 
   /* Font weights */
   --font-weight-light: 300;
@@ -76,7 +77,7 @@
   /* ----------------------------------------------------------
      SHADOW SYSTEM
      ---------------------------------------------------------- */
-  --shadow-black: var(--shadow-black-val);
+  --shadow-primary-red: var(--shadow-primary-red);
 }
 
 /* ============================================================
@@ -101,7 +102,7 @@
   --light-gray: #eaeaea;
   --dark-gray: #8b9096;
 
-  --shadow-black-val: 0 0 30px 0 rgba(0, 0, 0, 0.1);
+  --shadow-primary-red: 0 0 30px 0 rgba(38, 38, 38, 0.08);
 }
 
 /* ============================================================

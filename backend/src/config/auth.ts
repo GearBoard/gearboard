@@ -28,6 +28,21 @@ export const auth = betterAuth({
     },
   },
 
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user) => {
+          return {
+            data: {
+              ...user,
+              name: (user as { username?: string }).username ?? user.name,
+            },
+          };
+        },
+      },
+    },
+  },
+
   ...(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET
     ? {
         socialProviders: {
