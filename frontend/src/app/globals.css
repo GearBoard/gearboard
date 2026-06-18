@@ -30,6 +30,7 @@
      ---------------------------------------------------------- */
   --font-satoshi: "Satoshi", sans-serif;
   --font-noto: var(--font-noto-thai), sans-serif;
+  --font-sans: "Satoshi", var(--font-noto-thai), sans-serif;
 
   /* Font weights */
   --font-weight-light: 300;

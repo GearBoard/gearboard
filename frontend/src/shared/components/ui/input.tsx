@@ -5,7 +5,7 @@ import { cva } from "class-variance-authority";
 import { cn } from "@/shared/lib/utils";
 
 const inputVariants = cva(
-  "flex items-center w-full rounded-lg transition-all duration-200 border-[1.5px] border-gray shadow-primary-red px-3 py-2 md:px-4 h-10 gap-[10px] bg-white hover:border-primary-red focus-within:border-primary-red",
+  "flex items-center w-full rounded-lg transition-all duration-200 border-[1.5px] border-gray px-3 py-2 md:px-4 h-10 gap-[10px] bg-white hover:border-primary-red focus-within:border-primary-red",
   {
     variants: {
       error: {
@@ -79,7 +79,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           id={id}
           disabled={disabled}
           className={cn(
-            "bg-transparent outline-none w-full font-satoshi text-sm md:text-base text-black placeholder:text-dark-gray focus:placeholder-transparent focus:ring-0 focus:outline-none",
+            "bg-transparent outline-none w-full text-sm md:text-base text-black placeholder:text-dark-gray focus:placeholder-transparent focus:ring-0 focus:outline-none",
             disabled && "text-black/50 placeholder:text-dark-gray/50",
             hasError && "placeholder:text-primary-red"
           )}
@@ -95,7 +95,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className={cn("flex flex-col gap-1.5", className)}>
         {label && (
-          <label htmlFor={id} className="text-sm sm:text-base font-satoshi font-medium">
+          <label htmlFor={id} className="text-sm sm:text-base font-medium">
             {label}
             {required && <span className="text-primary-red"> *</span>}
           </label>

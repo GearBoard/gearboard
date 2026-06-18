@@ -87,7 +87,7 @@ export function Dropdown(props: DropdownProps) {
           type="button"
           className={cn(
             "cursor-pointer flex w-full items-center justify-between rounded-lg border-[1.5px] border-gray px-3 py-2 md:px-4 h-10",
-            "text-sm bg-white text-black outline-none shadow-primary-red transition-colors md:text-base",
+            "text-sm bg-white text-black outline-none transition-colors md:text-base",
             "hover:border-primary-red focus-visible:border-primary-red",
             open && "border-primary-red",
             hasError && "border-primary-red bg-primary-red/10",
@@ -165,7 +165,7 @@ export function Dropdown(props: DropdownProps) {
   return (
     <div className={cn("flex flex-col gap-2", className)}>
       {label && (
-        <label className="text-sm sm:text-base font-satoshi font-medium">
+        <label className="text-sm sm:text-base font-medium">
           {label}
           {required && <span className="text-primary-red"> *</span>}
         </label>

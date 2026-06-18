@@ -20,7 +20,7 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
     <div className="bg-white rounded-xl border-[1.5px] border-gray shadow-primary-red px-6 py-6 md:px-8 md:py-8 flex flex-col gap-4 md:gap-5 w-full">
       <div>
         <h1 className="text-[32px] md:text-4xl font-bold text-primary-red">ลงทะเบียน</h1>
-        <p className="text-sm md:text-base text-dark-gray mt-1">
+        <p className="text-sm md:text-base text-black font-medium mt-1">
           ลงทะเบียนเพื่อเริ่มต้นกับ Gearboard
         </p>
       </div>
