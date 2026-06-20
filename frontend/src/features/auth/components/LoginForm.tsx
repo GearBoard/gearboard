@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button, Input } from "@/shared/components";
 import { GoogleIcon } from "@/shared/components/icons/GoogleIcon";
 import { useRouter } from "next/navigation";
@@ -11,12 +11,10 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [error, setError] = useState("");
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: { preventDefault(): void }) => {
     e.preventDefault();
-    setError("");
     setIsLoading(true);
     try {
       await authClient.signIn.email(
@@ -25,32 +23,17 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
           onSuccess: () => {
             router.push("/");
           },
-          onError: (ctx: { error: { message: string } }) => {
-            setError(ctx.error.message);
-          },
         }
       );
-    } catch {
-      setError("เกิดข้อผิดพลาด กรุณาลองใหม่");
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleGoogleSignIn = async () => {
-    setError("");
     setIsGoogleLoading(true);
     try {
-      await authClient.signIn.social(
-        { provider: "google", callbackURL: "/" },
-        {
-          onError: (ctx: { error: { message: string } }) => {
-            setError(ctx.error.message);
-          },
-        }
-      );
-    } catch {
-      setError("เกิดข้อผิดพลาด กรุณาลองใหม่");
+      await authClient.signIn.social({ provider: "google", callbackURL: "/" });
     } finally {
       setIsGoogleLoading(false);
     }
@@ -64,12 +47,6 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
           เข้าสู่ระบบเพื่อเริ่มต้นกับ Gearboard
         </p>
       </div>
-
-      {error && (
-        <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
-          {error}
-        </div>
-      )}
 
       <form id="login-form" onSubmit={handleSubmit} className="flex flex-col gap-3">
         <Input
