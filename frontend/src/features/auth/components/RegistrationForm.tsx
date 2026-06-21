@@ -45,9 +45,9 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
   };
 
   return (
-    <div className="bg-white rounded-xl border-[1.5px] border-gray shadow-primary-red px-6 py-6 md:px-8 md:py-8 flex flex-col gap-4 md:gap-5 w-full">
+    <div className="bg-white rounded-xl border border-[#D9D9D9] shadow-[0px_0px_30px_rgba(38,38,38,0.05)] p-6 gap-4 md:p-8 md:gap-5 flex flex-col w-[353px] md:w-[480px]">
       <div>
-        <h1 className="text-[32px] md:text-4xl font-bold text-primary-red">ลงทะเบียน</h1>
+        <h1 className="text-[32px] md:text-[36px] font-bold text-primary-red">ลงทะเบียน</h1>
         <p className="text-sm md:text-base text-black font-medium mt-1">
           ลงทะเบียนเพื่อเริ่มต้นกับ Gearboard
         </p>
@@ -90,24 +90,24 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
         loading={isLoading}
         disabled={isGoogleLoading}
         size="md"
-        className="md:px-5 md:py-3 md:h-12 md:text-base md:gap-2"
+        className="h-[38px] md:h-[46px]"
       >
         ลงทะเบียน
       </Button>
 
       <div className="flex items-center gap-3">
-        <div className="flex-1 border-t border-gray" />
-        <span className="text-sm md:text-base text-dark-gray whitespace-nowrap">
+        <div className="flex-1 border-t border-[#8B9096]" />
+        <span className="text-sm md:text-base text-[#8B9096] whitespace-nowrap">
           หรือดำเนินการต่อด้วย
         </span>
-        <div className="flex-1 border-t border-gray" />
+        <div className="flex-1 border-t border-[#8B9096]" />
       </div>
 
       <button
         type="button"
         onClick={handleGoogleSignIn}
         disabled={isLoading || isGoogleLoading}
-        className="h-9.5 md:h-12 w-full flex items-center justify-center gap-3 border-[1.5px] border-gray rounded-[10px] bg-white px-3.75 py-2 md:py-3 text-base font-medium hover:bg-light-gray transition-colors cursor-pointer text-black/54 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="h-[38px] md:h-12 w-full flex items-center justify-center gap-3 border-[1.5px] border-[#D9D9D9] rounded-[10px] bg-white px-4 text-sm md:text-base font-medium hover:bg-light-gray transition-colors cursor-pointer text-black/54 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <GoogleIcon />
         ดำเนินการต่อด้วย Google
