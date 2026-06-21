@@ -11,10 +11,12 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [errors, setErrors] = useState({ email: "", password: "" });
   const router = useRouter();
 
   const handleSubmit = async (e: { preventDefault(): void }) => {
     e.preventDefault();
+    setErrors({ email: "", password: "" });
     setIsLoading(true);
     try {
       await authClient.signIn.email(
@@ -23,8 +25,18 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
           onSuccess: () => {
             router.push("/");
           },
+          onError: (ctx: { error: { message: string } }) => {
+            const msg = ctx.error.message.toLowerCase();
+            if (msg.includes("password")) {
+              setErrors((prev) => ({ ...prev, password: "รหัสผ่านไม่ถูกต้อง" }));
+            } else {
+              setErrors((prev) => ({ ...prev, email: ctx.error.message }));
+            }
+          },
         }
       );
+    } catch {
+      setErrors((prev) => ({ ...prev, email: "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง" }));
     } finally {
       setIsLoading(false);
     }
@@ -56,6 +68,7 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
           placeholder="user@example.com"
           value={formData.email}
           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          errorMessage={errors.email}
           required
         />
 
@@ -66,6 +79,7 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
           placeholder="กรอกรหัสผ่าน"
           value={formData.password}
           onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+          errorMessage={errors.password}
           required
         />
       </form>

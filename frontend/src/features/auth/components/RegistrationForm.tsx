@@ -11,10 +11,27 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
   const [formData, setFormData] = useState({ username: "", email: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [errors, setErrors] = useState({ username: "", email: "", password: "" });
   const router = useRouter();
+
+  const clearErrors = () => setErrors({ username: "", email: "", password: "" });
+
+  const mapError = (message: string) => {
+    const msg = message.toLowerCase();
+    if (msg.includes("username") || msg.includes("user already exists")) {
+      setErrors((prev) => ({ ...prev, username: "ไม่สามารถใช้ชื่อนี้ได้" }));
+    } else if (msg.includes("email")) {
+      setErrors((prev) => ({ ...prev, email: "อีเมลนี้ถูกใช้ไปแล้ว" }));
+    } else if (msg.includes("password")) {
+      setErrors((prev) => ({ ...prev, password: "กรุณากรอกรหัสผ่านอย่างน้อย 8 ตัว" }));
+    } else {
+      setErrors((prev) => ({ ...prev, username: "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง" }));
+    }
+  };
 
   const handleSubmit = async (e: { preventDefault(): void }) => {
     e.preventDefault();
+    clearErrors();
     setIsLoading(true);
     try {
       await authClient.signUp.email(
@@ -28,8 +45,13 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
           onSuccess: () => {
             router.push("/");
           },
+          onError: (ctx: { error: { message: string } }) => {
+            mapError(ctx.error.message);
+          },
         }
       );
+    } catch {
+      setErrors((prev) => ({ ...prev, username: "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง" }));
     } finally {
       setIsLoading(false);
     }
@@ -60,6 +82,7 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
           placeholder="กรอกชื่อผู้ใช้"
           value={formData.username}
           onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+          errorMessage={errors.username}
           required
         />
 
@@ -70,6 +93,7 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
           placeholder="user@example.com"
           value={formData.email}
           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          errorMessage={errors.email}
           required
         />
 
@@ -80,6 +104,7 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
           placeholder="กรอกรหัสผ่าน"
           value={formData.password}
           onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+          errorMessage={errors.password}
           required
         />
       </form>
