@@ -1,19 +1,57 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button, Input } from "@/shared/components";
 import { GoogleIcon } from "@/shared/components/icons/GoogleIcon";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/shared/lib/auth-client";
 import type { LoginFormProps } from "../types/types";
 
 export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [errors, setErrors] = useState({ email: "", password: "" });
+  const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: { preventDefault(): void }) => {
     e.preventDefault();
+    setErrors({ email: "", password: "" });
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setIsLoading(false);
+    try {
+      await authClient.signIn.email(
+        { email: formData.email, password: formData.password },
+        {
+          onSuccess: () => {
+            router.push("/");
+          },
+          onError: (ctx: { error: { message: string } }) => {
+            const msg = ctx.error.message.toLowerCase();
+            if (msg.includes("password")) {
+              setErrors((prev) => ({ ...prev, password: "รหัสผ่านไม่ถูกต้อง" }));
+            } else {
+              setErrors((prev) => ({ ...prev, email: ctx.error.message }));
+            }
+          },
+        }
+      );
+    } catch {
+      setErrors((prev) => ({ ...prev, email: "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง" }));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setIsGoogleLoading(true);
+    try {
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: `${window.location.origin}/`,
+      });
+    } finally {
+      setIsGoogleLoading(false);
+    }
   };
 
   return (
@@ -25,7 +63,7 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+      <form id="login-form" onSubmit={handleSubmit} className="flex flex-col gap-3">
         <Input
           id="login-email"
           type="email"
@@ -33,6 +71,7 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
           placeholder="user@example.com"
           value={formData.email}
           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          errorMessage={errors.email}
           required
         />
 
@@ -43,30 +82,34 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
           placeholder="กรอกรหัสผ่าน"
           value={formData.password}
           onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+          errorMessage={errors.password}
           required
         />
       </form>
 
       <Button
+        form="login-form"
         type="submit"
         loading={isLoading}
-        size="md"
-        className="md:px-5 md:py-3 md:h-12 md:text-base md:gap-2"
+        disabled={isGoogleLoading}
+        size="lg"
       >
         เข้าสู่ระบบ
       </Button>
 
       <div className="flex items-center gap-3">
-        <div className="flex-1 border-t border-gray" />
+        <div className="flex-1 border-t border-dark-gray" />
         <span className="text-sm md:text-base text-dark-gray whitespace-nowrap">
           หรือดำเนินการต่อด้วย
         </span>
-        <div className="flex-1 border-t border-gray" />
+        <div className="flex-1 border-t border-dark-gray" />
       </div>
 
       <button
         type="button"
-        className="h-9.5 md:h-12 w-full flex items-center justify-center gap-3 border-[1.5px] bg-white border-gray rounded-[10px] px-3.75 py-2 md:py-3 text-base font-medium hover:bg-light-gray transition-colors cursor-pointer text-black/54"
+        onClick={handleGoogleSignIn}
+        disabled={isLoading || isGoogleLoading}
+        className="h-12 w-full flex items-center justify-center gap-3 border-[1.5px] bg-white border-gray rounded-[10px] px-4 text-sm md:text-base font-medium hover:bg-light-gray transition-colors cursor-pointer text-dark-gray disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <GoogleIcon />
         ดำเนินการต่อด้วย Google
