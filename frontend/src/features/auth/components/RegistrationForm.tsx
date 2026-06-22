@@ -60,7 +60,10 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     try {
-      await authClient.signIn.social({ provider: "google", callbackURL: "/" });
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: `${window.location.origin}/`,
+      });
     } finally {
       setIsGoogleLoading(false);
     }
