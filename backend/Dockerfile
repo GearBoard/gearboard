@@ -6,6 +6,7 @@ WORKDIR /app
 # Copy workspace manifests first for layer caching
 COPY package.json yarn.lock ./
 COPY backend/package.json ./backend/
+COPY frontend/package.json ./frontend/
 
 # Install all dependencies (includes devDeps needed for build)
 RUN yarn install --frozen-lockfile
@@ -29,6 +30,7 @@ ENV NODE_ENV=production
 # Copy workspace manifests
 COPY package.json yarn.lock ./
 COPY backend/package.json ./backend/
+COPY frontend/package.json ./frontend/
 
 # Install production dependencies only
 RUN yarn install --frozen-lockfile --production
