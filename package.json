@@ -2,6 +2,10 @@
   "name": "gearboard",
   "private": true,
   "type": "module",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
   "scripts": {
     "prepare": "husky",
     "lint": "eslint .",

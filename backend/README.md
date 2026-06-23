@@ -139,21 +139,21 @@ cp .env.example .env
 ### 2. Start PostgreSQL
 
 ```bash
-npm run db.create
+yarn workspace gearboard-backend db.create
 # or: docker-compose up -d db
 ```
 
 ### 3. Apply schema and seed
 
 ```bash
-npm run db.push
-npm run db.seed   # optional
+yarn workspace gearboard-backend db.push
+yarn workspace gearboard-backend db.seed   # optional
 ```
 
 ### 4. Run the server
 
 ```bash
-npm run dev
+yarn workspace gearboard-backend dev
 ```
 
 Server runs at `http://localhost:4000` unless `PORT` is overridden.
