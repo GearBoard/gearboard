@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { cva } from "class-variance-authority";
 import { cn } from "@/shared/lib/utils";
 
@@ -47,6 +48,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     },
     ref
   ) => {
+    const [showPassword, setShowPassword] = React.useState(false);
+    const isPassword = type === "password";
     const hasError = error || !!errorMessage;
 
     const renderedIcon = React.isValidElement<{ className?: string }>(icon)
@@ -75,7 +78,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
         <input
           data-slot="input"
-          type={type}
+          type={isPassword ? (showPassword ? "text" : "password") : type}
           id={id}
           disabled={disabled}
           className={cn(
@@ -87,6 +90,16 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           {...props}
         />
+        {isPassword && (
+          <button
+            type="button"
+            onClick={() => setShowPassword((prev) => !prev)}
+            className="shrink-0 text-dark-gray hover:text-black transition-colors"
+            aria-label={showPassword ? "ซ่อนรหัสผ่าน" : "แสดงรหัสผ่าน"}
+          >
+            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+          </button>
+        )}
       </div>
     );
 

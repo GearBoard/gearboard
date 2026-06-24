@@ -2,6 +2,7 @@ import { Router } from "express";
 import { requireAuth } from "../../common/middleware/auth.middleware.js";
 import { validateBody, validateParams } from "../../common/middleware/validate.middleware.js";
 import { commentController } from "./comment.controller.js";
+import { postController } from "../post/post.controller.js";
 import {
   commentIdValidateSchema,
   createCommentSchema,
@@ -15,7 +16,7 @@ export const commentRoute = Router({ mergeParams: true });
 commentRoute.get(
   "/",
   validateParams(postIdParamsSchema),
-  commentController.getComments.bind(commentController)
+  postController.getComments.bind(postController)
 );
 
 // POST /posts/:postId/comments — create a root-level comment (requires auth)
@@ -24,7 +25,7 @@ commentRoute.post(
   requireAuth,
   validateParams(postIdParamsSchema),
   validateBody(createCommentSchema),
-  commentController.createComment.bind(commentController)
+  postController.createComment.bind(postController)
 );
 
 commentRoute.post(

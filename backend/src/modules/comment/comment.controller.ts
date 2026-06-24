@@ -36,31 +36,4 @@ export const commentController = {
       handleHttpError(res, error);
     }
   },
-
-  async getComments(req: Request, res: Response) {
-    const { postId } = (req as Request & { validatedParams: { postId: string } }).validatedParams;
-
-    try {
-      const data = await commentService.getByPostId(postId);
-      res.status(200).json(successResponse(data));
-    } catch (error) {
-      handleHttpError(res, error);
-    }
-  },
-
-  async createComment(req: Request, res: Response) {
-    const authReq = req as AuthenticatedRequest;
-    const { postId } = (
-      authReq as AuthenticatedRequest & {
-        validatedParams: { postId: string };
-      }
-    ).validatedParams;
-
-    try {
-      const data = await commentService.createComment(authReq.user.id, postId, req.body);
-      res.status(201).json(successResponse(data));
-    } catch (error) {
-      handleHttpError(res, error);
-    }
-  },
 };
