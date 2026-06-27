@@ -1,0 +1,714 @@
+<title>GearBoard — Architecture</title>
+<meta name="description" content="Codebase architecture guide for the GearBoard monorepo: Hono API + Next.js frontend.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; background: #f8fafc; color: #1e293b; line-height: 1.6; }
+  a { color: #3b82f6; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code { font-family: "SF Mono", "Fira Code", Consolas, monospace; font-size: 13px; background: #f1f5f9; padding: 1px 5px; border-radius: 4px; }
+
+  /* Layout */
+  .layout { display: flex; min-height: 100vh; }
+  .sidebar { width: 210px; min-width: 210px; background: #1e293b; position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 1.5rem 0; }
+  .sidebar-logo { padding: 0 1.25rem 1.25rem; border-bottom: 1px solid #334155; margin-bottom: 1rem; }
+  .sidebar-logo .project-name { color: #f1f5f9; font-weight: 700; font-size: 15px; }
+  .sidebar-logo .project-sub { color: #94a3b8; font-size: 12px; }
+  .sidebar nav a { display: block; padding: 0.4rem 1.25rem; color: #94a3b8; font-size: 13px; transition: all 0.15s; border-left: 3px solid transparent; }
+  .sidebar nav a:hover { color: #f1f5f9; background: #334155; border-left-color: #3b82f6; text-decoration: none; }
+  .sidebar nav .section-label { padding: 1rem 1.25rem 0.25rem; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #475569; }
+  .main { flex: 1; padding: 2rem; max-width: calc(100% - 210px); overflow-x: hidden; }
+
+  /* Header */
+  .header { background: #1e293b; color: #f1f5f9; padding: 1.5rem 2rem; border-radius: 8px; margin-bottom: 1.5rem; }
+  .header h1 { font-size: 22px; font-weight: 700; margin-bottom: 0.5rem; }
+  .header p { color: #94a3b8; font-size: 14px; margin-bottom: 1rem; }
+  .badges { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 9999px; font-size: 12px; font-weight: 600; }
+  .badge-blue  { background: #1d4ed8; color: #dbeafe; }
+  .badge-violet{ background: #6d28d9; color: #ede9fe; }
+  .badge-green { background: #15803d; color: #dcfce7; }
+  .badge-amber { background: #b45309; color: #fef3c7; }
+  .badge-slate { background: #475569; color: #e2e8f0; }
+
+  /* Cards */
+  .card { background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); padding: 1.5rem; margin-bottom: 1.25rem; }
+  .card.backend  { border-left: 4px solid #3b82f6; }
+  .card.frontend { border-left: 4px solid #8b5cf6; }
+  .card.build    { border-left: 4px solid #22c55e; }
+  .card.guide    { border-left: 4px solid #f59e0b; }
+  .card.overview { border-left: 4px solid #64748b; }
+  .card h2 { font-size: 16px; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+  .card h3 { font-size: 13px; font-weight: 700; margin: 1.25rem 0 0.5rem; color: #334155; }
+  .card h4 { font-size: 12px; font-weight: 600; margin: 1rem 0 0.4rem; color: #475569; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* Code blocks */
+  pre { background: #0f172a; color: #e2e8f0; border-radius: 6px; padding: 1rem; overflow-x: auto; font-size: 12.5px; line-height: 1.55; margin: 0.5rem 0 1rem; }
+  pre .kw  { color: #7dd3fc; }
+  pre .str { color: #86efac; }
+  pre .cm  { color: #64748b; }
+  pre .fn  { color: #fbbf24; }
+  pre .ty  { color: #c4b5fd; }
+  pre .num { color: #f9a8d4; }
+  pre .path{ color: #94a3b8; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 0.75rem 0; }
+  thead tr { background: #f1f5f9; }
+  th { text-align: left; padding: 0.5rem 0.75rem; font-weight: 600; color: #475569; border-bottom: 2px solid #e2e8f0; }
+  td { padding: 0.45rem 0.75rem; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+  tbody tr:nth-child(even) { background: #f8fafc; }
+
+  /* Details */
+  details { border: 1px solid #e2e8f0; border-radius: 6px; margin: 0.75rem 0; overflow: hidden; }
+  summary { padding: 0.6rem 1rem; cursor: pointer; font-weight: 600; font-size: 13px; background: #f8fafc; color: #334155; list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary::before { content: "▶ "; font-size: 11px; color: #94a3b8; }
+  details[open] summary::before { content: "▼ "; }
+  details > *:not(summary) { padding: 1rem; }
+
+  /* Guide steps */
+  .steps { counter-reset: step; list-style: none; }
+  .steps li { counter-increment: step; margin-bottom: 0.75rem; background: #f8fafc; border-radius: 6px; padding: 0.75rem 1rem 0.75rem 3rem; position: relative; border: 1px solid #e2e8f0; }
+  .steps li::before { content: counter(step); position: absolute; left: 0.75rem; top: 0.75rem; width: 1.4rem; height: 1.4rem; background: #3b82f6; color: #fff; border-radius: 50%; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center; }
+
+  /* Inline path */
+  .path-chip { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 6px; font-family: "SF Mono", monospace; font-size: 12px; color: #334155; }
+
+  /* Diagrams */
+  .flow { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 1rem; font-family: "SF Mono", monospace; font-size: 12px; color: #475569; white-space: pre; overflow-x: auto; }
+  .arrow { color: #3b82f6; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .layout { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; position: static; display: flex; flex-wrap: wrap; padding: 0.75rem; gap: 0.5rem; }
+    .sidebar-logo { border: none; padding: 0; margin: 0; width: 100%; }
+    .sidebar nav { display: flex; flex-wrap: wrap; gap: 0.25rem; width: 100%; }
+    .sidebar nav a { border-radius: 4px; border-left: none; padding: 0.3rem 0.6rem; font-size: 12px; }
+    .sidebar nav .section-label { display: none; }
+    .main { max-width: 100%; padding: 1rem; }
+  }
+</style>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="project-name">GearBoard</div>
+      <div class="project-sub">Architecture Guide</div>
+    </div>
+    <nav>
+      <div class="section-label">Overview</div>
+      <a href="#overview">Stack &amp; Layout</a>
+      <a href="#repo-layout">Repo Structure</a>
+      <div class="section-label">Backend</div>
+      <a href="#api-boot">Boot &amp; Wiring</a>
+      <a href="#api-lifecycle">Request Lifecycle</a>
+      <a href="#api-dto">DTO &amp; Validation</a>
+      <a href="#api-service">Service Layer</a>
+      <a href="#api-repo">Repository</a>
+      <a href="#api-errors">Errors &amp; Response</a>
+      <a href="#api-db">Database</a>
+      <div class="section-label">Frontend</div>
+      <a href="#web-layout">App Structure</a>
+      <a href="#web-rpc">API Client &amp; RPC</a>
+      <a href="#web-hooks">SWR Hooks</a>
+      <a href="#web-auth">Auth Client</a>
+      <a href="#web-ui">Shared UI</a>
+      <div class="section-label">Build &amp; Run</div>
+      <a href="#commands">Commands</a>
+      <div class="section-label">Guides</div>
+      <a href="#guide-endpoint">Add an Endpoint</a>
+      <a href="#guide-page">Add a Page</a>
+    </nav>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main">
+    <!-- Header -->
+    <div class="header">
+      <h1>GearBoard</h1>
+      <p>Yarn Berry monorepo — Hono REST API + Next.js 16 frontend with type-safe RPC</p>
+      <div class="badges">
+        <span class="badge badge-blue">Hono 4</span>
+        <span class="badge badge-blue">Prisma 7</span>
+        <span class="badge badge-blue">Better-Auth</span>
+        <span class="badge badge-blue">PostgreSQL</span>
+        <span class="badge badge-violet">Next.js 16</span>
+        <span class="badge badge-violet">React 19</span>
+        <span class="badge badge-violet">SWR</span>
+        <span class="badge badge-violet">Tailwind v4</span>
+        <span class="badge badge-slate">TypeScript 5</span>
+        <span class="badge badge-slate">Yarn 4</span>
+      </div>
+    </div>
+
+    <!-- ───── OVERVIEW ───── -->
+    <section id="overview">
+      <div class="card overview">
+        <h2>🗺 Stack &amp; Versions</h2>
+        <table>
+          <thead><tr><th>Layer</th><th>Technology</th><th>Version</th></tr></thead>
+          <tbody>
+            <tr><td>Monorepo</td><td>Yarn Berry workspaces</td><td>4.17.0</td></tr>
+            <tr><td>Backend framework</td><td>Hono + @hono/node-server</td><td>4.12.27</td></tr>
+            <tr><td>ORM</td><td>Prisma (PrismaPg adapter)</td><td>7.0.0</td></tr>
+            <tr><td>Auth</td><td>Better-Auth</td><td>1.5.5</td></tr>
+            <tr><td>Validation</td><td>Zod + @hono/zod-validator</td><td>3.24.0 / 0.8.0</td></tr>
+            <tr><td>Frontend</td><td>Next.js App Router</td><td>16.1.6</td></tr>
+            <tr><td>UI runtime</td><td>React</td><td>19.2.3</td></tr>
+            <tr><td>Data fetching</td><td>SWR + Hono RPC client</td><td>2.4.2</td></tr>
+            <tr><td>Styling</td><td>Tailwind CSS v4 + CVA</td><td>—</td></tr>
+            <tr><td>UI primitives</td><td>Radix UI (Dialog, Popover)</td><td>—</td></tr>
+            <tr><td>Component dev</td><td>Storybook (nextjs-vite)</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ───── REPO LAYOUT ───── -->
+    <section id="repo-layout">
+      <div class="card overview">
+        <h2>📁 Repo Structure</h2>
+        <table>
+          <thead><tr><th>Path</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><code>package.json</code></td><td>Workspaces: <code>apps/*</code>, <code>packages/*</code>. Root scripts for db, web, api.</td></tr>
+            <tr><td><code>.yarnrc.yml</code></td><td><code>nodeLinker: node-modules</code>, <code>enableScripts: true</code> (required for Prisma postinstall).</td></tr>
+            <tr><td><code>yarn.lock</code></td><td>Single lock file for all workspaces.</td></tr>
+            <tr><td><code>apps/api/</code></td><td>Hono REST API — entry, config, modules, Prisma schema.</td></tr>
+            <tr><td><code>apps/web/</code></td><td>Next.js frontend — App Router pages, features, shared libs/hooks/components.</td></tr>
+            <tr><td><code>packages/</code></td><td>Reserved for shared packages (empty).</td></tr>
+          </tbody>
+        </table>
+
+        <h3>apps/api/src layout</h3>
+        <div class="flow">src/
+├── server.ts          <span class="cm">← @hono/node-server entry, reads PORT from env</span>
+├── app.ts             <span class="cm">← Hono(), CORS, auth handler, routes, onError</span>
+├── routes.ts          <span class="cm">← chained .route() calls; exports AppType</span>
+├── config/            <span class="cm">← env.ts, auth.ts, prisma.ts</span>
+├── common/
+│   ├── errors/        <span class="cm">← AppError hierarchy</span>
+│   ├── middleware/    <span class="cm">← requireAuth, requireAdmin</span>
+│   ├── types/         <span class="cm">← AppVariables, AuthenticatedUser</span>
+│   └── utils/         <span class="cm">← response, pagination, validation-hook, http-error</span>
+└── modules/
+    ├── post/          <span class="cm">← post.route.ts, post.repository.ts, dto/, service/</span>
+    ├── comment/       <span class="cm">← comment.route.ts, comment.repository.ts, dto/, service/</span>
+    └── user/          <span class="cm">← user.route.ts, user.repository.ts, dto/, service/</span></div>
+
+        <h3>apps/web/src layout</h3>
+        <div class="flow">src/
+├── app/               <span class="cm">← Next.js App Router: layout, pages, globals.css</span>
+│   └── auth/page.tsx  <span class="cm">← Login / Register toggle</span>
+├── features/
+│   └── auth/          <span class="cm">← LoginForm, RegistrationForm, types</span>
+└── shared/
+    ├── libs/          <span class="cm">← api-client.ts, auth-client.ts, utils.ts</span>
+    ├── hooks/         <span class="cm">← posts.ts, comments.ts, users.ts, index.ts</span>
+    └── components/ui/ <span class="cm">← Button, Input, Modal, Dropdown, Textarea, Navbar</span></div>
+      </div>
+    </section>
+
+    <!-- ───── API BOOT ───── -->
+    <section id="api-boot">
+      <div class="card backend">
+        <h2>⚙️ Boot &amp; Wiring</h2>
+
+        <h3>Entry point — <span class="path-chip">apps/api/src/server.ts</span></h3>
+        <pre><span class="kw">import</span> { serve } <span class="kw">from</span> <span class="str">"@hono/node-server"</span>;
+<span class="kw">import</span> app <span class="kw">from</span> <span class="str">"./app.js"</span>;
+<span class="kw">import</span> { env } <span class="kw">from</span> <span class="str">"./config/env.js"</span>;
+
+serve({ fetch: app.fetch, port: <span class="ty">Number</span>(env.PORT) }, (info) =&gt; {
+  console.log(<span class="str">`Server running at http://localhost:${info.port}`</span>);
+});</pre>
+
+        <h3>App — <span class="path-chip">apps/api/src/app.ts</span></h3>
+        <pre><span class="kw">const</span> app = <span class="kw">new</span> <span class="ty">Hono</span>();
+app.use(cors({ origin: env.BETTER_AUTH_TRUSTED_ORIGIN, credentials: <span class="kw">true</span> }));
+app.on([<span class="str">"POST"</span>, <span class="str">"GET"</span>], <span class="str">"/api/auth/**"</span>, (c) =&gt; auth.handler(c.req.raw));
+app.get(<span class="str">"/"</span>, (c) =&gt; c.text(<span class="str">"Hello World!"</span>));
+app.route(<span class="str">"/"</span>, apiRoutes);
+app.onError((err, c) =&gt; {
+  <span class="kw">const</span> { statusCode, message } = <span class="fn">resolveHttpError</span>(err);
+  <span class="kw">return</span> c.json({ success: <span class="kw">false</span>, message }, statusCode);
+});</pre>
+
+        <h3>Routes — <span class="path-chip">apps/api/src/routes.ts</span></h3>
+        <pre><span class="kw">export const</span> apiRoutes = <span class="kw">new</span> <span class="ty">Hono</span>()
+  .route(<span class="str">"/api/posts"</span>, postRoute)
+  .route(<span class="str">"/api/comments"</span>, commentRoute)
+  .route(<span class="str">"/api/users"</span>, userRoute);
+
+<span class="kw">export type</span> <span class="ty">AppType</span> = <span class="kw">typeof</span> apiRoutes;</pre>
+
+        <details>
+          <summary>Why routes.ts is separate from app.ts</summary>
+          <p><code>app.ts</code> uses <code>.on()</code> (wildcard auth handler) and <code>.onError()</code>. These break TypeScript's ability to accumulate route schema types via <code>typeof app</code>. <code>routes.ts</code> is a clean Hono chain — only <code>.route()</code> calls — so <code>typeof apiRoutes</code> resolves to the full typed schema used by <code>hc&lt;AppType&gt;</code> on the frontend.</p>
+        </details>
+
+        <h3>Config — env, auth, prisma</h3>
+        <table>
+          <thead><tr><th>File</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td><code>config/env.ts</code></td><td><code>getEnv(key)</code> throws if missing; <code>getEnvOptional(key, default)</code> for optional. Required: <code>DATABASE_URL</code>, <code>BETTER_AUTH_SECRET</code>, <code>BETTER_AUTH_URL</code>, <code>BETTER_AUTH_TRUSTED_ORIGIN</code>.</td></tr>
+            <tr><td><code>config/auth.ts</code></td><td>Better-Auth with Prisma adapter. Email+password enabled. Optional Google OAuth (activated only when <code>GOOGLE_CLIENT_ID</code>/<code>GOOGLE_CLIENT_SECRET</code> present). Custom field: <code>username</code> (required).</td></tr>
+            <tr><td><code>config/prisma.ts</code></td><td><code>PrismaPg</code> adapter; generated client imported from <code>generated/prisma/</code>.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ───── LIFECYCLE ───── -->
+    <section id="api-lifecycle">
+      <div class="card backend">
+        <h2>🔄 Request Lifecycle</h2>
+        <div class="flow">Request
+  <span class="arrow">→</span> CORS middleware (global, all routes)
+  <span class="arrow">→</span> requireAuth (optional — applied per route)
+  <span class="arrow">→</span> requireAdmin (optional — role check)
+  <span class="arrow">→</span> zValidator("param" | "query" | "json", ZodSchema, validationHook)
+  <span class="arrow">→</span> handler: c.req.valid() → service() → c.json(successResponse(result), status)
+  <span class="arrow">→</span> app.onError() (catches thrown AppError / unknown errors)</div>
+
+        <h3>Auth middleware — <span class="path-chip">apps/api/src/common/middleware/auth.middleware.ts</span></h3>
+        <pre><span class="kw">export const</span> requireAuth = <span class="fn">createMiddleware</span>&lt;{ <span class="ty">Variables</span>: <span class="ty">AppVariables</span> }&gt;(<span class="kw">async</span> (c, next) =&gt; {
+  <span class="kw">const</span> session = <span class="kw">await</span> auth.api.getSession({ headers: c.req.raw.headers });
+  <span class="kw">if</span> (!session?.user) <span class="kw">return</span> c.json({ success: <span class="kw">false</span>, message: <span class="str">"Unauthorized"</span> }, <span class="num">401</span>);
+  <span class="kw">const</span> dbUser = <span class="kw">await</span> userRepository.findById(session.user.id);
+  <span class="kw">if</span> (!dbUser) <span class="kw">return</span> c.json({ success: <span class="kw">false</span>, message: <span class="str">"Unauthorized"</span> }, <span class="num">401</span>);
+  c.set(<span class="str">"user"</span>, { id: dbUser.id, name: dbUser.name, image: dbUser.image ?? <span class="kw">null</span>,
+    role: dbUser.role, email: dbUser.email, username: dbUser.username ?? <span class="kw">null</span> });
+  <span class="kw">await</span> next();
+});</pre>
+
+        <h3>Route example — <span class="path-chip">apps/api/src/modules/post/post.route.ts</span></h3>
+        <pre><span class="kw">export const</span> postRoute = <span class="kw">new</span> <span class="ty">Hono</span>&lt;{ <span class="ty">Variables</span>: <span class="ty">AppVariables</span> }&gt;()
+  .get(<span class="str">"/:id"</span>, <span class="fn">zValidator</span>(<span class="str">"param"</span>, GetPostByIdParamsInputDTO, validationHook), <span class="kw">async</span> (c) =&gt; {
+    <span class="kw">const</span> { id } = c.req.valid(<span class="str">"param"</span>);
+    <span class="kw">const</span> result = <span class="kw">await</span> <span class="fn">getPostByIdService</span>(id);
+    <span class="kw">return</span> c.json(<span class="fn">successResponse</span>(result), <span class="num">200</span>);
+  })
+  .post(<span class="str">"/"</span>, requireAuth, <span class="fn">zValidator</span>(<span class="str">"json"</span>, CreatePostBodyInputDTO, validationHook), <span class="kw">async</span> (c) =&gt; {
+    <span class="kw">const</span> user = c.get(<span class="str">"user"</span>);
+    <span class="kw">const</span> data = c.req.valid(<span class="str">"json"</span>);
+    <span class="kw">const</span> result = <span class="kw">await</span> <span class="fn">createPostService</span>(data, user.id);
+    <span class="kw">return</span> c.json(<span class="fn">successResponse</span>(result, <span class="str">"Post created"</span>), <span class="num">201</span>);
+  });</pre>
+        <p style="margin-top:0.5rem; font-size:13px; color:#475569;">Route methods <strong>must remain chained</strong>. Imperative <code>postRoute.get(...)</code> calls break TypeScript's schema inference.</p>
+      </div>
+    </section>
+
+    <!-- ───── DTO ───── -->
+    <section id="api-dto">
+      <div class="card backend">
+        <h2>📋 DTO &amp; Validation</h2>
+        <p style="margin-bottom:1rem; font-size:13px; color:#475569;">One DTO file per endpoint. Each file exports an <strong>Input DTO</strong> (Zod schema used in <code>zValidator()</code>) and an <strong>Output DTO</strong> (class with <code>static toDTO()</code>).</p>
+
+        <h3>Input DTO — <span class="path-chip">dto/create-post.dto.ts</span></h3>
+        <pre><span class="kw">export const</span> CreatePostBodyInputDTO = z.object({
+  title: z.string().trim().min(<span class="num">1</span>, <span class="str">"Title is required"</span>).max(<span class="num">255</span>, <span class="str">"Title too long"</span>),
+  description: z.string().trim().min(<span class="num">1</span>, <span class="str">"Description is required"</span>),
+  tags: z.array(z.string().trim()).optional().default([])
+    .transform((tags) =&gt; [...<span class="kw">new</span> <span class="ty">Set</span>(tags)]),    <span class="cm">// deduplicate</span>
+  images: z.array(z.string().url(<span class="str">"Invalid image URL"</span>)).optional().default([]),
+});
+<span class="kw">export type</span> <span class="ty">CreatePostBody</span> = z.infer&lt;<span class="kw">typeof</span> CreatePostBodyInputDTO&gt;;</pre>
+
+        <h3>Output DTO — <span class="path-chip">dto/get-post-by-id.dto.ts</span></h3>
+        <pre><span class="kw">export class</span> <span class="ty">GetPostByIdOutputDTO</span> {
+  id!: <span class="ty">string</span>; title!: <span class="ty">string</span>; tags!: <span class="ty">string</span>[]; images!: <span class="ty">string</span>[];
+  authorInfo!: { id: <span class="ty">string</span>; username: <span class="ty">string | null</span>; image: <span class="ty">string | null</span> };
+  createdAt!: <span class="ty">string</span>; updatedAt!: <span class="ty">string</span>;
+
+  <span class="kw">static</span> <span class="fn">toDTO</span>(post: <span class="ty">Post</span>): <span class="ty">GetPostByIdOutputDTO</span> {
+    <span class="kw">return</span> {
+      id: post.id, title: post.title,
+      tags: post.tags.map((pt) =&gt; pt.tag.name),        <span class="cm">// flatten nested relation</span>
+      images: post.images.map((pi) =&gt; pi.url),
+      authorInfo: { id: post.user.id, username: post.user.username, image: post.user.image },
+      createdAt: post.createdAt.toISOString(),
+      updatedAt: post.updatedAt.toISOString(),
+    };
+  }
+}</pre>
+
+        <h3>Validation hook — <span class="path-chip">common/utils/validation-hook.ts</span></h3>
+        <pre><span class="kw">export function</span> <span class="fn">validationHook</span>(result: { success: <span class="ty">boolean</span>; error?: <span class="ty">ZodError</span> }, c: <span class="ty">Context</span>) {
+  <span class="kw">if</span> (!result.success) {
+    <span class="kw">const</span> message = result.error?.issues[<span class="num">0</span>]?.message ?? <span class="str">"Validation error"</span>;
+    <span class="kw">return</span> c.json({ success: <span class="kw">false</span>, message }, <span class="num">400</span>);   <span class="cm">// returns first error only</span>
+  }
+}</pre>
+      </div>
+    </section>
+
+    <!-- ───── SERVICE ───── -->
+    <section id="api-service">
+      <div class="card backend">
+        <h2>🧩 Service Layer</h2>
+        <p style="margin-bottom:1rem; font-size:13px; color:#475569;">One service file per endpoint. Services are thin: fetch from repo, authorise, return DTO. Business errors are thrown as typed <code>AppError</code> subclasses.</p>
+
+        <h3>Read service</h3>
+        <pre><span class="kw">export async function</span> <span class="fn">createPostService</span>(data: <span class="ty">CreatePostBody</span>, userId: <span class="ty">string</span>): <span class="ty">Promise&lt;CreatePostOutputDTO&gt;</span> {
+  <span class="kw">const</span> post = <span class="kw">await</span> postRepository.create(data, userId);
+  <span class="kw">return</span> <span class="ty">CreatePostOutputDTO</span>.<span class="fn">toDTO</span>(post);
+}</pre>
+
+        <h3>Mutation service with ownership check</h3>
+        <pre><span class="kw">export async function</span> <span class="fn">updatePostService</span>(id: <span class="ty">string</span>, data: <span class="ty">UpdatePostBody</span>, userId: <span class="ty">string</span>) {
+  <span class="kw">const</span> post = <span class="kw">await</span> postRepository.findById(id);
+  <span class="kw">if</span> (!post) <span class="kw">throw new</span> <span class="ty">NotFoundError</span>(<span class="str">"Post not found"</span>);
+  <span class="kw">if</span> (post.userId !== userId) <span class="kw">throw new</span> <span class="ty">ForbiddenError</span>(<span class="str">"Forbidden"</span>);
+  <span class="kw">const</span> updated = <span class="kw">await</span> postRepository.update(id, data);
+  <span class="kw">return</span> <span class="ty">UpdatePostOutputDTO</span>.<span class="fn">toDTO</span>(updated);
+}</pre>
+      </div>
+    </section>
+
+    <!-- ───── REPOSITORY ───── -->
+    <section id="api-repo">
+      <div class="card backend">
+        <h2>🗄 Repository Layer</h2>
+
+        <h3>Type definition — <span class="path-chip">post.repository.ts</span></h3>
+        <pre><span class="kw">const</span> postInclude = {
+  user: { select: { id: <span class="kw">true</span>, username: <span class="kw">true</span>, image: <span class="kw">true</span> } },
+  tags: { include: { tag: <span class="kw">true</span> } },
+  images: <span class="kw">true</span>,
+};
+<span class="cm">// Private Prisma payload type — used by DTOs in this module</span>
+<span class="kw">export type</span> <span class="ty">Post</span> = Prisma.PostGetPayload&lt;{ include: <span class="kw">typeof</span> postInclude }&gt;;</pre>
+
+        <h3>Soft delete pattern</h3>
+        <pre><span class="cm">// Every query filters deletedAt: null</span>
+prisma.post.findUnique({ where: { id, <span class="kw">deletedAt</span>: <span class="kw">null</span> }, include: postInclude });
+
+<span class="cm">// Delete sets the timestamp</span>
+<span class="kw">async</span> <span class="fn">softDelete</span>(id: <span class="ty">string</span>): <span class="ty">Promise&lt;void&gt;</span> {
+  <span class="kw">await</span> prisma.post.update({ where: { id, deletedAt: <span class="kw">null</span> }, data: { deletedAt: <span class="kw">new</span> <span class="ty">Date</span>() } });
+}</pre>
+
+        <h3>Pagination utility — <span class="path-chip">common/utils/pagination.ts</span></h3>
+        <pre><span class="kw">export function</span> <span class="fn">getSkipTake</span>(page = <span class="num">1</span>, limit = <span class="num">10</span>): { skip: <span class="ty">number</span>; take: <span class="ty">number</span> } {
+  <span class="kw">const</span> take = Math.min(Math.max(<span class="num">1</span>, limit), <span class="num">100</span>);  <span class="cm">// clamp 1–100</span>
+  <span class="kw">const</span> skip = (Math.max(<span class="num">1</span>, page) - <span class="num">1</span>) * take;
+  <span class="kw">return</span> { skip, take };
+}</pre>
+      </div>
+    </section>
+
+    <!-- ───── ERRORS & RESPONSE ───── -->
+    <section id="api-errors">
+      <div class="card backend">
+        <h2>⚠️ Errors &amp; Response</h2>
+
+        <h3>Error hierarchy — <span class="path-chip">common/errors/app-error.ts</span></h3>
+        <table>
+          <thead><tr><th>Class</th><th>Status</th><th>Default message</th></tr></thead>
+          <tbody>
+            <tr><td><code>BadRequestError</code></td><td>400</td><td>Bad request</td></tr>
+            <tr><td><code>UnauthorizedError</code></td><td>401</td><td>Unauthorized</td></tr>
+            <tr><td><code>ForbiddenError</code></td><td>403</td><td>Forbidden</td></tr>
+            <tr><td><code>NotFoundError</code></td><td>404</td><td>Not found</td></tr>
+            <tr><td><code>ConflictError</code></td><td>409</td><td>Conflict</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Response envelope — <span class="path-chip">common/utils/response.ts</span></h3>
+        <pre><span class="cm">// Success</span>
+{ success: <span class="kw">true</span>,  message: <span class="str">"OK"</span>,    data: T }        <span class="cm">// 200/201</span>
+<span class="cm">// Error</span>
+{ success: <span class="kw">false</span>, message: <span class="str">"Not found"</span> }             <span class="cm">// 4xx/5xx</span></pre>
+        <p style="font-size:13px; color:#475569; margin-top:0.5rem;"><code>successResponse(data, message?)</code> defaults <code>message</code> to <code>"OK"</code>. Mutations pass a custom message: <code>"Post created"</code>, <code>"Post updated"</code>, etc.</p>
+      </div>
+    </section>
+
+    <!-- ───── DATABASE ───── -->
+    <section id="api-db">
+      <div class="card backend">
+        <h2>🐘 Database Schema</h2>
+        <table>
+          <thead><tr><th>Model</th><th>Key fields</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>User</code></td><td>id, email, username, role, departmentId, deletedAt</td><td>Better-Auth base + custom fields. Soft delete.</td></tr>
+            <tr><td><code>Session</code></td><td>token, userId, expiresAt</td><td>Better-Auth managed.</td></tr>
+            <tr><td><code>Account</code></td><td>providerId, accountId, userId</td><td>OAuth account linking.</td></tr>
+            <tr><td><code>Post</code></td><td>title, description, isClosed, likeCount, commentCount, userId, deletedAt</td><td>Soft delete.</td></tr>
+            <tr><td><code>PostImage</code></td><td>url, postId</td><td><code>onDelete: Cascade</code></td></tr>
+            <tr><td><code>Tag</code></td><td>name (unique)</td><td>Global tag registry.</td></tr>
+            <tr><td><code>PostTag</code></td><td>postId + tagId (composite PK)</td><td>Join table. Tag upsert via <code>connectOrCreate</code>.</td></tr>
+            <tr><td><code>Comment</code></td><td>content, userId, postId, parentId (self-ref), deletedAt</td><td>Replies via self-reference. Cascade delete on post.</td></tr>
+            <tr><td><code>Like</code></td><td>userId + postId (composite PK)</td><td>—</td></tr>
+            <tr><td><code>Bookmark</code></td><td>userId + postId (composite PK)</td><td>—</td></tr>
+            <tr><td><code>Department</code></td><td>id, name</td><td>Reference table.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ───── WEB LAYOUT ───── -->
+    <section id="web-layout">
+      <div class="card frontend">
+        <h2>🌐 Frontend App Structure</h2>
+
+        <h3>Routing — Next.js App Router</h3>
+        <table>
+          <thead><tr><th>Route</th><th>File</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><code>/</code></td><td><code>app/page.tsx</code></td><td>Home (empty placeholder)</td></tr>
+            <tr><td><code>/auth</code></td><td><code>app/auth/page.tsx</code></td><td>Login / Register toggle</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Root layout — <span class="path-chip">app/layout.tsx</span></h3>
+        <pre><span class="kw">export default function</span> <span class="fn">RootLayout</span>({ children }: { children: <span class="ty">React.ReactNode</span> }) {
+  <span class="kw">return</span> (
+    &lt;html lang=<span class="str">"en"</span> className={notoSansThai.variable}&gt;
+      &lt;body className=<span class="str">"antialiased"</span>&gt;{children}&lt;/body&gt;
+    &lt;/html&gt;
+  );
+}</pre>
+
+        <h3>Path alias</h3>
+        <p style="font-size:13px;">All src imports use <code>@/</code> (maps to <code>./src/*</code>). Cross-workspace imports (e.g. importing <code>AppType</code> from api) use relative paths: <code>../../../../api/src/routes</code>.</p>
+      </div>
+    </section>
+
+    <!-- ───── RPC CLIENT ───── -->
+    <section id="web-rpc">
+      <div class="card frontend">
+        <h2>🔌 API Client &amp; Hono RPC</h2>
+        <p style="margin-bottom:1rem; font-size:13px; color:#475569;">The frontend uses Hono RPC — no Axios, no codegen, no OpenAPI. The client is typed directly from <code>AppType</code> in the API source.</p>
+
+        <h3><span class="path-chip">apps/web/src/shared/libs/api-client.ts</span></h3>
+        <pre><span class="kw">import</span> { hc } <span class="kw">from</span> <span class="str">"hono/client"</span>;
+<span class="kw">import type</span> { <span class="ty">AppType</span> } <span class="kw">from</span> <span class="str">"../../../../api/src/routes"</span>;
+
+<span class="kw">export const</span> client = <span class="fn">hc</span>&lt;<span class="ty">AppType</span>&gt;(process.env.NEXT_PUBLIC_API_URL!);
+
+<span class="kw">export async function</span> <span class="fn">unwrap</span>&lt;<span class="ty">T extends { data: unknown }</span>&gt;(
+  resPromise: <span class="ty">Promise&lt;{ ok: boolean; json(): Promise&lt;T&gt; }&gt;</span>
+): <span class="ty">Promise&lt;T["data"]&gt;</span> {
+  <span class="kw">const</span> res = <span class="kw">await</span> resPromise;
+  <span class="kw">const</span> body = <span class="kw">await</span> res.json();
+  <span class="kw">if</span> (!res.ok)
+    <span class="kw">throw new</span> <span class="ty">Error</span>((body <span class="kw">as</span> { message: <span class="ty">string</span> }).message ?? <span class="str">"Request failed"</span>);
+  <span class="kw">return</span> body.data;
+}</pre>
+        <p style="font-size:13px; margin-top:0.5rem; color:#475569;"><code>T["data"]</code> (index type) resolves eagerly, giving concrete return types. A conditional type <code>T extends ... ? D : never</code> would defer resolution and lose type info.</p>
+
+        <details>
+          <summary>How the RPC type inference chain works</summary>
+          <ol style="padding-left:1.25rem; font-size:13px; line-height:1.8;">
+            <li><code>routes.ts</code> builds a chained Hono instance — <code>typeof apiRoutes</code> accumulates all route schemas.</li>
+            <li><code>AppType = typeof apiRoutes</code> exported from <code>routes.ts</code>.</li>
+            <li>Frontend imports <code>AppType</code> as a type-only import — no runtime code crosses the workspace boundary.</li>
+            <li><code>hc&lt;AppType&gt;(url)</code> produces a proxy object typed to match every endpoint, param, query, body, and response shape.</li>
+            <li><code>client.api.posts[":id"].$get({ param: { id } })</code> is fully type-checked.</li>
+          </ol>
+        </details>
+      </div>
+    </section>
+
+    <!-- ───── SWR HOOKS ───── -->
+    <section id="web-hooks">
+      <div class="card frontend">
+        <h2>🪝 SWR Hooks</h2>
+        <p style="margin-bottom:1rem; font-size:13px; color:#475569;">All data fetching goes through <code>shared/hooks/</code>. GETs use <code>useSWR</code>; mutations use <code>useSWRMutation</code>. Import from <code>@/shared/hooks</code>.</p>
+
+        <h3>GET hook — <span class="path-chip">hooks/posts.ts</span></h3>
+        <pre><span class="kw">export function</span> <span class="fn">useGetPostById</span>(id: <span class="ty">string</span>) {
+  <span class="kw">return</span> <span class="fn">useSWR</span>([<span class="str">"post"</span>, id], () =&gt;
+    <span class="fn">unwrap</span>(client.api.posts[<span class="str">":id"</span>].$get({ param: { id } }))
+  );
+}
+<span class="kw">export function</span> <span class="fn">useGetPostList</span>(query?: { page?: <span class="ty">string</span>; search?: <span class="ty">string</span>; tag?: <span class="ty">string</span> }) {
+  <span class="kw">return</span> <span class="fn">useSWR</span>([<span class="str">"posts"</span>, query], () =&gt;
+    <span class="fn">unwrap</span>(client.api.posts.$get({ query: query ?? {} }))
+  );
+}</pre>
+
+        <h3>Mutation hook — <span class="path-chip">hooks/posts.ts</span></h3>
+        <pre><span class="kw">export function</span> <span class="fn">useCreatePost</span>() {
+  <span class="kw">return</span> <span class="fn">useSWRMutation</span>(
+    <span class="str">"posts"</span>,
+    (_key: <span class="ty">string</span>, { arg }: { arg: { title: <span class="ty">string</span>; description: <span class="ty">string</span>; tags?: <span class="ty">string</span>[] } }) =&gt;
+      <span class="fn">unwrap</span>(client.api.posts.$post({ json: arg }))
+  );
+}
+
+<span class="cm">// Usage in a component:</span>
+<span class="kw">const</span> { trigger, isMutating } = <span class="fn">useCreatePost</span>();
+<span class="kw">await</span> trigger({ title: <span class="str">"..."</span>, description: <span class="str">"..."</span> });</pre>
+
+        <h3>Available hooks</h3>
+        <table>
+          <thead><tr><th>Hook</th><th>SWR type</th><th>Cache key</th></tr></thead>
+          <tbody>
+            <tr><td><code>useGetPostById(id)</code></td><td>useSWR</td><td><code>["post", id]</code></td></tr>
+            <tr><td><code>useGetPostList(query?)</code></td><td>useSWR</td><td><code>["posts", query]</code></td></tr>
+            <tr><td><code>useGetPostComments(postId)</code></td><td>useSWR</td><td><code>["post-comments", postId]</code></td></tr>
+            <tr><td><code>useCreatePost()</code></td><td>useSWRMutation</td><td><code>"posts"</code></td></tr>
+            <tr><td><code>useUpdatePost(id)</code></td><td>useSWRMutation</td><td><code>["post", id]</code></td></tr>
+            <tr><td><code>useDeletePost(id)</code></td><td>useSWRMutation</td><td><code>["post", id]</code></td></tr>
+            <tr><td><code>useCreateComment(postId)</code></td><td>useSWRMutation</td><td><code>["post-comments", postId]</code></td></tr>
+            <tr><td><code>useCreateReply(commentId)</code></td><td>useSWRMutation</td><td><code>["comment-replies", commentId]</code></td></tr>
+            <tr><td><code>useDeleteComment(commentId)</code></td><td>useSWRMutation</td><td><code>["comment", commentId]</code></td></tr>
+            <tr><td><code>useGetMe()</code></td><td>useSWR</td><td><code>"me"</code></td></tr>
+            <tr><td><code>useGetUserList(query?)</code></td><td>useSWR</td><td><code>["users", query]</code></td></tr>
+            <tr><td><code>useGetUserById(id)</code></td><td>useSWR</td><td><code>["user", id]</code></td></tr>
+            <tr><td><code>useUpdateUser(id)</code></td><td>useSWRMutation</td><td><code>["user", id]</code></td></tr>
+            <tr><td><code>useDeleteUser(id)</code></td><td>useSWRMutation</td><td><code>["user", id]</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ───── AUTH CLIENT ───── -->
+    <section id="web-auth">
+      <div class="card frontend">
+        <h2>🔐 Auth Client</h2>
+        <h3><span class="path-chip">apps/web/src/shared/libs/auth-client.ts</span></h3>
+        <pre><span class="kw">import</span> { createAuthClient } <span class="kw">from</span> <span class="str">"better-auth/react"</span>;
+<span class="kw">import</span> { inferAdditionalFields } <span class="kw">from</span> <span class="str">"better-auth/client/plugins"</span>;
+<span class="kw">import type</span> { auth } <span class="kw">from</span> <span class="str">"../../../../api/src/config/auth"</span>;
+
+<span class="kw">export const</span> authClient = <span class="fn">createAuthClient</span>({
+  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL!,
+  plugins: [<span class="fn">inferAdditionalFields</span>&lt;<span class="kw">typeof</span> auth&gt;()],
+});
+<span class="kw">export const</span> { useSession, signIn, signUp, signOut } = authClient;</pre>
+        <p style="font-size:13px; margin-top:0.75rem; color:#475569;"><code>inferAdditionalFields</code> types the session object with custom fields (<code>username</code>, <code>role</code>) declared in the API's <code>auth.ts</code>. No manual type duplication needed.</p>
+      </div>
+    </section>
+
+    <!-- ───── SHARED UI ───── -->
+    <section id="web-ui">
+      <div class="card frontend">
+        <h2>🎨 Shared UI Library</h2>
+        <p style="margin-bottom:1rem; font-size:13px; color:#475569;">All shared components live in <code>apps/web/src/shared/components/ui/</code>. Import via <code>@/shared/components</code>. Each component has a <code>.stories.tsx</code> file for Storybook.</p>
+
+        <table>
+          <thead><tr><th>Component</th><th>Key variants / props</th></tr></thead>
+          <tbody>
+            <tr><td><code>Button</code></td><td><code>color</code>: red | navy | yellow; <code>size</code>: lg | md | sm | xs; <code>loading</code>, <code>asChild</code>, <code>iconLeft</code>, <code>iconRight</code></td></tr>
+            <tr><td><code>Input</code></td><td><code>icon</code>, <code>error</code>, <code>disabled</code>, password toggle (auto for <code>type="password"</code>)</td></tr>
+            <tr><td><code>Modal</code></td><td>Radix Dialog wrapper; <code>open</code>, <code>onOpenChange</code>, <code>title</code>, <code>description</code></td></tr>
+            <tr><td><code>Dropdown</code></td><td>Radix Popover; single/multi-select; <code>options</code>, <code>value</code>, <code>onChange</code></td></tr>
+            <tr><td><code>Textarea</code></td><td>Standard textarea</td></tr>
+            <tr><td><code>Navbar</code></td><td>Responsive; search bar (desktop), logo, login/signup buttons</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Design tokens — <span class="path-chip">app/globals.css</span></h3>
+        <pre><span class="kw">:root</span> {
+  <span class="cm">/* Brand colours */</span>
+  --primary-red: <span class="num">#8b0020</span>;    --primary-navy: <span class="num">#333e55</span>;    --primary-yellow: <span class="num">#f8d21d</span>;
+  --bg-white: <span class="num">#f3eff5</span>;       --dark-gray: <span class="num">#8b9096</span>;
+}
+<span class="kw">@theme</span> inline {
+  --color-primary-red: var(--primary-red);
+  --font-sans: <span class="str">"Satoshi"</span>, var(--font-noto-thai), sans-serif;
+}</pre>
+        <p style="font-size:13px; margin-top:0.5rem; color:#475569;">Tailwind CSS v4 — tokens registered in <code>@theme</code> are available as Tailwind utilities: <code>text-primary-red</code>, <code>bg-primary-navy</code>, etc.</p>
+      </div>
+    </section>
+
+    <!-- ───── COMMANDS ───── -->
+    <section id="commands">
+      <div class="card build">
+        <h2>🛠 Commands</h2>
+        <table>
+          <thead><tr><th>Command</th><th>What it runs</th></tr></thead>
+          <tbody>
+            <tr><td><code>yarn install</code></td><td>Install all workspace dependencies (run from root)</td></tr>
+            <tr><td><code>yarn web:dev</code></td><td>Next.js dev server (port 3000)</td></tr>
+            <tr><td><code>yarn api:dev</code></td><td>Hono + tsx watch (reads <code>PORT</code> env)</td></tr>
+            <tr><td><code>yarn web:build</code></td><td>Next.js production build</td></tr>
+            <tr><td><code>yarn api:build</code></td><td>TypeScript compile to <code>dist/</code></td></tr>
+            <tr><td><code>yarn web:storybook</code></td><td>Storybook dev server (port 6006)</td></tr>
+            <tr><td><code>yarn db:create</code></td><td>Start PostgreSQL container (docker compose)</td></tr>
+            <tr><td><code>yarn db:generate</code></td><td><code>prisma generate</code></td></tr>
+            <tr><td><code>yarn db:push</code></td><td>Sync schema to DB without a migration file</td></tr>
+            <tr><td><code>yarn db:migrate</code></td><td>Create + apply migration (<code>prisma migrate dev</code>)</td></tr>
+            <tr><td><code>yarn db:apply</code></td><td>Apply existing migrations (<code>prisma migrate deploy</code>) — for CI/prod</td></tr>
+            <tr><td><code>yarn db:seed</code></td><td>Run <code>prisma/seed.ts</code></td></tr>
+            <tr><td><code>yarn db:studio</code></td><td>Open Prisma Studio GUI</td></tr>
+            <tr><td><code>yarn db:reset</code></td><td>Drop + recreate DB and re-apply migrations</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ───── GUIDES ───── -->
+    <section id="guide-endpoint">
+      <div class="card guide">
+        <h2>📌 Add a Backend Endpoint</h2>
+        <ol class="steps">
+          <li>
+            <strong>DTO file</strong> — create <span class="path-chip">apps/api/src/modules/&lt;module&gt;/dto/&lt;action&gt;-&lt;resource&gt;.dto.ts</span><br>
+            Export <code>const &lt;Action&gt;&lt;Resource&gt;InputDTO = z.object({...})</code> + inferred type.<br>
+            Export <code>class &lt;Action&gt;&lt;Resource&gt;OutputDTO</code> with <code>static toDTO(entity: EntityType)</code>.<br>
+            Add re-export to <span class="path-chip">dto/index.ts</span>.
+          </li>
+          <li>
+            <strong>Service file</strong> — create <span class="path-chip">service/&lt;action&gt;-&lt;resource&gt;.service.ts</span><br>
+            <code>export async function &lt;action&gt;&lt;Resource&gt;Service(...)</code> — call repo, check ownership if needed, return DTO.<br>
+            Throw <code>NotFoundError</code> / <code>ForbiddenError</code> etc. for domain errors.<br>
+            Add re-export to <span class="path-chip">service/index.ts</span>.
+          </li>
+          <li>
+            <strong>Route</strong> — add a chained method to <span class="path-chip">&lt;module&gt;.route.ts</span>:
+            <pre style="margin:0.5rem 0 0;"><span class="kw">.</span>get(<span class="str">"/new-path"</span>, requireAuth,
+  zValidator(<span class="str">"param"</span>, InputDTO, validationHook),
+  <span class="kw">async</span> (c) =&gt; {
+    <span class="kw">const</span> input = c.req.valid(<span class="str">"param"</span>);
+    <span class="kw">const</span> result = <span class="kw">await</span> <span class="fn">newService</span>(input);
+    <span class="kw">return</span> c.json(<span class="fn">successResponse</span>(result), <span class="num">200</span>);
+  }
+)</pre>
+            Must stay chained — separate <code>route.get()</code> calls break TypeScript type inference.
+          </li>
+          <li>
+            <strong>No changes needed</strong> to <code>routes.ts</code>, <code>app.ts</code>, or <code>AppType</code> — <code>typeof apiRoutes</code> updates automatically.
+          </li>
+          <li>
+            <strong>Frontend hook</strong> — add to <span class="path-chip">apps/web/src/shared/hooks/&lt;resource&gt;.ts</span> and re-export from <span class="path-chip">hooks/index.ts</span>.
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="guide-page">
+      <div class="card guide">
+        <h2>📌 Add a Frontend Page</h2>
+        <ol class="steps">
+          <li>
+            <strong>Create route</strong> — <span class="path-chip">apps/web/src/app/&lt;path&gt;/page.tsx</span><br>
+            Add <code>"use client"</code> directive if using hooks or state.
+          </li>
+          <li>
+            <strong>Fetch data</strong> — import hooks from <code>@/shared/hooks</code>:
+            <pre style="margin:0.5rem 0 0;"><span class="kw">import</span> { useGetPostList } <span class="kw">from</span> <span class="str">"@/shared/hooks"</span>;
+
+<span class="kw">const</span> { data, isLoading } = <span class="fn">useGetPostList</span>({ page: <span class="str">"1"</span>, limit: <span class="str">"10"</span> });
+<span class="cm">// data is typed: { data: GetPostByIdOutputDTO[], total, page, limit, totalPages }</span></pre>
+          </li>
+          <li>
+            <strong>Feature components</strong> — if the page is complex, co-locate components in <span class="path-chip">apps/web/src/features/&lt;feature&gt;/components/</span>.
+          </li>
+          <li>
+            <strong>Shared UI</strong> — use components from <code>@/shared/components</code>: <code>Button</code>, <code>Input</code>, <code>Modal</code>, <code>Dropdown</code>.
+          </li>
+          <li>
+            <strong>Auth guard</strong> — use <code>useSession()</code> from <code>@/shared/libs/auth-client</code> and <code>useRouter()</code> to redirect unauthenticated users.
+          </li>
+        </ol>
+      </div>
+    </section>
+
+  </main>
+</div>
