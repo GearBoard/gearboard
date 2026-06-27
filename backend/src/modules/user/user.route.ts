@@ -49,7 +49,7 @@ userRoute.patch(
     const { id } = c.req.valid("param");
     const body = c.req.valid("json");
     const result = await userService.update(id, body, user.id, user.role);
-    return c.json(successResponse(result, 200, "User updated"), 200);
+    return c.json(successResponse(result, "User updated"), 200);
   }
 );
 
@@ -61,6 +61,6 @@ userRoute.delete(
     const user = c.get("user");
     const { id } = c.req.valid("param");
     await userService.delete(id, user.id, user.role);
-    return c.json(successResponse(null, 200, "User deleted successfully"), 200);
+    return c.json(successResponse(null, "User deleted successfully"), 200);
   }
 );

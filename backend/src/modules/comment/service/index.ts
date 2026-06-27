@@ -1,2 +1,2 @@
-export { createReplyService } from "./create-reply.service.js";
-export { deleteCommentService } from "./delete-comment.service.js";
+export * from "./create-reply.service.js";
+export * from "./delete-comment.service.js";

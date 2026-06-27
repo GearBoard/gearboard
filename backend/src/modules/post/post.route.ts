@@ -47,7 +47,7 @@ postRoute.post(
     const user = c.get("user");
     const data = c.req.valid("json");
     const result = await createPostService(data, user.id);
-    return c.json(successResponse(result, 201, "Post created"), 201);
+    return c.json(successResponse(result, "Post created"), 201);
   }
 );
 
@@ -61,7 +61,7 @@ postRoute.patch(
     const { id } = c.req.valid("param");
     const data = c.req.valid("json");
     const result = await updatePostService(id, data, user.id);
-    return c.json(successResponse(result, 200, "Post updated"), 200);
+    return c.json(successResponse(result, "Post updated"), 200);
   }
 );
 
@@ -73,7 +73,7 @@ postRoute.delete(
     const user = c.get("user");
     const { id } = c.req.valid("param");
     await deletePostService(id, user.id);
-    return c.json(successResponse(null, 200, "Post deleted successfully"), 200);
+    return c.json(successResponse(null, "Post deleted successfully"), 200);
   }
 );
 
@@ -97,6 +97,6 @@ postRoute.post(
     const { postId } = c.req.valid("param");
     const data = c.req.valid("json");
     const result = await createCommentByPostIdService(user.id, postId, data);
-    return c.json(successResponse(result, 201, "Comment created"), 201);
+    return c.json(successResponse(result, "Comment created"), 201);
   }
 );

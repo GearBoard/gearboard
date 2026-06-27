@@ -23,7 +23,7 @@ commentRoute.post(
     const { commentId } = c.req.valid("param");
     const data = c.req.valid("json");
     const result = await createReplyService(commentId, user.id, data);
-    return c.json(successResponse(result, 201, "Reply created"), 201);
+    return c.json(successResponse(result, "Reply created"), 201);
   }
 );
 
@@ -35,6 +35,6 @@ commentRoute.delete(
     const user = c.get("user");
     const { commentId } = c.req.valid("param");
     await deleteCommentService(commentId, user.id);
-    return c.json(successResponse(null, 200, "Comment deleted successfully"), 200);
+    return c.json(successResponse(null, "Comment deleted successfully"), 200);
   }
 );
