@@ -2,7 +2,7 @@ language: "th"
 
 reviews:
   profile: "chill"
-  high_level_summary: true
+  high_level_summary: false
   poem: false
   auto_review:
     enabled: true
@@ -21,10 +21,10 @@ reviews:
 knowledge_base:
   web_search:
     enabled: true
-  # code_guidelines:
-  #   enabled: true
-  #   filePatterns:
-  #     - "docs/coding-standards.md"
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - "docs/review-guidelines.md"
 
 tools:
   eslint:
