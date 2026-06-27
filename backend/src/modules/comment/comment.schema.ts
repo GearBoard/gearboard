@@ -4,10 +4,6 @@ export const commentIdValidateSchema = z.object({
   commentId: z.string().trim().min(1, { message: "Invalid comment id" }),
 });
 
-export const postIdParamsSchema = z.object({
-  postId: z.string().trim().min(1, { message: "Invalid post id" }),
-});
-
 export const createCommentSchema = z.object({
   content: z.string().min(1, "Content of comment is require"),
   images: z
