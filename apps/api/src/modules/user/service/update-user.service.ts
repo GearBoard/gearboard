@@ -1,4 +1,4 @@
-import { ConflictError, ForbiddenError, NotFoundError } from "../../../common/errors/app-error.js";
+import { ForbiddenError, NotFoundError } from "../../../common/errors/app-error.js";
 import { UserRole } from "../../../common/types/index.js";
 import { userRepository } from "../user.repository.js";
 import { UpdateUserOutputDTO, type UpdateUserBody } from "../dto/index.js";
@@ -14,11 +14,6 @@ export async function updateUserService(
   }
   const user = await userRepository.findById(id);
   if (!user) throw new NotFoundError("User not found");
-
-  if (data.username) {
-    const existing = await userRepository.findByUsername(data.username);
-    if (existing && existing.id !== id) throw new ConflictError("Username already taken");
-  }
 
   const updated = await userRepository.update(id, data);
   return UpdateUserOutputDTO.toDTO(updated);

@@ -14,7 +14,7 @@ export class GetPostByIdOutputDTO {
   likeCount!: number;
   commentCount!: number;
   isClosed!: boolean;
-  authorInfo!: { id: string; username: string | null; image: string | null };
+  authorInfo!: { id: string; name: string; image: string | null };
   createdAt!: string;
   updatedAt!: string;
 
@@ -30,7 +30,7 @@ export class GetPostByIdOutputDTO {
       isClosed: post.isClosed,
       authorInfo: {
         id: post.user.id,
-        username: post.user.username,
+        name: post.user.name,
         image: post.user.image,
       },
       createdAt: post.createdAt.toISOString(),

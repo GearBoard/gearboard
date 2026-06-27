@@ -6,7 +6,6 @@ import Link from "next/link";
 
 export default function RegisterTestPage() {
   const [name, setName] = useState("");
-  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -16,7 +15,7 @@ export default function RegisterTestPage() {
     e.preventDefault();
     setError("");
     await authClient.signUp.email(
-      { email, password, name, username },
+      { email, password, name },
       {
         onSuccess: () => {
           router.push("/auth-test/login");
@@ -48,16 +47,6 @@ export default function RegisterTestPage() {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            required
-            style={{ width: "100%", padding: 8, border: "1px solid #ccc", borderRadius: 4 }}
-          />
-        </div>
-        <div>
-          <label style={{ display: "block", marginBottom: 5 }}>Username</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
             required
             style={{ width: "100%", padding: 8, border: "1px solid #ccc", borderRadius: 4 }}
           />

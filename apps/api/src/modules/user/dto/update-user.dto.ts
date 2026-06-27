@@ -7,7 +7,6 @@ export const UpdateUserParamsInputDTO = z.object({
 });
 
 export const UpdateUserBodyInputDTO = z.object({
-  username: z.string().trim().min(1, "Username must not be empty").optional(),
   name: z.string().trim().min(1, "Name must not be empty").optional(),
   image: z
     .string()

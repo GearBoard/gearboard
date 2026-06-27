@@ -5,7 +5,7 @@ const postInclude = {
   user: {
     select: {
       id: true,
-      username: true,
+      name: true,
       image: true,
     },
   },

@@ -8,7 +8,7 @@ export const GetUserByIdParamsInputDTO = z.object({
 
 export class UserOutputDTO {
   id!: string;
-  username!: string | null;
+  name!: string;
   email!: string;
   image!: string | null;
   description!: string | null;
@@ -20,7 +20,7 @@ export class UserOutputDTO {
   static toDTO(user: User): UserOutputDTO {
     return {
       id: user.id,
-      username: user.username,
+      name: user.name,
       email: user.email,
       image: user.image,
       description: user.description,

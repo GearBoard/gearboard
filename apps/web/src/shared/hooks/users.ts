@@ -29,7 +29,6 @@ export function useUpdateUser(id: string) {
         arg,
       }: {
         arg: {
-          username?: string;
           name?: string;
           image?: string;
           description?: string;

@@ -12,7 +12,7 @@ export class GetCommentsByPostIdOutputDTO {
   parentId!: string | null;
   content!: string;
   images!: Array<{ id: string; url: string }>;
-  author?: { id: string; username: string | null; image: string | null };
+  author?: { id: string; name: string; image: string | null };
   replies?: GetCommentsByPostIdOutputDTO[];
   createdAt!: string;
 
@@ -25,7 +25,7 @@ export class GetCommentsByPostIdOutputDTO {
       content: comment.content,
       images: comment.images.map((img) => ({ id: img.id, url: img.url })),
       author: comment.user
-        ? { id: comment.user.id, username: comment.user.username, image: comment.user.image }
+        ? { id: comment.user.id, name: comment.user.name, image: comment.user.image }
         : undefined,
       replies: comment.replies?.map((r) =>
         GetCommentsByPostIdOutputDTO.toDTO(r as unknown as Comment)

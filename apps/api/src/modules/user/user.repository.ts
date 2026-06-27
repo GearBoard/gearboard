@@ -3,7 +3,6 @@ import type { User } from "../../../generated/prisma/client.js";
 import { prisma } from "../../config/prisma.js";
 
 type UpdateUserData = {
-  username?: string;
   name?: string;
   image?: string | null;
   description?: string | null;
@@ -11,10 +10,6 @@ type UpdateUserData = {
 };
 
 export const userRepository = {
-  async findByUsername(username: string): Promise<User | null> {
-    return prisma.user.findFirst({ where: { username, deletedAt: null } });
-  },
-
   async findById(id: string): Promise<User | null> {
     const user = await prisma.user.findUnique({
       where: { id, deletedAt: null },
@@ -36,7 +31,7 @@ export const userRepository = {
 
     if (search) {
       whereConditions.OR = [
-        { username: { contains: search, mode: "insensitive" } },
+        { name: { contains: search, mode: "insensitive" } },
         { email: { contains: search, mode: "insensitive" } },
       ];
     }
@@ -64,7 +59,6 @@ export const userRepository = {
 
   async update(id: string, data: UpdateUserData): Promise<User> {
     const updateData: Prisma.UserUpdateInput = {};
-    if (data.username !== undefined) updateData.username = data.username;
     if (data.name !== undefined) updateData.name = data.name;
     if (data.image !== undefined) updateData.image = data.image;
     if (data.description !== undefined) updateData.description = data.description;

@@ -24,9 +24,7 @@ model User {
   updatedAt     DateTime @updatedAt
 
   // Custom Gearboard fields
-  username        String?   @unique
-  displayUsername String?
-  description     String?
+  description  String?
   role            UserRole  @default(USER)
   departmentId    String?
   deletedAt       DateTime?

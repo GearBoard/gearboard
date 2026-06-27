@@ -24,7 +24,7 @@ export class CreateReplyOutputDTO {
   parentId!: string | null;
   content!: string;
   images!: Array<{ id: string; url: string }>;
-  author?: { id: string; username: string | null; image: string | null };
+  author?: { id: string; name: string; image: string | null };
   createdAt!: string;
 
   static toDTO(comment: Comment): CreateReplyOutputDTO {
@@ -36,7 +36,7 @@ export class CreateReplyOutputDTO {
       content: comment.content,
       images: comment.images.map((img) => ({ id: img.id, url: img.url })),
       author: comment.user
-        ? { id: comment.user.id, username: comment.user.username, image: comment.user.image }
+        ? { id: comment.user.id, name: comment.user.name, image: comment.user.image }
         : undefined,
       createdAt: comment.createdAt.toISOString(),
     };

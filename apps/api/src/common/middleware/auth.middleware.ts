@@ -21,7 +21,6 @@ export const requireAuth = createMiddleware<{ Variables: AppVariables }>(async (
     image: dbUser.image ?? null,
     role: dbUser.role,
     email: dbUser.email,
-    username: dbUser.username ?? null,
   });
 
   await next();

@@ -8,24 +8,24 @@ import { authClient } from "@/shared/libs/auth-client";
 import type { RegistrationFormProps } from "../types/types";
 
 export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormProps) {
-  const [formData, setFormData] = useState({ username: "", email: "", password: "" });
+  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [errors, setErrors] = useState({ username: "", email: "", password: "" });
+  const [errors, setErrors] = useState({ name: "", email: "", password: "" });
   const router = useRouter();
 
-  const clearErrors = () => setErrors({ username: "", email: "", password: "" });
+  const clearErrors = () => setErrors({ name: "", email: "", password: "" });
 
   const mapError = (message: string) => {
     const msg = message.toLowerCase();
-    if (msg.includes("username") || msg.includes("user already exists")) {
-      setErrors((prev) => ({ ...prev, username: "ไม่สามารถใช้ชื่อนี้ได้" }));
+    if (msg.includes("email") && msg.includes("exist")) {
+      setErrors((prev) => ({ ...prev, email: "อีเมลนี้ถูกใช้ไปแล้ว" }));
     } else if (msg.includes("email")) {
       setErrors((prev) => ({ ...prev, email: "อีเมลนี้ถูกใช้ไปแล้ว" }));
     } else if (msg.includes("password")) {
       setErrors((prev) => ({ ...prev, password: "กรุณากรอกรหัสผ่านอย่างน้อย 8 ตัว" }));
     } else {
-      setErrors((prev) => ({ ...prev, username: "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง" }));
+      setErrors((prev) => ({ ...prev, name: "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง" }));
     }
   };
 
@@ -38,8 +38,7 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
         {
           email: formData.email,
           password: formData.password,
-          name: formData.username,
-          username: formData.username,
+          name: formData.name,
         },
         {
           onSuccess: () => {
@@ -51,7 +50,7 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
         }
       );
     } catch {
-      setErrors((prev) => ({ ...prev, username: "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง" }));
+      setErrors((prev) => ({ ...prev, name: "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง" }));
     } finally {
       setIsLoading(false);
     }
@@ -81,11 +80,11 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
       <form id="register-form" onSubmit={handleSubmit} className="flex flex-col gap-3">
         <Input
           label="ชื่อผู้ใช้"
-          id="register-username"
+          id="register-name"
           placeholder="กรอกชื่อผู้ใช้"
-          value={formData.username}
-          onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-          errorMessage={errors.username}
+          value={formData.name}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          errorMessage={errors.name}
           required
         />
 

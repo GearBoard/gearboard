@@ -7,7 +7,6 @@ export interface AuthenticatedUser {
   image: string | null;
   role: UserRole;
   email: string;
-  username: string | null;
 }
 
 export type AppVariables = { user: AuthenticatedUser };
