@@ -1,6 +1,7 @@
 {
   "name": "gearboard",
   "private": true,
+  "type": "module",
   "workspaces": [
     "apps/*",
     "packages/*"
