@@ -62,7 +62,7 @@ export const userRepository = {
     return { users, total };
   },
 
-  async update(id: string, data: UpdateUserData): Promise<User | null> {
+  async update(id: string, data: UpdateUserData): Promise<User> {
     const updateData: Prisma.UserUpdateInput = {};
     if (data.username !== undefined) updateData.username = data.username;
     if (data.name !== undefined) updateData.name = data.name;
@@ -73,32 +73,16 @@ export const userRepository = {
         data.departmentId !== null ? { connect: { id: data.departmentId } } : { disconnect: true };
     }
 
-    try {
-      return await prisma.user.update({
-        where: { id, deletedAt: null },
-        data: updateData,
-      });
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
-        return null;
-      }
-      throw error;
-    }
+    return prisma.user.update({
+      where: { id, deletedAt: null },
+      data: updateData,
+    });
   },
 
-  async softDelete(id: string): Promise<{ id: string } | null> {
-    try {
-      const user = await prisma.user.update({
-        where: { id, deletedAt: null },
-        data: { deletedAt: new Date() },
-        select: { id: true },
-      });
-      return user;
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
-        return null;
-      }
-      throw error;
-    }
+  async softDelete(id: string): Promise<void> {
+    await prisma.user.update({
+      where: { id, deletedAt: null },
+      data: { deletedAt: new Date() },
+    });
   },
 };

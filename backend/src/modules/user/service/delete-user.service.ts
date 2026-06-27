@@ -10,6 +10,8 @@ export async function deleteUserService(
   if (requesterId !== id && requesterRole !== UserRole.ADMIN) {
     throw new ForbiddenError("Forbidden");
   }
-  const deleted = await userRepository.softDelete(id);
-  if (!deleted) throw new NotFoundError("User not found");
+  const user = await userRepository.findById(id);
+  if (!user) throw new NotFoundError("User not found");
+
+  await userRepository.softDelete(id);
 }

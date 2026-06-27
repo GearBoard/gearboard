@@ -21,6 +21,5 @@ export async function updateUserService(
   }
 
   const updated = await userRepository.update(id, data);
-  if (!updated) throw new NotFoundError("User not found");
   return UpdateUserOutputDTO.toDTO(updated);
 }
