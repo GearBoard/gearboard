@@ -5,6 +5,10 @@ export const getPostByIdSchema = z.object({
   id: z.string().trim().min(1, { message: "Invalid post id" }),
 });
 
+export const getCommentsByPostIdSchema = z.object({
+  postId: z.string().trim().min(1, { message: "Invalid post id" }),
+});
+
 // GET /posts - Query schemas
 export const getAllPostsQuerySchema = z.object({
   page: z
@@ -26,6 +30,16 @@ export const getAllPostsQuerySchema = z.object({
   search: z.string().optional(),
   tag: z.string().optional(),
   userId: z.string().trim().min(1, { message: "userId must not be empty" }).optional(),
+});
+
+export const createCommentByPostIdSchema = z.object({
+  content: z.string().min(1, "Content of comment is required"),
+  images: z
+    .string()
+    .url()
+    .optional()
+    .or(z.literal(""))
+    .transform((v) => (v ? v : null)),
 });
 
 // POST - Create schema

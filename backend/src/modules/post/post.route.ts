@@ -8,7 +8,9 @@ import { requireAuth } from "../../common/middleware/auth.middleware.js";
 import { postController } from "./post.controller.js";
 import {
   createPostSchema,
+  createCommentByPostIdSchema,
   getPostByIdSchema,
+  getCommentsByPostIdSchema,
   getAllPostsQuerySchema,
   updatePostSchema,
 } from "./post.schema.js";
@@ -52,4 +54,18 @@ postRoute.delete(
   requireAuth,
   validateParams(getPostByIdSchema),
   postController.delete.bind(postController)
+);
+
+postRoute.post(
+  "/:postId/comment",
+  requireAuth,
+  validateParams(getCommentsByPostIdSchema),
+  validateBody(createCommentByPostIdSchema),
+  postController.createComment.bind(postController)
+);
+
+postRoute.get(
+  "/:postId/comments",
+  validateParams(getCommentsByPostIdSchema),
+  postController.getComments.bind(postController)
 );

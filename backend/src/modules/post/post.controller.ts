@@ -3,6 +3,7 @@ import { successResponse } from "../../common/utils/response.js";
 import type { AuthenticatedRequest } from "../../common/types/index.js";
 import { handleHttpError } from "../../common/utils/http-error.js";
 import { postService } from "./post.service.js";
+import { commentService } from "../comment/comment.service.js";
 import { GetPostByIdParams, GetAllPostsQuery } from "./post.schema.js";
 
 export const postController = {
@@ -73,6 +74,33 @@ export const postController = {
 
       await postService.delete(id, authReq.user.id);
       res.status(200).json(successResponse({ message: "Post deleted successfully" }));
+    } catch (error) {
+      handleHttpError(res, error);
+    }
+  },
+
+  async getComments(req: Request, res: Response) {
+    const { postId } = (req as Request & { validatedParams: { postId: string } }).validatedParams;
+
+    try {
+      const data = await commentService.getByPostId(postId);
+      res.status(200).json(successResponse(data));
+    } catch (error) {
+      handleHttpError(res, error);
+    }
+  },
+
+  async createComment(req: Request, res: Response) {
+    const authReq = req as AuthenticatedRequest;
+    const { postId } = (
+      authReq as AuthenticatedRequest & {
+        validatedParams: { postId: string };
+      }
+    ).validatedParams;
+
+    try {
+      const data = await commentService.createComment(authReq.user.id, postId, req.body);
+      res.status(201).json(successResponse(data));
     } catch (error) {
       handleHttpError(res, error);
     }
