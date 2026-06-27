@@ -6,6 +6,5 @@ export async function deleteCommentService(commentId: string, userId: string): P
   if (!comment) throw new NotFoundError("Comment not found");
   if (comment.userId !== userId) throw new ForbiddenError("Forbidden");
 
-  const deleted = await commentRepository.softDelete(commentId);
-  if (!deleted) throw new NotFoundError("Comment not found");
+  await commentRepository.softDelete(commentId);
 }

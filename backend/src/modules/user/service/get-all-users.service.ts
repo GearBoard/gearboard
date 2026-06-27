@@ -15,5 +15,6 @@ export async function getAllUsersService(query: GetAllUsersQuery): Promise<GetAl
     role: query.role,
     departmentId: query.departmentId,
   });
+
   return toGetAllUsersOutputDTO(users, total, query.page, query.limit);
 }

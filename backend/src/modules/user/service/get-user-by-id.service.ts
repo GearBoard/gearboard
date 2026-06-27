@@ -11,7 +11,9 @@ export async function getUserByIdService(
   if (requesterId !== id && requesterRole !== UserRole.ADMIN) {
     throw new ForbiddenError("Forbidden");
   }
+
   const user = await userRepository.findById(id);
   if (!user) throw new NotFoundError("User not found");
+
   return UserOutputDTO.toDTO(user);
 }

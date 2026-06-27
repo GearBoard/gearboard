@@ -13,7 +13,5 @@ export async function updatePostService(
   if (post.userId !== userId) throw new ForbiddenError("Forbidden");
 
   const updated = await postRepository.update(id, data);
-  if (!updated) throw new NotFoundError("Post not found");
-
   return UpdatePostOutputDTO.toDTO(updated);
 }

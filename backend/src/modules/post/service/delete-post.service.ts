@@ -7,6 +7,5 @@ export async function deletePostService(id: string, userId: string): Promise<voi
 
   if (post.userId !== userId) throw new ForbiddenError("Forbidden");
 
-  const deleted = await postRepository.softDelete(id);
-  if (!deleted) throw new NotFoundError("Post not found");
+  await postRepository.softDelete(id);
 }

@@ -136,68 +136,47 @@ export const postRepository = {
     return post as Post;
   },
 
-  async update(id: string, data: UpdatePostData): Promise<Post | null> {
+  async update(id: string, data: UpdatePostData): Promise<Post> {
     const updateData: Prisma.PostUpdateInput = {};
     if (data.title !== undefined) updateData.title = data.title;
     if (data.description !== undefined) updateData.description = data.description;
     if (data.isClosed !== undefined) updateData.isClosed = data.isClosed;
 
-    try {
-      return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-        if (data.tags !== undefined) {
-          await tx.postTag.deleteMany({
-            where: { postId: id },
-          });
+    return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+      if (data.tags !== undefined) {
+        await tx.postTag.deleteMany({ where: { postId: id } });
 
-          if (data.tags.length > 0) {
-            await Promise.all(
-              data.tags.map(async (tagName) => {
-                await tx.postTag.create({
-                  data: {
-                    post: {
-                      connect: { id },
-                    },
-                    tag: {
-                      connectOrCreate: {
-                        where: { name: tagName },
-                        create: { name: tagName },
-                      },
+        if (data.tags.length > 0) {
+          await Promise.all(
+            data.tags.map((tagName) =>
+              tx.postTag.create({
+                data: {
+                  post: { connect: { id } },
+                  tag: {
+                    connectOrCreate: {
+                      where: { name: tagName },
+                      create: { name: tagName },
                     },
                   },
-                });
+                },
               })
-            );
-          }
+            )
+          );
         }
-
-        const updatedPost = await tx.post.update({
-          where: { id, deletedAt: null },
-          data: updateData,
-          include: postInclude,
-        });
-
-        return updatedPost as Post;
-      });
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
-        return null;
       }
-      throw error;
-    }
+
+      return tx.post.update({
+        where: { id, deletedAt: null },
+        data: updateData,
+        include: postInclude,
+      }) as Promise<Post>;
+    });
   },
 
-  async softDelete(id: string): Promise<{ id: string } | null> {
-    try {
-      return await prisma.post.update({
-        where: { id, deletedAt: null },
-        data: { deletedAt: new Date() },
-        select: { id: true },
-      });
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
-        return null;
-      }
-      throw error;
-    }
+  async softDelete(id: string): Promise<void> {
+    await prisma.post.update({
+      where: { id, deletedAt: null },
+      data: { deletedAt: new Date() },
+    });
   },
 };

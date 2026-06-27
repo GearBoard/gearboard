@@ -84,27 +84,17 @@ export const commentRepository = {
     return comment as Comment;
   },
 
-  async softDelete(id: string): Promise<{ id: string } | null> {
-    try {
-      return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-        const deletedComment = await tx.comment.update({
-          where: { id, deletedAt: null },
-          data: { deletedAt: new Date() },
-          select: { id: true },
-        });
-
-        await tx.comment.updateMany({
-          where: { parentId: id, deletedAt: null },
-          data: { deletedAt: new Date() },
-        });
-
-        return deletedComment;
+  async softDelete(id: string): Promise<void> {
+    await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+      await tx.comment.update({
+        where: { id, deletedAt: null },
+        data: { deletedAt: new Date() },
       });
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
-        return null;
-      }
-      throw error;
-    }
+
+      await tx.comment.updateMany({
+        where: { parentId: id, deletedAt: null },
+        data: { deletedAt: new Date() },
+      });
+    });
   },
 };
