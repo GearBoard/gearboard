@@ -1,13 +1,33 @@
 {
   "name": "gearboard",
   "private": true,
-  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "prepare": "husky",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix && prettier --write .",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "web:dev": "yarn workspace web dev",
+    "web:build": "yarn workspace web build",
+    "web:storybook": "yarn workspace web storybook",
+    "web:build-storybook": "yarn workspace web build-storybook",
+    "api:dev": "yarn workspace api dev",
+    "api:build": "yarn workspace api build",
+    "db:create": "yarn workspace api db.create",
+    "db:start": "yarn workspace api db.start",
+    "db:stop": "yarn workspace api db.stop",
+    "db:down": "yarn workspace api db.down",
+    "db:generate": "yarn workspace api db.generate",
+    "db:push": "yarn workspace api db.push",
+    "db:studio": "yarn workspace api db.studio",
+    "db:migrate": "yarn workspace api db.migrate",
+    "db:apply": "yarn workspace api db.apply",
+    "db:seed": "yarn workspace api db.seed",
+    "db:reset": "yarn workspace api db.reset"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
@@ -30,7 +50,5 @@
       "prettier --write"
     ]
   },
-  "dependencies": {
-    "better-auth": "^1.5.4"
-  }
+  "packageManager": "yarn@4.17.0"
 }

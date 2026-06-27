@@ -6,7 +6,7 @@ import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 
 export default defineConfig([
-  // Global ignores (backend + frontend)
+  // Global ignores
   {
     ignores: [
       "**/node_modules/**",
@@ -19,15 +19,15 @@ export default defineConfig([
     ],
   },
 
-  // Backend: TypeScript + Prettier
-  { files: ["backend/**/*.{ts,tsx,js,jsx}"], ...js.configs.recommended },
+  // API: TypeScript + Prettier
+  { files: ["apps/api/**/*.{ts,tsx,js,jsx}"], ...js.configs.recommended },
   ...tseslint.configs.recommended.map((c) => ({
     ...c,
-    files: ["backend/**/*.{ts,tsx,js,jsx}"],
+    files: ["apps/api/**/*.{ts,tsx,js,jsx}"],
   })),
-  { files: ["backend/**/*.{ts,tsx,js,jsx}"], ...prettier },
+  { files: ["apps/api/**/*.{ts,tsx,js,jsx}"], ...prettier },
   {
-    files: ["backend/**/*.{ts,tsx,js,jsx}"],
+    files: ["apps/api/**/*.{ts,tsx,js,jsx}"],
     languageOptions: {
       parserOptions: {
         ecmaVersion: "latest",
@@ -53,13 +53,13 @@ export default defineConfig([
     },
   },
 
-  // Frontend: Next.js
-  ...nextVitals.map((c) => ({ ...c, files: ["frontend/**/*.{ts,tsx,js,jsx}"] })),
-  ...nextTs.map((c) => ({ ...c, files: ["frontend/**/*.{ts,tsx,js,jsx}"] })),
+  // Web: Next.js
+  ...nextVitals.map((c) => ({ ...c, files: ["apps/web/**/*.{ts,tsx,js,jsx}"] })),
+  ...nextTs.map((c) => ({ ...c, files: ["apps/web/**/*.{ts,tsx,js,jsx}"] })),
   {
-    files: ["frontend/**/*.{ts,tsx,js,jsx}"],
+    files: ["apps/web/**/*.{ts,tsx,js,jsx}"],
     rules: {
-      "@next/next/no-html-link-for-pages": ["error", "frontend/src/app/"],
+      "@next/next/no-html-link-for-pages": ["error", "apps/web/src/app/"],
     },
   },
 ]);
