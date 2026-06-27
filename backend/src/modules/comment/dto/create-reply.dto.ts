@@ -1,11 +1,11 @@
 import { z } from "zod";
 import type { Comment } from "../comment.repository.js";
 
-export const CreateReplyParamsSchema = z.object({
+export const CreateReplyParamsInputDTO = z.object({
   commentId: z.string().trim().min(1, "Invalid comment id"),
 });
 
-export const CreateReplyBodySchema = z.object({
+export const CreateReplyBodyInputDTO = z.object({
   content: z.string().min(1, "Content of comment is required"),
   images: z
     .string()
@@ -15,7 +15,7 @@ export const CreateReplyBodySchema = z.object({
     .transform((v) => (v ? v : null)),
 });
 
-export type CreateReplyBody = z.infer<typeof CreateReplyBodySchema>;
+export type CreateReplyBody = z.infer<typeof CreateReplyBodyInputDTO>;
 
 export class CreateReplyOutputDTO {
   id!: string;

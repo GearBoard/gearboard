@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { Comment } from "../../comment/comment.repository.js";
 
-export const GetCommentsByPostIdParamsSchema = z.object({
+export const GetCommentsByPostIdParamsInputDTO = z.object({
   postId: z.string().trim().min(1, "Invalid post id"),
 });
 

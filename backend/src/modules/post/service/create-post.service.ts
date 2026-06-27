@@ -6,5 +6,6 @@ export async function createPostService(
   userId: string
 ): Promise<CreatePostOutputDTO> {
   const post = await postRepository.create(data, userId);
+
   return CreatePostOutputDTO.toDTO(post);
 }

@@ -2,7 +2,7 @@ import { z } from "zod";
 import { GetPostByIdOutputDTO } from "./get-post-by-id.dto.js";
 import type { Post } from "../post.repository.js";
 
-export const GetAllPostsQuerySchema = z.object({
+export const GetAllPostsQueryInputDTO = z.object({
   page: z
     .string()
     .optional()
@@ -24,7 +24,7 @@ export const GetAllPostsQuerySchema = z.object({
   userId: z.string().trim().min(1, { message: "userId must not be empty" }).optional(),
 });
 
-export type GetAllPostsQuery = z.infer<typeof GetAllPostsQuerySchema>;
+export type GetAllPostsQuery = z.infer<typeof GetAllPostsQueryInputDTO>;
 
 export class GetAllPostsOutputDTO {
   data!: GetPostByIdOutputDTO[];

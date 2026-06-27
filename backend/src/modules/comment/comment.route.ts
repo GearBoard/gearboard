@@ -5,9 +5,9 @@ import { requireAuth } from "../../common/middleware/auth.middleware.js";
 import { successResponse } from "../../common/utils/response.js";
 import { validationHook } from "../../common/utils/validation-hook.js";
 import {
-  CreateReplyParamsSchema,
-  CreateReplyBodySchema,
-  DeleteCommentParamsSchema,
+  CreateReplyParamsInputDTO,
+  CreateReplyBodyInputDTO,
+  DeleteCommentParamsInputDTO,
 } from "./dto/index.js";
 import { createReplyService, deleteCommentService } from "./service/index.js";
 
@@ -16,8 +16,8 @@ export const commentRoute = new Hono<{ Variables: AppVariables }>();
 commentRoute.post(
   "/:commentId/replies",
   requireAuth,
-  zValidator("param", CreateReplyParamsSchema, validationHook),
-  zValidator("json", CreateReplyBodySchema, validationHook),
+  zValidator("param", CreateReplyParamsInputDTO, validationHook),
+  zValidator("json", CreateReplyBodyInputDTO, validationHook),
   async (c) => {
     const user = c.get("user");
     const { commentId } = c.req.valid("param");
@@ -30,7 +30,7 @@ commentRoute.post(
 commentRoute.delete(
   "/:commentId",
   requireAuth,
-  zValidator("param", DeleteCommentParamsSchema, validationHook),
+  zValidator("param", DeleteCommentParamsInputDTO, validationHook),
   async (c) => {
     const user = c.get("user");
     const { commentId } = c.req.valid("param");

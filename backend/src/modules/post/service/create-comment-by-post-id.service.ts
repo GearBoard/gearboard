@@ -10,5 +10,6 @@ export async function createCommentByPostIdService(
   data: CreateCommentBody
 ): Promise<CreateCommentByPostIdOutputDTO> {
   const comment = await commentRepository.create(userId, postId, data);
+
   return CreateCommentByPostIdOutputDTO.toDTO(comment);
 }

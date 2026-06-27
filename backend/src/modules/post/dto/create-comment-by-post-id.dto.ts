@@ -2,11 +2,11 @@ import { z } from "zod";
 import { GetCommentsByPostIdOutputDTO } from "./get-comments-by-post-id.dto.js";
 import type { Comment } from "../../comment/comment.repository.js";
 
-export const CreateCommentParamsSchema = z.object({
+export const CreateCommentParamsInputDTO = z.object({
   postId: z.string().trim().min(1, "Invalid post id"),
 });
 
-export const CreateCommentBodySchema = z.object({
+export const CreateCommentBodyInputDTO = z.object({
   content: z.string().min(1, "Content of comment is required"),
   images: z
     .string()
@@ -16,7 +16,7 @@ export const CreateCommentBodySchema = z.object({
     .transform((v) => (v ? v : null)),
 });
 
-export type CreateCommentBody = z.infer<typeof CreateCommentBodySchema>;
+export type CreateCommentBody = z.infer<typeof CreateCommentBodyInputDTO>;
 
 export class CreateCommentByPostIdOutputDTO extends GetCommentsByPostIdOutputDTO {
   static toDTO(comment: Comment): CreateCommentByPostIdOutputDTO {

@@ -9,9 +9,11 @@ export async function updatePostService(
 ): Promise<UpdatePostOutputDTO> {
   const post = await postRepository.findById(id);
   if (!post) throw new NotFoundError("Post not found");
+
   if (post.userId !== userId) throw new ForbiddenError("Forbidden");
 
   const updated = await postRepository.update(id, data);
   if (!updated) throw new NotFoundError("Post not found");
+
   return UpdatePostOutputDTO.toDTO(updated);
 }

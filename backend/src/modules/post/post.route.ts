@@ -5,15 +5,15 @@ import { requireAuth } from "../../common/middleware/auth.middleware.js";
 import { successResponse } from "../../common/utils/response.js";
 import { validationHook } from "../../common/utils/validation-hook.js";
 import {
-  GetPostByIdParamsSchema,
-  GetAllPostsQuerySchema,
-  CreatePostBodySchema,
-  UpdatePostParamsSchema,
-  UpdatePostBodySchema,
-  DeletePostParamsSchema,
-  GetCommentsByPostIdParamsSchema,
-  CreateCommentParamsSchema,
-  CreateCommentBodySchema,
+  GetPostByIdParamsInputDTO,
+  GetAllPostsQueryInputDTO,
+  CreatePostBodyInputDTO,
+  UpdatePostParamsInputDTO,
+  UpdatePostBodyInputDTO,
+  DeletePostParamsInputDTO,
+  GetCommentsByPostIdParamsInputDTO,
+  CreateCommentParamsInputDTO,
+  CreateCommentBodyInputDTO,
 } from "./dto/index.js";
 import {
   getPostByIdService,
@@ -27,13 +27,13 @@ import {
 
 export const postRoute = new Hono<{ Variables: AppVariables }>();
 
-postRoute.get("/:id", zValidator("param", GetPostByIdParamsSchema, validationHook), async (c) => {
+postRoute.get("/:id", zValidator("param", GetPostByIdParamsInputDTO, validationHook), async (c) => {
   const { id } = c.req.valid("param");
   const result = await getPostByIdService(id);
   return c.json(successResponse(result), 200);
 });
 
-postRoute.get("/", zValidator("query", GetAllPostsQuerySchema, validationHook), async (c) => {
+postRoute.get("/", zValidator("query", GetAllPostsQueryInputDTO, validationHook), async (c) => {
   const query = c.req.valid("query");
   const result = await getAllPostsService(query);
   return c.json(successResponse(result), 200);
@@ -42,7 +42,7 @@ postRoute.get("/", zValidator("query", GetAllPostsQuerySchema, validationHook), 
 postRoute.post(
   "/",
   requireAuth,
-  zValidator("json", CreatePostBodySchema, validationHook),
+  zValidator("json", CreatePostBodyInputDTO, validationHook),
   async (c) => {
     const user = c.get("user");
     const data = c.req.valid("json");
@@ -54,8 +54,8 @@ postRoute.post(
 postRoute.patch(
   "/:id",
   requireAuth,
-  zValidator("param", UpdatePostParamsSchema, validationHook),
-  zValidator("json", UpdatePostBodySchema, validationHook),
+  zValidator("param", UpdatePostParamsInputDTO, validationHook),
+  zValidator("json", UpdatePostBodyInputDTO, validationHook),
   async (c) => {
     const user = c.get("user");
     const { id } = c.req.valid("param");
@@ -68,7 +68,7 @@ postRoute.patch(
 postRoute.delete(
   "/:id",
   requireAuth,
-  zValidator("param", DeletePostParamsSchema, validationHook),
+  zValidator("param", DeletePostParamsInputDTO, validationHook),
   async (c) => {
     const user = c.get("user");
     const { id } = c.req.valid("param");
@@ -79,7 +79,7 @@ postRoute.delete(
 
 postRoute.get(
   "/:postId/comments",
-  zValidator("param", GetCommentsByPostIdParamsSchema, validationHook),
+  zValidator("param", GetCommentsByPostIdParamsInputDTO, validationHook),
   async (c) => {
     const { postId } = c.req.valid("param");
     const result = await getCommentsByPostIdService(postId);
@@ -90,8 +90,8 @@ postRoute.get(
 postRoute.post(
   "/:postId/comment",
   requireAuth,
-  zValidator("param", CreateCommentParamsSchema, validationHook),
-  zValidator("json", CreateCommentBodySchema, validationHook),
+  zValidator("param", CreateCommentParamsInputDTO, validationHook),
+  zValidator("json", CreateCommentBodyInputDTO, validationHook),
   async (c) => {
     const user = c.get("user");
     const { postId } = c.req.valid("param");

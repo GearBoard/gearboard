@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { Post } from "../post.repository.js";
 
-export const GetPostByIdParamsSchema = z.object({
+export const GetPostByIdParamsInputDTO = z.object({
   id: z.string().trim().min(1, "Invalid post id"),
 });
 

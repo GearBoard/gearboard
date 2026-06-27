@@ -11,5 +11,6 @@ export async function getAllPostsService(query: GetAllPostsQuery): Promise<GetAl
     tagName: query.tag,
     userId: query.userId,
   });
+
   return GetAllPostsOutputDTO.toDTO(posts, total, query.page, query.limit);
 }
