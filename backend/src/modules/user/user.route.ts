@@ -4,14 +4,26 @@ import type { AppVariables } from "../../common/types/index.js";
 import { requireAuth, requireAdmin } from "../../common/middleware/auth.middleware.js";
 import { successResponse } from "../../common/utils/response.js";
 import { validationHook } from "../../common/utils/validation-hook.js";
-import { getAllUsersQuerySchema, getUserByIdSchema, updateUserSchema } from "./user.schema.js";
-import { userService } from "./user.service.js";
+import {
+  GetUserByIdParamsInputDTO,
+  GetAllUsersQueryInputDTO,
+  UpdateUserParamsInputDTO,
+  UpdateUserBodyInputDTO,
+  DeleteUserParamsInputDTO,
+} from "./dto/index.js";
+import {
+  getMeService,
+  getUserByIdService,
+  getAllUsersService,
+  updateUserService,
+  deleteUserService,
+} from "./service/index.js";
 
 export const userRoute = new Hono<{ Variables: AppVariables }>();
 
 userRoute.get("/me", requireAuth, async (c) => {
   const user = c.get("user");
-  const data = await userService.getById(user.id, user.id, user.role);
+  const data = await getMeService(user.id);
   return c.json(successResponse(data), 200);
 });
 
@@ -19,10 +31,10 @@ userRoute.get(
   "/",
   requireAuth,
   requireAdmin,
-  zValidator("query", getAllUsersQuerySchema, validationHook),
+  zValidator("query", GetAllUsersQueryInputDTO, validationHook),
   async (c) => {
     const query = c.req.valid("query");
-    const result = await userService.getAll(query);
+    const result = await getAllUsersService(query);
     return c.json(successResponse(result), 200);
   }
 );
@@ -30,11 +42,11 @@ userRoute.get(
 userRoute.get(
   "/:id",
   requireAuth,
-  zValidator("param", getUserByIdSchema, validationHook),
+  zValidator("param", GetUserByIdParamsInputDTO, validationHook),
   async (c) => {
     const user = c.get("user");
     const { id } = c.req.valid("param");
-    const data = await userService.getById(id, user.id, user.role);
+    const data = await getUserByIdService(id, user.id, user.role);
     return c.json(successResponse(data), 200);
   }
 );
@@ -42,13 +54,13 @@ userRoute.get(
 userRoute.patch(
   "/:id",
   requireAuth,
-  zValidator("param", getUserByIdSchema, validationHook),
-  zValidator("json", updateUserSchema, validationHook),
+  zValidator("param", UpdateUserParamsInputDTO, validationHook),
+  zValidator("json", UpdateUserBodyInputDTO, validationHook),
   async (c) => {
     const user = c.get("user");
     const { id } = c.req.valid("param");
     const body = c.req.valid("json");
-    const result = await userService.update(id, body, user.id, user.role);
+    const result = await updateUserService(id, body, user.id, user.role);
     return c.json(successResponse(result, "User updated"), 200);
   }
 );
@@ -56,11 +68,11 @@ userRoute.patch(
 userRoute.delete(
   "/:id",
   requireAuth,
-  zValidator("param", getUserByIdSchema, validationHook),
+  zValidator("param", DeleteUserParamsInputDTO, validationHook),
   async (c) => {
     const user = c.get("user");
     const { id } = c.req.valid("param");
-    await userService.delete(id, user.id, user.role);
+    await deleteUserService(id, user.id, user.role);
     return c.json(successResponse(null, "User deleted successfully"), 200);
   }
 );

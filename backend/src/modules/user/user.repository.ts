@@ -1,7 +1,14 @@
 import { Prisma } from "../../../generated/prisma/client.js";
 import type { User } from "../../../generated/prisma/client.js";
 import { prisma } from "../../config/prisma.js";
-import type { UpdateUserRequestDto } from "./user.dto.js";
+
+type UpdateUserData = {
+  username?: string;
+  name?: string;
+  image?: string | null;
+  description?: string | null;
+  departmentId?: string | null;
+};
 
 export const userRepository = {
   async findById(id: string): Promise<User | null> {
@@ -51,7 +58,7 @@ export const userRepository = {
     return { users, total };
   },
 
-  async update(id: string, data: UpdateUserRequestDto): Promise<User | null> {
+  async update(id: string, data: UpdateUserData): Promise<User | null> {
     const updateData: Prisma.UserUpdateInput = {};
     if (data.username !== undefined) updateData.username = data.username;
     if (data.name !== undefined) updateData.name = data.name;
