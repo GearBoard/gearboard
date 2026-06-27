@@ -1,6 +1,7 @@
 import { Prisma } from "../../../generated/prisma/client.js";
 import type { User } from "../../../generated/prisma/client.js";
 import { prisma } from "../../config/prisma.js";
+import { ConflictError } from "../../common/errors/app-error.js";
 
 type UpdateUserData = {
   username?: string;
@@ -75,8 +76,9 @@ export const userRepository = {
         data: updateData,
       });
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
-        return null;
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === "P2025") return null;
+        if (error.code === "P2002") throw new ConflictError("Username already taken");
       }
       throw error;
     }
