@@ -1,7 +1,6 @@
 import { Prisma } from "../../../generated/prisma/client.js";
 import type { User } from "../../../generated/prisma/client.js";
 import { prisma } from "../../config/prisma.js";
-import { ConflictError } from "../../common/errors/app-error.js";
 
 type UpdateUserData = {
   username?: string;
@@ -12,6 +11,10 @@ type UpdateUserData = {
 };
 
 export const userRepository = {
+  async findByUsername(username: string): Promise<User | null> {
+    return prisma.user.findFirst({ where: { username, deletedAt: null } });
+  },
+
   async findById(id: string): Promise<User | null> {
     const user = await prisma.user.findUnique({
       where: { id, deletedAt: null },
@@ -76,9 +79,8 @@ export const userRepository = {
         data: updateData,
       });
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === "P2025") return null;
-        if (error.code === "P2002") throw new ConflictError("Username already taken");
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+        return null;
       }
       throw error;
     }
