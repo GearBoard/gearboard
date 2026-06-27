@@ -1,6 +1,6 @@
 import { ForbiddenError, NotFoundError } from "../../../common/errors/app-error.js";
 import { postRepository } from "../post.repository.js";
-import { UpdatePostOutputDTO, type UpdatePostBody } from "./update-post.dto.js";
+import { UpdatePostOutputDTO, type UpdatePostBody } from "../dto/update-post.dto.js";
 
 export async function updatePostService(
   id: string,

@@ -1,19 +1,22 @@
-export type SuccessResponseDto<T> = {
+export type SuccessResponse<T> = {
   success: true;
+  statusCode: number;
+  message: string;
   data: T;
 };
 
-export type ErrorResponseDto = {
+export type ErrorResponse = {
   success: false;
+  statusCode: number;
   message: string;
 };
 
-export type ApiResponseDto<T> = SuccessResponseDto<T> | ErrorResponseDto;
+export type ApiResponse<T> = SuccessResponse<T> | ErrorResponse;
 
-export function successResponse<T>(data: T): SuccessResponseDto<T> {
-  return { success: true, data };
+export function successResponse<T>(data: T, statusCode = 200, message = "OK"): SuccessResponse<T> {
+  return { success: true, statusCode, message, data };
 }
 
-export function errorResponse(message: string): ErrorResponseDto {
-  return { success: false, message };
+export function errorResponse(message: string, statusCode: number): ErrorResponse {
+  return { success: false, statusCode, message };
 }

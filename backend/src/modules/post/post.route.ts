@@ -4,23 +4,26 @@ import type { AppVariables } from "../../common/types/index.js";
 import { requireAuth } from "../../common/middleware/auth.middleware.js";
 import { successResponse } from "../../common/utils/response.js";
 import { validationHook } from "../../common/utils/validation-hook.js";
-import { GetPostByIdParamsSchema } from "./get-post-by-id/get-post-by-id.dto.js";
-import { getPostByIdService } from "./get-post-by-id/get-post-by-id.service.js";
-import { GetAllPostsQuerySchema } from "./get-all-posts/get-all-posts.dto.js";
-import { getAllPostsService } from "./get-all-posts/get-all-posts.service.js";
-import { CreatePostBodySchema } from "./create-post/create-post.dto.js";
-import { createPostService } from "./create-post/create-post.service.js";
-import { UpdatePostParamsSchema, UpdatePostBodySchema } from "./update-post/update-post.dto.js";
-import { updatePostService } from "./update-post/update-post.service.js";
-import { DeletePostParamsSchema } from "./delete-post/delete-post.dto.js";
-import { deletePostService } from "./delete-post/delete-post.service.js";
-import { GetCommentsByPostIdParamsSchema } from "./get-comments-by-post-id/get-comments-by-post-id.dto.js";
-import { getCommentsByPostIdService } from "./get-comments-by-post-id/get-comments-by-post-id.service.js";
 import {
+  GetPostByIdParamsSchema,
+  GetAllPostsQuerySchema,
+  CreatePostBodySchema,
+  UpdatePostParamsSchema,
+  UpdatePostBodySchema,
+  DeletePostParamsSchema,
+  GetCommentsByPostIdParamsSchema,
   CreateCommentParamsSchema,
   CreateCommentBodySchema,
-} from "./create-comment-by-post-id/create-comment-by-post-id.dto.js";
-import { createCommentByPostIdService } from "./create-comment-by-post-id/create-comment-by-post-id.service.js";
+} from "./dto/index.js";
+import {
+  getPostByIdService,
+  getAllPostsService,
+  createPostService,
+  updatePostService,
+  deletePostService,
+  getCommentsByPostIdService,
+  createCommentByPostIdService,
+} from "./service/index.js";
 
 export const postRoute = new Hono<{ Variables: AppVariables }>();
 
@@ -44,7 +47,7 @@ postRoute.post(
     const user = c.get("user");
     const data = c.req.valid("json");
     const result = await createPostService(data, user.id);
-    return c.json(successResponse(result), 201);
+    return c.json(successResponse(result, 201, "Post created"), 201);
   }
 );
 
@@ -58,7 +61,7 @@ postRoute.patch(
     const { id } = c.req.valid("param");
     const data = c.req.valid("json");
     const result = await updatePostService(id, data, user.id);
-    return c.json(successResponse(result), 200);
+    return c.json(successResponse(result, 200, "Post updated"), 200);
   }
 );
 
@@ -70,7 +73,7 @@ postRoute.delete(
     const user = c.get("user");
     const { id } = c.req.valid("param");
     await deletePostService(id, user.id);
-    return c.json(successResponse({ message: "Post deleted successfully" }), 200);
+    return c.json(successResponse(null, 200, "Post deleted successfully"), 200);
   }
 );
 
@@ -94,6 +97,6 @@ postRoute.post(
     const { postId } = c.req.valid("param");
     const data = c.req.valid("json");
     const result = await createCommentByPostIdService(user.id, postId, data);
-    return c.json(successResponse(result), 201);
+    return c.json(successResponse(result, 201, "Comment created"), 201);
   }
 );

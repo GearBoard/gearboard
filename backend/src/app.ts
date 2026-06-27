@@ -26,7 +26,10 @@ app.route("/api/users", userRoute);
 
 app.onError((err, c) => {
   const { statusCode, message } = resolveHttpError(err);
-  return c.json({ success: false, message }, statusCode as Parameters<typeof c.json>[1]);
+  return c.json(
+    { success: false, statusCode, message },
+    statusCode as Parameters<typeof c.json>[1]
+  );
 });
 
 export default app;

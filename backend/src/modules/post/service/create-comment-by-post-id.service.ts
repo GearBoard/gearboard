@@ -2,7 +2,7 @@ import { commentRepository } from "../../comment/comment.repository.js";
 import {
   CreateCommentByPostIdOutputDTO,
   type CreateCommentBody,
-} from "./create-comment-by-post-id.dto.js";
+} from "../dto/create-comment-by-post-id.dto.js";
 
 export async function createCommentByPostIdService(
   userId: string,

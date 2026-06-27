@@ -1,5 +1,5 @@
 import { postRepository } from "../post.repository.js";
-import { GetAllPostsOutputDTO, type GetAllPostsQuery } from "./get-all-posts.dto.js";
+import { GetAllPostsOutputDTO, type GetAllPostsQuery } from "../dto/get-all-posts.dto.js";
 import { getSkipTake } from "../../../common/utils/pagination.js";
 
 export async function getAllPostsService(query: GetAllPostsQuery): Promise<GetAllPostsOutputDTO> {

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { GetCommentsByPostIdOutputDTO } from "../get-comments-by-post-id/get-comments-by-post-id.dto.js";
+import { GetCommentsByPostIdOutputDTO } from "./get-comments-by-post-id.dto.js";
 import type { Comment } from "../../comment/comment.repository.js";
 
 export const CreateCommentParamsSchema = z.object({

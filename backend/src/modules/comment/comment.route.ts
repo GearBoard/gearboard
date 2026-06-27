@@ -4,10 +4,12 @@ import type { AppVariables } from "../../common/types/index.js";
 import { requireAuth } from "../../common/middleware/auth.middleware.js";
 import { successResponse } from "../../common/utils/response.js";
 import { validationHook } from "../../common/utils/validation-hook.js";
-import { CreateReplyParamsSchema, CreateReplyBodySchema } from "./create-reply/create-reply.dto.js";
-import { createReplyService } from "./create-reply/create-reply.service.js";
-import { DeleteCommentParamsSchema } from "./delete-comment/delete-comment.dto.js";
-import { deleteCommentService } from "./delete-comment/delete-comment.service.js";
+import {
+  CreateReplyParamsSchema,
+  CreateReplyBodySchema,
+  DeleteCommentParamsSchema,
+} from "./dto/index.js";
+import { createReplyService, deleteCommentService } from "./service/index.js";
 
 export const commentRoute = new Hono<{ Variables: AppVariables }>();
 
@@ -21,7 +23,7 @@ commentRoute.post(
     const { commentId } = c.req.valid("param");
     const data = c.req.valid("json");
     const result = await createReplyService(commentId, user.id, data);
-    return c.json(successResponse(result), 201);
+    return c.json(successResponse(result, 201, "Reply created"), 201);
   }
 );
 
@@ -33,6 +35,6 @@ commentRoute.delete(
     const user = c.get("user");
     const { commentId } = c.req.valid("param");
     await deleteCommentService(commentId, user.id);
-    return c.json(successResponse({ message: "Comment deleted successfully" }), 200);
+    return c.json(successResponse(null, 200, "Comment deleted successfully"), 200);
   }
 );

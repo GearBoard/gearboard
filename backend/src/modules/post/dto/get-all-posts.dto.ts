@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { GetPostByIdOutputDTO } from "../get-post-by-id/get-post-by-id.dto.js";
+import { GetPostByIdOutputDTO } from "./get-post-by-id.dto.js";
 import type { Post } from "../post.repository.js";
 
 export const GetAllPostsQuerySchema = z.object({

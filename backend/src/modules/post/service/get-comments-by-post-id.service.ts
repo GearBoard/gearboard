@@ -1,5 +1,5 @@
 import { commentRepository } from "../../comment/comment.repository.js";
-import { GetCommentsByPostIdOutputDTO } from "./get-comments-by-post-id.dto.js";
+import { GetCommentsByPostIdOutputDTO } from "../dto/get-comments-by-post-id.dto.js";
 
 export async function getCommentsByPostIdService(
   postId: string

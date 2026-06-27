@@ -7,6 +7,6 @@ export function validationHook(
 ): Response | void {
   if (!result.success) {
     const message = result.error?.issues[0]?.message ?? "Validation error";
-    return c.json({ success: false, message }, 400);
+    return c.json({ success: false, statusCode: 400, message }, 400);
   }
 }

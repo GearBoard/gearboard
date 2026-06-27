@@ -1,5 +1,5 @@
 import { postRepository } from "../post.repository.js";
-import { CreatePostOutputDTO, type CreatePostBody } from "./create-post.dto.js";
+import { CreatePostOutputDTO, type CreatePostBody } from "../dto/create-post.dto.js";
 
 export async function createPostService(
   data: CreatePostBody,

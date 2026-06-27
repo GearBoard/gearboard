@@ -1,6 +1,6 @@
 import { NotFoundError } from "../../../common/errors/app-error.js";
 import { commentRepository } from "../comment.repository.js";
-import { CreateReplyOutputDTO, type CreateReplyBody } from "./create-reply.dto.js";
+import { CreateReplyOutputDTO, type CreateReplyBody } from "../dto/create-reply.dto.js";
 
 export async function createReplyService(
   commentId: string,
