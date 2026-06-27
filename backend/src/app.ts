@@ -1,15 +1,13 @@
-import express from "express";
-import cors from "cors";
-import swaggerUi from "swagger-ui-express";
-import YAML from "yamljs";
-import { toNodeHandler } from "better-auth/node";
-
-import routes from "./routes.js";
+import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { auth } from "./config/auth.js";
 import { env } from "./config/env.js";
-import { errorMiddleware } from "./common/middleware/error.middleware.js";
+import { resolveHttpError } from "./common/utils/http-error.js";
+import { postRoute } from "./modules/post/post.route.js";
+import { commentRoute } from "./modules/comment/comment.route.js";
+import { userRoute } from "./modules/user/user.route.js";
 
-const app = express();
+const app = new Hono();
 
 app.use(
   cors({
@@ -18,20 +16,17 @@ app.use(
   })
 );
 
-app.all("/api/auth/*", toNodeHandler(auth));
+app.on(["POST", "GET"], "/api/auth/**", (c) => auth.handler(c.req.raw));
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.get("/", (c) => c.text("Hello World!"));
 
-app.get("/", (_req, res) => {
-  res.send("Hello World!");
+app.route("/api/posts", postRoute);
+app.route("/api/comments", commentRoute);
+app.route("/api/users", userRoute);
+
+app.onError((err, c) => {
+  const { statusCode, message } = resolveHttpError(err);
+  return c.json({ success: false, message }, statusCode as Parameters<typeof c.json>[1]);
 });
-
-const swaggerDocument = YAML.load("./openapi.yaml");
-app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-app.use("/api", routes);
-
-app.use(errorMiddleware);
 
 export default app;

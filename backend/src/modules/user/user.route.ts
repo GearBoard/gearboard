@@ -1,48 +1,66 @@
-import { Router } from "express";
+import { Hono } from "hono";
+import { zValidator } from "@hono/zod-validator";
+import type { AppVariables } from "../../common/types/index.js";
 import { requireAuth, requireAdmin } from "../../common/middleware/auth.middleware.js";
-import {
-  validateBody,
-  validateParams,
-  validateQuery,
-} from "../../common/middleware/validate.middleware.js";
-import { userController } from "./user.controller.js";
+import { successResponse } from "../../common/utils/response.js";
+import { validationHook } from "../../common/utils/validation-hook.js";
 import { getAllUsersQuerySchema, getUserByIdSchema, updateUserSchema } from "./user.schema.js";
+import { userService } from "./user.service.js";
 
-export const userRoute = Router();
+export const userRoute = new Hono<{ Variables: AppVariables }>();
 
-// GET /users/me — authenticated user's own profile
-userRoute.get("/me", requireAuth, userController.getMe.bind(userController));
+userRoute.get("/me", requireAuth, async (c) => {
+  const user = c.get("user");
+  const data = await userService.getById(user.id, user.id, user.role);
+  return c.json(successResponse(data), 200);
+});
 
-// GET /users — admin only, paginated list with filters
 userRoute.get(
   "/",
   requireAuth,
   requireAdmin,
-  validateQuery(getAllUsersQuerySchema),
-  userController.getAll.bind(userController)
+  zValidator("query", getAllUsersQuerySchema, validationHook),
+  async (c) => {
+    const query = c.req.valid("query");
+    const result = await userService.getAll(query);
+    return c.json(successResponse(result), 200);
+  }
 );
 
-// GET /users/:id — owner or admin
 userRoute.get(
   "/:id",
   requireAuth,
-  validateParams(getUserByIdSchema),
-  userController.getById.bind(userController)
+  zValidator("param", getUserByIdSchema, validationHook),
+  async (c) => {
+    const user = c.get("user");
+    const { id } = c.req.valid("param");
+    const data = await userService.getById(id, user.id, user.role);
+    return c.json(successResponse(data), 200);
+  }
 );
 
-// PATCH /users/:id — owner or admin
 userRoute.patch(
   "/:id",
   requireAuth,
-  validateParams(getUserByIdSchema),
-  validateBody(updateUserSchema),
-  userController.update.bind(userController)
+  zValidator("param", getUserByIdSchema, validationHook),
+  zValidator("json", updateUserSchema, validationHook),
+  async (c) => {
+    const user = c.get("user");
+    const { id } = c.req.valid("param");
+    const body = c.req.valid("json");
+    const result = await userService.update(id, body, user.id, user.role);
+    return c.json(successResponse(result), 200);
+  }
 );
 
-// DELETE /users/:id — owner or admin, soft delete
 userRoute.delete(
   "/:id",
   requireAuth,
-  validateParams(getUserByIdSchema),
-  userController.delete.bind(userController)
+  zValidator("param", getUserByIdSchema, validationHook),
+  async (c) => {
+    const user = c.get("user");
+    const { id } = c.req.valid("param");
+    await userService.delete(id, user.id, user.role);
+    return c.json(successResponse({ message: "User deleted successfully" }), 200);
+  }
 );

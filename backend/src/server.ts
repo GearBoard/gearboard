@@ -1,8 +1,13 @@
+import { serve } from "@hono/node-server";
 import app from "./app.js";
 import { env } from "./config/env.js";
 
-const port = Number(env.PORT);
-
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
+serve(
+  {
+    fetch: app.fetch,
+    port: Number(env.PORT),
+  },
+  (info) => {
+    console.log(`Server running at http://localhost:${info.port}`);
+  }
+);

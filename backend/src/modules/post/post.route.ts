@@ -1,71 +1,99 @@
-import { Router } from "express";
-import {
-  validateBody,
-  validateParams,
-  validateQuery,
-} from "../../common/middleware/validate.middleware.js";
+import { Hono } from "hono";
+import { zValidator } from "@hono/zod-validator";
+import type { AppVariables } from "../../common/types/index.js";
 import { requireAuth } from "../../common/middleware/auth.middleware.js";
-import { postController } from "./post.controller.js";
+import { successResponse } from "../../common/utils/response.js";
+import { validationHook } from "../../common/utils/validation-hook.js";
+import { GetPostByIdParamsSchema } from "./get-post-by-id/get-post-by-id.dto.js";
+import { getPostByIdService } from "./get-post-by-id/get-post-by-id.service.js";
+import { GetAllPostsQuerySchema } from "./get-all-posts/get-all-posts.dto.js";
+import { getAllPostsService } from "./get-all-posts/get-all-posts.service.js";
+import { CreatePostBodySchema } from "./create-post/create-post.dto.js";
+import { createPostService } from "./create-post/create-post.service.js";
+import { UpdatePostParamsSchema, UpdatePostBodySchema } from "./update-post/update-post.dto.js";
+import { updatePostService } from "./update-post/update-post.service.js";
+import { DeletePostParamsSchema } from "./delete-post/delete-post.dto.js";
+import { deletePostService } from "./delete-post/delete-post.service.js";
+import { GetCommentsByPostIdParamsSchema } from "./get-comments-by-post-id/get-comments-by-post-id.dto.js";
+import { getCommentsByPostIdService } from "./get-comments-by-post-id/get-comments-by-post-id.service.js";
 import {
-  createPostSchema,
-  createCommentByPostIdSchema,
-  getPostByIdSchema,
-  getCommentsByPostIdSchema,
-  getAllPostsQuerySchema,
-  updatePostSchema,
-} from "./post.schema.js";
+  CreateCommentParamsSchema,
+  CreateCommentBodySchema,
+} from "./create-comment-by-post-id/create-comment-by-post-id.dto.js";
+import { createCommentByPostIdService } from "./create-comment-by-post-id/create-comment-by-post-id.service.js";
 
-export const postRoute = Router();
+export const postRoute = new Hono<{ Variables: AppVariables }>();
 
-// GET /posts/:id - Get post by ID
-postRoute.get(
-  "/:id",
-  validateParams(getPostByIdSchema),
-  postController.getById.bind(postController)
-);
+postRoute.get("/:id", zValidator("param", GetPostByIdParamsSchema, validationHook), async (c) => {
+  const { id } = c.req.valid("param");
+  const result = await getPostByIdService(id);
+  return c.json(successResponse(result), 200);
+});
 
-// GET /posts - Get all posts with pagination and filters
-postRoute.get(
-  "/",
-  validateQuery(getAllPostsQuerySchema),
-  postController.getAll.bind(postController)
-);
+postRoute.get("/", zValidator("query", GetAllPostsQuerySchema, validationHook), async (c) => {
+  const query = c.req.valid("query");
+  const result = await getAllPostsService(query);
+  return c.json(successResponse(result), 200);
+});
 
-// POST /posts - Create a new post
 postRoute.post(
   "/",
   requireAuth,
-  validateBody(createPostSchema),
-  postController.create.bind(postController)
+  zValidator("json", CreatePostBodySchema, validationHook),
+  async (c) => {
+    const user = c.get("user");
+    const data = c.req.valid("json");
+    const result = await createPostService(data, user.id);
+    return c.json(successResponse(result), 201);
+  }
 );
 
-// PATCH /posts/:id - Update a post
 postRoute.patch(
   "/:id",
   requireAuth,
-  validateParams(getPostByIdSchema),
-  validateBody(updatePostSchema),
-  postController.update.bind(postController)
+  zValidator("param", UpdatePostParamsSchema, validationHook),
+  zValidator("json", UpdatePostBodySchema, validationHook),
+  async (c) => {
+    const user = c.get("user");
+    const { id } = c.req.valid("param");
+    const data = c.req.valid("json");
+    const result = await updatePostService(id, data, user.id);
+    return c.json(successResponse(result), 200);
+  }
 );
 
-// DELETE /posts/:id - Delete a post
 postRoute.delete(
   "/:id",
   requireAuth,
-  validateParams(getPostByIdSchema),
-  postController.delete.bind(postController)
+  zValidator("param", DeletePostParamsSchema, validationHook),
+  async (c) => {
+    const user = c.get("user");
+    const { id } = c.req.valid("param");
+    await deletePostService(id, user.id);
+    return c.json(successResponse({ message: "Post deleted successfully" }), 200);
+  }
+);
+
+postRoute.get(
+  "/:postId/comments",
+  zValidator("param", GetCommentsByPostIdParamsSchema, validationHook),
+  async (c) => {
+    const { postId } = c.req.valid("param");
+    const result = await getCommentsByPostIdService(postId);
+    return c.json(successResponse(result), 200);
+  }
 );
 
 postRoute.post(
   "/:postId/comment",
   requireAuth,
-  validateParams(getCommentsByPostIdSchema),
-  validateBody(createCommentByPostIdSchema),
-  postController.createComment.bind(postController)
-);
-
-postRoute.get(
-  "/:postId/comments",
-  validateParams(getCommentsByPostIdSchema),
-  postController.getComments.bind(postController)
+  zValidator("param", CreateCommentParamsSchema, validationHook),
+  zValidator("json", CreateCommentBodySchema, validationHook),
+  async (c) => {
+    const user = c.get("user");
+    const { postId } = c.req.valid("param");
+    const data = c.req.valid("json");
+    const result = await createCommentByPostIdService(user.id, postId, data);
+    return c.json(successResponse(result), 201);
+  }
 );

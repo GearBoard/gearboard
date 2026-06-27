@@ -1,7 +1,5 @@
 import { Prisma } from "../../../generated/prisma/client.js";
 import { prisma } from "../../config/prisma.js";
-import type { CreateCommentRequestDto, CreateReplyRequestDto } from "./comment.dto.js";
-import type { CommentWithRelations } from "./comment.mapper.js";
 
 const commentInclude = {
   images: true,
@@ -20,31 +18,31 @@ const commentInclude = {
   },
 } satisfies Prisma.CommentInclude;
 
+export type Comment = Prisma.CommentGetPayload<{ include: typeof commentInclude }>;
+
+type CommentData = { content: string; images?: string | null };
+
 export const commentRepository = {
-  async findById(id: string): Promise<CommentWithRelations | null> {
+  async findById(id: string): Promise<Comment | null> {
     const comment = await prisma.comment.findUnique({
       where: { id, deletedAt: null },
       include: commentInclude,
     });
 
-    return comment as CommentWithRelations | null;
+    return comment as Comment | null;
   },
 
-  async findManyByPostId(postId: string): Promise<CommentWithRelations[]> {
+  async findManyByPostId(postId: string): Promise<Comment[]> {
     const comments = await prisma.comment.findMany({
       where: { postId, parentId: null, deletedAt: null },
       include: commentInclude,
       orderBy: { createdAt: "desc" },
     });
 
-    return comments as CommentWithRelations[];
+    return comments as Comment[];
   },
 
-  async create(
-    userId: string,
-    postId: string,
-    data: CreateCommentRequestDto
-  ): Promise<CommentWithRelations> {
+  async create(userId: string, postId: string, data: CommentData): Promise<Comment> {
     const comment = await prisma.comment.create({
       data: {
         userId,
@@ -59,15 +57,15 @@ export const commentRepository = {
       include: commentInclude,
     });
 
-    return comment as CommentWithRelations;
+    return comment as Comment;
   },
 
   async createReply(
     userId: string,
     postId: string,
     parentId: string,
-    data: CreateReplyRequestDto
-  ): Promise<CommentWithRelations> {
+    data: CommentData
+  ): Promise<Comment> {
     const comment = await prisma.comment.create({
       data: {
         userId,
@@ -83,7 +81,7 @@ export const commentRepository = {
       include: commentInclude,
     });
 
-    return comment as CommentWithRelations;
+    return comment as Comment;
   },
 
   async softDelete(id: string): Promise<{ id: string } | null> {

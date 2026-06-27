@@ -1,7 +1,5 @@
 import { Prisma } from "../../../generated/prisma/client.js";
 import { prisma } from "../../config/prisma.js";
-import type { CreatePostRequestDto, UpdatePostRequestDto } from "./post.dto.js";
-import type { PostWithRelations } from "./post.mapper.js";
 
 const postInclude = {
   user: {
@@ -19,15 +17,29 @@ const postInclude = {
   images: true,
 };
 
-export { postInclude };
+export type Post = Prisma.PostGetPayload<{ include: typeof postInclude }>;
+
+type CreatePostData = {
+  title: string;
+  description: string;
+  tags: string[];
+  images: string[];
+};
+
+type UpdatePostData = {
+  title?: string;
+  description?: string;
+  tags?: string[];
+  isClosed?: boolean;
+};
 
 export const postRepository = {
-  async findById(id: string): Promise<PostWithRelations | null> {
+  async findById(id: string): Promise<Post | null> {
     const post = await prisma.post.findUnique({
       where: { id, deletedAt: null },
       include: postInclude,
     });
-    return post as PostWithRelations | null;
+    return post as Post | null;
   },
 
   async findMany(options: {
@@ -36,7 +48,7 @@ export const postRepository = {
     search?: string;
     tagName?: string;
     userId?: string;
-  }): Promise<{ posts: PostWithRelations[]; total: number }> {
+  }): Promise<{ posts: Post[]; total: number }> {
     const { skip, take, search, tagName, userId } = options;
 
     const whereConditions: Prisma.PostWhereInput = { deletedAt: null };
@@ -91,12 +103,12 @@ export const postRepository = {
     ]);
 
     return {
-      posts: posts as PostWithRelations[],
+      posts: posts as Post[],
       total,
     };
   },
 
-  async create(data: CreatePostRequestDto, userId: string): Promise<PostWithRelations> {
+  async create(data: CreatePostData, userId: string): Promise<Post> {
     const post = await prisma.post.create({
       data: {
         userId,
@@ -121,10 +133,10 @@ export const postRepository = {
       include: postInclude,
     });
 
-    return post as PostWithRelations;
+    return post as Post;
   },
 
-  async update(id: string, data: UpdatePostRequestDto): Promise<PostWithRelations | null> {
+  async update(id: string, data: UpdatePostData): Promise<Post | null> {
     const updateData: Prisma.PostUpdateInput = {};
     if (data.title !== undefined) updateData.title = data.title;
     if (data.description !== undefined) updateData.description = data.description;
@@ -164,7 +176,7 @@ export const postRepository = {
           include: postInclude,
         });
 
-        return updatedPost as PostWithRelations;
+        return updatedPost as Post;
       });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {

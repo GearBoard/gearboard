@@ -1,27 +1,15 @@
-import type { Response } from "express";
-
+import type { Context } from "hono";
 import { AppError } from "../errors/app-error.js";
-import { errorResponse } from "./response.js";
 
 export function resolveHttpError(error: unknown): { statusCode: number; message: string } {
   if (error instanceof AppError) {
-    return {
-      statusCode: error.statusCode,
-      message: error.message,
-    };
+    return { statusCode: error.statusCode, message: error.message };
   }
-
-  return {
-    statusCode: 500,
-    message: "Internal server error",
-  };
+  console.error(error);
+  return { statusCode: 500, message: "Internal server error" };
 }
 
-export function handleHttpError(res: Response, error: unknown): void {
-  if (!(error instanceof AppError)) {
-    console.error(error);
-  }
-
+export function handleHttpError(c: Context, error: unknown): Response {
   const { statusCode, message } = resolveHttpError(error);
-  res.status(statusCode).json(errorResponse(message));
+  return c.json({ success: false, message }, statusCode as Parameters<typeof c.json>[1]);
 }

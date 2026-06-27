@@ -1,49 +1,36 @@
-import type { NextFunction, Request, Response } from "express";
-import { fromNodeHeaders } from "better-auth/node";
-
+import { createMiddleware } from "hono/factory";
 import { auth } from "../../config/auth.js";
-import type { AuthenticatedRequest } from "../types/index.js";
-import { errorResponse } from "../utils/response.js";
 import { userRepository } from "../../modules/user/user.repository.js";
+import type { AppVariables } from "../types/index.js";
 
-export async function requireAuth(req: Request, res: Response, next: NextFunction): Promise<void> {
-  try {
-    const session = await auth.api.getSession({
-      headers: fromNodeHeaders(req.headers),
-    });
+export const requireAuth = createMiddleware<{ Variables: AppVariables }>(async (c, next) => {
+  const session = await auth.api.getSession({ headers: c.req.raw.headers });
 
-    if (!session?.user) {
-      res.status(401).json(errorResponse("Unauthorized"));
-      return;
-    }
-
-    const dbUser = await userRepository.findById(session.user.id);
-
-    if (!dbUser) {
-      res.status(401).json(errorResponse("Unauthorized"));
-      return;
-    }
-
-    (req as AuthenticatedRequest).user = {
-      id: dbUser.id,
-      name: dbUser.name,
-      image: dbUser.image ?? null,
-      role: dbUser.role,
-      email: dbUser.email,
-      username: dbUser.username ?? null,
-    };
-
-    next();
-  } catch (error) {
-    next(error);
+  if (!session?.user) {
+    return c.json({ success: false, message: "Unauthorized" }, 401);
   }
-}
 
-export function requireAdmin(req: Request, res: Response, next: NextFunction): void {
-  const authReq = req as AuthenticatedRequest;
-  if (authReq.user?.role !== "ADMIN") {
-    res.status(403).json(errorResponse("Forbidden"));
-    return;
+  const dbUser = await userRepository.findById(session.user.id);
+  if (!dbUser) {
+    return c.json({ success: false, message: "Unauthorized" }, 401);
   }
-  next();
-}
+
+  c.set("user", {
+    id: dbUser.id,
+    name: dbUser.name,
+    image: dbUser.image ?? null,
+    role: dbUser.role,
+    email: dbUser.email,
+    username: dbUser.username ?? null,
+  });
+
+  await next();
+});
+
+export const requireAdmin = createMiddleware<{ Variables: AppVariables }>(async (c, next) => {
+  const user = c.get("user");
+  if (user?.role !== "ADMIN") {
+    return c.json({ success: false, message: "Forbidden" }, 403);
+  }
+  await next();
+});

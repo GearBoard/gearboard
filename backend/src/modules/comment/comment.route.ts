@@ -1,22 +1,38 @@
-import { Router } from "express";
+import { Hono } from "hono";
+import { zValidator } from "@hono/zod-validator";
+import type { AppVariables } from "../../common/types/index.js";
 import { requireAuth } from "../../common/middleware/auth.middleware.js";
-import { validateBody, validateParams } from "../../common/middleware/validate.middleware.js";
-import { commentController } from "./comment.controller.js";
-import { commentIdValidateSchema, createReplySchema } from "./comment.schema.js";
+import { successResponse } from "../../common/utils/response.js";
+import { validationHook } from "../../common/utils/validation-hook.js";
+import { CreateReplyParamsSchema, CreateReplyBodySchema } from "./create-reply/create-reply.dto.js";
+import { createReplyService } from "./create-reply/create-reply.service.js";
+import { DeleteCommentParamsSchema } from "./delete-comment/delete-comment.dto.js";
+import { deleteCommentService } from "./delete-comment/delete-comment.service.js";
 
-export const commentRoute = Router({ mergeParams: true });
+export const commentRoute = new Hono<{ Variables: AppVariables }>();
 
 commentRoute.post(
   "/:commentId/replies",
   requireAuth,
-  validateParams(commentIdValidateSchema),
-  validateBody(createReplySchema),
-  commentController.createReply.bind(commentController)
+  zValidator("param", CreateReplyParamsSchema, validationHook),
+  zValidator("json", CreateReplyBodySchema, validationHook),
+  async (c) => {
+    const user = c.get("user");
+    const { commentId } = c.req.valid("param");
+    const data = c.req.valid("json");
+    const result = await createReplyService(commentId, user.id, data);
+    return c.json(successResponse(result), 201);
+  }
 );
 
 commentRoute.delete(
   "/:commentId",
   requireAuth,
-  validateParams(commentIdValidateSchema),
-  commentController.deleteComment.bind(commentController)
+  zValidator("param", DeleteCommentParamsSchema, validationHook),
+  async (c) => {
+    const user = c.get("user");
+    const { commentId } = c.req.valid("param");
+    await deleteCommentService(commentId, user.id);
+    return c.json(successResponse({ message: "Comment deleted successfully" }), 200);
+  }
 );
