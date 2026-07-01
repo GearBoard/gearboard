@@ -2,14 +2,27 @@
 import "dotenv/config";
 import { prisma } from "../src/config/prisma.js";
 
-const departments = [
-  { name: "Computer Engineering" },
-  { name: "Electrical Engineering" },
-  { name: "Mechanical Engineering" },
-  { name: "Civil Engineering" },
-  { name: "Mathematics" },
-  { name: "Physics" },
-  { name: "Chemistry" },
+const departments = [ //ใส่ข้อมูลให้หมดทุกภาควิชา Check...
+  { name: "วิศวกรรมโยธา" },
+  { name: "วิศวกรรมไฟฟ้า" },
+  { name: "วิศวกรรมเครื่องกล" },
+  { name: "วิศวกรรมเรือ" },
+  { name: "วิศวกรรมยานยนต์" },
+  { name: "วิศวกรรมอุตสาหการ" },
+  { name: "วิศวกรรมเคมี" },
+  { name: "วิศวกรรมทรัพยากรธรณี" },
+  { name: "วิศวกรรมปิโตรเลียม" },
+  { name: "วิศวกรรมสิ่งแวดล้อม" },
+  { name: "วิศวกรรมสำรวจ" },
+  { name: "วิศวกรรมโลหการและวัสดุ" },
+  { name: "วิศวกรรมคอมพิวเตอร์" },
+  { name: "วิศวกรรมนิวเคลียร์และรังสี" },
+  { name: "วิศวกรรมนาโน (NANO)" },
+  { name: "วิศวกรรมการออกแบบและการผลิตยานยนต์ (ADME)" },
+  { name: "วิศวกรรมอากาศยาน (AERO)" },
+  { name: "วิศวกรรมสารสนเทศและการสื่อสาร (ICE)" },
+  { name: "วิศวกรรมหุ่นยนต์และปัญญาประดิษฐ์ (RAIE)" },
+  { name: "วิศวกรรมเคมีและกระบวนการ (ChPE)" },
 ];
 
 async function main() {
