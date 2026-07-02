@@ -25,12 +25,19 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
           onSuccess: () => {
             router.push("/");
           },
-          onError: (ctx: { error: { message: string } }) => {
-            const msg = ctx.error.message.toLowerCase();
-            if (msg.includes("password")) {
-              setErrors((prev) => ({ ...prev, password: "รหัสผ่านไม่ถูกต้อง" }));
-            } else {
-              setErrors((prev) => ({ ...prev, email: ctx.error.message }));
+          onError: (ctx: { error: { code?: string; message: string } }) => {
+            switch (ctx.error.code) {
+              case "INVALID_EMAIL_OR_PASSWORD":
+                setErrors((prev) => ({ ...prev, email: "อีเมลหรือรหัสผ่านไม่ถูกต้อง" }));
+                break;
+              case "INVALID_EMAIL":
+                setErrors((prev) => ({ ...prev, email: "รูปแบบอีเมลไม่ถูกต้อง" }));
+                break;
+              default:
+                setErrors((prev) => ({
+                  ...prev,
+                  email: "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง",
+                }));
             }
           },
         }
@@ -43,12 +50,22 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
   };
 
   const handleGoogleSignIn = async () => {
+    setErrors({ email: "", password: "" });
     setIsGoogleLoading(true);
     try {
-      await authClient.signIn.social({
-        provider: "google",
-        callbackURL: `${window.location.origin}/`,
-      });
+      await authClient.signIn.social(
+        { provider: "google", callbackURL: `${window.location.origin}/` },
+        {
+          onError: () => {
+            setErrors((prev) => ({
+              ...prev,
+              email: "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง",
+            }));
+          },
+        }
+      );
+    } catch {
+      setErrors((prev) => ({ ...prev, email: "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง" }));
     } finally {
       setIsGoogleLoading(false);
     }
