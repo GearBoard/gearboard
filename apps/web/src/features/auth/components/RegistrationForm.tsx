@@ -129,15 +129,19 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
         <div className="flex-1 border-t border-dark-gray" />
       </div>
 
-      <button
+      <Button
         type="button"
+        variant="outline"
+        color="gray"
+        size="lg"
+        className="w-full"
         onClick={handleGoogleSignIn}
-        disabled={isLoading || isGoogleLoading}
-        className="h-12 w-full flex items-center justify-center gap-3 border-[1.5px] border-gray rounded-[10px] bg-white px-4 text-sm md:text-base font-medium hover:bg-light-gray transition-colors cursor-pointer text-dark-gray disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={isLoading}
+        loading={isGoogleLoading}
+        iconLeft={<GoogleIcon />}
       >
-        <GoogleIcon />
         ดำเนินการต่อด้วย Google
-      </button>
+      </Button>
 
       <p className="text-center text-sm md:text-base">
         มีบัญชีอยู่แล้ว ?{" "}

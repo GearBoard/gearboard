@@ -8,9 +8,13 @@ const meta: Meta<typeof Button> = {
   component: Button,
   tags: ["autodocs"],
   argTypes: {
+    variant: {
+      control: "select",
+      options: ["default", "outline"],
+    },
     color: {
       control: "select",
-      options: ["red", "navy", "yellow"],
+      options: ["red", "gray"],
     },
     size: {
       control: "select",
@@ -36,8 +40,16 @@ export const AllColors: Story = {
   render: () => (
     <div className="flex flex-wrap gap-4">
       <Button color="red">Red</Button>
-      <Button color="navy">Navy</Button>
-      <Button color="yellow">Yellow</Button>
+      <Button color="gray">Gray</Button>
+    </div>
+  ),
+};
+
+export const Outline: Story = {
+  render: () => (
+    <div className="flex flex-wrap gap-4">
+      <Button variant="outline" color="red">Red</Button>
+      <Button variant="outline" color="gray">Gray</Button>
     </div>
   ),
 };
@@ -57,7 +69,7 @@ export const WithIconLeft: Story = {
   args: {
     children: "Download",
     iconLeft: <Download />,
-    color: "navy",
+    color: "gray",
     size: "md",
   },
 };
@@ -76,7 +88,7 @@ export const WithBothIcons: Story = {
     children: "Download",
     iconLeft: <Download />,
     iconRight: <ArrowRight />,
-    color: "navy",
+    color: "gray",
     size: "md",
   },
 };
@@ -94,6 +106,6 @@ export const Disabled: Story = {
   args: {
     children: "Disabled",
     disabled: true,
-    color: "navy",
+    color: "gray",
   },
 };
