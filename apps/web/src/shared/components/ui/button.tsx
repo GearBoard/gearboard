@@ -11,20 +11,29 @@ const buttonVariants = cva(
   "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 cursor-pointer active:cursor-default",
   {
     variants: {
+      variant: {
+        default: "",
+        outline: "bg-white",
+      },
       color: {
-        red: "bg-primary-red text-white hover:bg-dark-red active:bg-darker-red focus-visible:ring-primary-red",
-        navy: "bg-primary-navy text-white hover:bg-dark-navy active:bg-darker-navy focus-visible:ring-primary-navy",
-        yellow:
-          "bg-primary-yellow text-primary-navy hover:bg-dark-yellow active:bg-darker-yellow focus-visible:ring-primary-yellow",
+        red: "focus-visible:ring-primary-red",
+        gray: "focus-visible:ring-primary-dark-gray",
       },
       size: {
-        lg: "px-5 py-3 h-12 text-base gap-2 [&_svg:not([class*='size-'])]:size-[16px]", // Rename the existing default size variant to lg
-        md: "px-4 py-2 h-10 text-base gap-2 [&_svg:not([class*='size-'])]:size-[16px]",
-        sm: "px-3 py-1.5 h-8 text-sm gap-2 [&_svg:not([class*='size-'])]:size-[14px]", // Update the sm size variant horizontal padding to px-3
-        xs: "px-2 py-1 h-6 text-xs gap-2 [&_svg:not([class*='size-'])]:size-[12px]",
+        lg: "px-5 py-3 text-base gap-2 [&_svg:not([class*='size-'])]:size-[16px]", // Rename the existing default size variant to lg
+        md: "px-4 py-2 text-base gap-2 [&_svg:not([class*='size-'])]:size-[16px]",
+        sm: "px-4 py-1.5 text-sm gap-2 [&_svg:not([class*='size-'])]:size-[14px]", // Update the sm size variant horizontal padding to px-3
+        xs: "px-2 py-1 text-xs gap-2 [&_svg:not([class*='size-'])]:size-[12px]",
       },
     },
+    compoundVariants: [
+      { variant: "default", color: "red", className: "bg-primary-red text-white hover:bg-dark-red active:bg-darker-red" },
+      { variant: "default", color: "gray", className: "bg-dark-gray text-white hover:bg-[#5D636B] active:bg-[#4D5054]" },
+      { variant: "outline", color: "red", className: "border-primary-red text-primary-red hover:border-dark-red hover:text-dark-red active:border-darker-red active:text-darker-red" },
+      { variant: "outline", color: "gray", className: "border-dark-gray text-dark-gray hover:border-[#5D636B] hover:text-[#5D636B] active:border-[#4D5054] active:text-[#4D5054]" },
+    ],
     defaultVariants: {
+      variant: "default",
       color: "red",
       size: "md", //Change the default size fallback from the current default variant to md
     },
@@ -43,6 +52,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       className,
+      variant = "default",
       color = "red",
       size = "md", // change to md
       asChild = false,
@@ -61,12 +71,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <Comp
         data-slot="button"
-        data-variant={color}
+        data-variant={variant}
+        data-color={color}
         data-size={size}
         disabled={isDisabled}
         aria-disabled={isDisabled}
         aria-busy={loading}
-        className={cn(buttonVariants({ color, size, className }))}
+        className={cn(buttonVariants({ variant, color, size, className }))}
         ref={ref}
         {...props}
         onClick={(e) => {
