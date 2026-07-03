@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Input } from "@/shared/components";
 import { GoogleIcon } from "@/shared/components/icons/GoogleIcon";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/shared/libs/auth-client";
 import type { LoginFormProps } from "../types/types";
 
@@ -11,8 +11,22 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [errors, setErrors] = useState({ email: "", password: "" });
   const router = useRouter();
+  const searchParams = useSearchParams();
+  // Google OAuth errors that happen after the redirect back from the provider
+  // land here as an `error` query param (set via errorCallbackURL below).
+  const [errors, setErrors] = useState(() =>
+    searchParams.get("error")
+      ? { email: "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง", password: "" }
+      : { email: "", password: "" }
+  );
+
+  useEffect(() => {
+    if (searchParams.get("error")) {
+      router.replace("/auth", { scroll: false });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSubmit = async (e: { preventDefault(): void }) => {
     e.preventDefault();
@@ -54,7 +68,11 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
     setIsGoogleLoading(true);
     try {
       await authClient.signIn.social(
-        { provider: "google", callbackURL: `${window.location.origin}/` },
+        {
+          provider: "google",
+          callbackURL: `${window.location.origin}/`,
+          errorCallbackURL: `${window.location.origin}/auth`,
+        },
         {
           onError: () => {
             setErrors((prev) => ({

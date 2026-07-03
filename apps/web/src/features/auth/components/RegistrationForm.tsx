@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { Button, Input } from "@/shared/components";
 import { GoogleIcon } from "@/shared/components/icons/GoogleIcon";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/shared/libs/auth-client";
 import type { RegistrationFormProps } from "../types/types";
 
@@ -17,10 +17,24 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
   const [formData, setFormData] = useState({ name: "", email: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [errors, setErrors] = useState({ name: "", email: "", password: "" });
   const router = useRouter();
+  const searchParams = useSearchParams();
+  // Google OAuth errors that happen after the redirect back from the provider
+  // land here as an `error` query param (set via errorCallbackURL below).
+  const [errors, setErrors] = useState(() =>
+    searchParams.get("error")
+      ? { name: "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง", email: "", password: "" }
+      : { name: "", email: "", password: "" }
+  );
 
   const clearErrors = () => setErrors({ name: "", email: "", password: "" });
+
+  useEffect(() => {
+    if (searchParams.get("error")) {
+      router.replace("/auth", { scroll: false });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const mapError = (code: string | undefined) => {
     switch (code) {
@@ -90,7 +104,11 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
     setIsGoogleLoading(true);
     try {
       await authClient.signIn.social(
-        { provider: "google", callbackURL: `${window.location.origin}/` },
+        {
+          provider: "google",
+          callbackURL: `${window.location.origin}/`,
+          errorCallbackURL: `${window.location.origin}/auth`,
+        },
         {
           onError: () => {
             setErrors((prev) => ({
