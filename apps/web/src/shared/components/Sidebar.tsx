@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { House, StickyNote, Bookmark, ChevronRight, LogOut } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
+import { cn } from "@/shared/libs/utils";
 
 type ActivePage = "home" | "posts" | "saved";
 
@@ -14,6 +15,7 @@ interface SidebarProps {
   user?: {
     name: string;
   };
+  onLogout?: () => void;
 }
 
 const NAV_ITEMS = [
@@ -26,6 +28,7 @@ export const Sidebar = ({
   isAuthenticated = false,
   activePage = "home",
   user,
+  onLogout,
 }: SidebarProps) => {
   return (
     <aside className="flex flex-col justify-between bg-white border-b border-l border-r border-gray w-60 md:w-80 px-3 pt-4 pb-9 md:px-4 md:py-9 h-full">
@@ -47,24 +50,35 @@ export const Sidebar = ({
         <div className="flex flex-col gap-2">
           {NAV_ITEMS.map(({ id, label, icon: Icon, href }) => {
             const isActive = activePage === id;
+            const navClass = cn(
+              "flex items-center gap-3 w-full rounded-lg text-left font-semibold transition-colors",
+              "pl-6 pr-4 py-2 h-10 text-sm",
+              "md:pl-8 md:pr-4 md:py-3 md:h-12 md:text-base",
+              isActive
+                ? "bg-primary-red text-white cursor-default"
+                : "bg-white text-black cursor-pointer hover:bg-light-gray active:bg-gray"
+            );
+
+            if (isActive) {
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  disabled
+                  aria-current="page"
+                  className={navClass}
+                >
+                  <Icon className="w-6 h-6 shrink-0" />
+                  {label}
+                </button>
+              );
+            }
+
             return (
-              <button
-                key={id}
-                type="button"
-                disabled={isActive}
-                aria-current={isActive ? "page" : undefined}
-                className={[
-                  "flex items-center gap-3 w-full rounded-lg text-left font-semibold transition-colors",
-                  "pl-6 pr-4 py-2 h-10 text-sm",
-                  "md:pl-8 md:pr-4 md:py-3 md:h-12 md:text-base",
-                  isActive
-                    ? "bg-primary-red text-white cursor-default"
-                    : "bg-white text-black cursor-pointer hover:bg-light-gray active:bg-gray",
-                ].join(" ")}
-              >
+              <Link key={id} href={href} className={navClass}>
                 <Icon className="w-6 h-6 shrink-0" />
                 {label}
-              </button>
+              </Link>
             );
           })}
         </div>
@@ -86,7 +100,7 @@ export const Sidebar = ({
               <div className="w-9 h-9 md:w-12 md:h-12 rounded-full bg-[#C01300] shrink-0" />
               <div className="flex flex-col">
                 <span className="text-sm md:text-base font-medium text-black leading-[135%]">
-                  {user?.name ?? "John Doe"}
+                  {user?.name}
                 </span>
                 <span className="text-xs md:text-sm font-medium text-dark-gray leading-[135%]">
                   ดูโปรไฟล์
@@ -99,6 +113,7 @@ export const Sidebar = ({
           {/* Logout button */}
           <button
             type="button"
+            onClick={onLogout}
             className="flex items-center gap-3 w-full rounded-lg px-4 py-2 md:py-3 h-10 md:h-12 bg-[#FFF2F2] text-[#CE0000] font-semibold text-sm md:text-lg cursor-pointer hover:bg-[#FFE5E5] active:bg-[#FFCCCC] transition-colors"
           >
             <LogOut className="w-6 h-6 shrink-0" />
@@ -110,11 +125,11 @@ export const Sidebar = ({
         <div className="flex flex-col gap-4 md:hidden">
           <hr className="border-gray" />
           <div className="flex flex-col gap-3">
-            <Button variant="outline" color="red" className="w-full font-bold">
-              Log in
+            <Button variant="outline" color="red" className="w-full font-bold" asChild>
+              <Link href="/login">Log in</Link>
             </Button>
-            <Button color="red" className="w-full font-bold">
-              Sign up
+            <Button color="red" className="w-full font-bold" asChild>
+              <Link href="/register">Sign up</Link>
             </Button>
           </div>
         </div>
