@@ -1,4 +1,4 @@
-import type { Department } from "../department.repository.js";
+import type { Department } from "../../../../generated/prisma/client.js";
 
 export class DepartmentOutputDTO {
     id!: string;
