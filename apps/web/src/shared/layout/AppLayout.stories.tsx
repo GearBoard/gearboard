@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { within, userEvent } from "storybook/test";
-import AppLayout from "@/shared/components/AppLayout";
+import AppLayout from "@/shared/layout/AppLayout";
 
 const meta: Meta<typeof AppLayout> = {
-  title: "Shared/UI/AppLayout",
+  title: "Shared/Layout/AppLayout",
   component: AppLayout,
   tags: ["autodocs"],
   parameters: {
