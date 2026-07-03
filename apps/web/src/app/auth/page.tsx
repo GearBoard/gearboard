@@ -17,7 +17,7 @@ export default function AuthPage() {
         aria-hidden="true"
         fill
         priority
-        className="pointer-events-none hidden object-cover md:block"
+        className="pointer-events-none -z-10 hidden object-cover md:block"
       />
 
       <Link
