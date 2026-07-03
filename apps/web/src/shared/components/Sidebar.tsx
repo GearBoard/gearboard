@@ -43,7 +43,7 @@ export const Sidebar = ({
             alt="GearBoard Logo"
             className="w-[41px] h-10"
           />
-          <span className="font-black text-xl text-primary-red">GEARBOARD</span>
+          <span className="font-black text-xl text-primary-red">gearboard</span>
         </Link>
 
         {/* Nav buttons */}
