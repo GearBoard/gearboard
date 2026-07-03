@@ -3,87 +3,105 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Search, Menu } from "lucide-react";
+import { Search, Menu, Github } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 
-export const Navbar = () => {
+interface NavbarProps {
+  isAuthenticated?: boolean;
+}
+
+export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   return (
-    <nav className="bg-bg-white py-4 px-8">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-8 flex-1">
-          {/* Logo */}
-          <div className="shrink-0">
-            <Link
-              href="/"
-              className="font-bold tracking-tight text-primary-red flex flex-row items-center gap-2 text-base sm:text-3xl"
-            >
-              <Image
-                src="/logo.svg"
-                width={82}
-                height={80}
-                alt="GearBoard Logo"
-                className="w-[42px] h-[41px] sm:w-[82px] sm:h-[80px]"
-              />
-              <span>GEARBOARD</span>
-            </Link>
-          </div>
+    <nav className="bg-white border-b border-gray">
+      <div className="flex items-center justify-between px-6 h-12 md:px-16 md:h-16">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-[9px] md:gap-3 shrink-0">
+          <Image
+            src="/logo.svg"
+            width={47}
+            height={46}
+            alt="GearBoard Logo"
+            className="w-8 h-[31px] md:w-[47px] md:h-[46px]"
+          />
+          <span className="font-black text-base md:text-2xl text-primary-red">
+            GEARBOARD
+          </span>
+        </Link>
 
-          {/* Search Bar (Desktop) */}
-          <div className="hidden md:block w-full max-w-[500px]">
+        {/* Search Bar — desktop only, fills space between logo and actions */}
+        <div className="hidden md:flex flex-1 justify-center mx-8">
+          <div className="w-full max-w-[478px]">
             <Input
               type="text"
               placeholder="ค้นหาวิชา, อาจารย์ หรือข้อสอบ"
               aria-label="ค้นหา"
-              icon={<Search className="text-primary-red" />}
+              icon={<Search />}
             />
           </div>
         </div>
 
-        {/* Action Buttons (Desktop) */}
-        <div className="hidden md:flex items-center gap-3">
-          <Button color="yellow" size="md" className="font-bold">
-            Log in
-          </Button>
-          <Button color="red" size="md" className="font-bold">
-            Sign up
-          </Button>
-        </div>
+        {/* Right side */}
+        <div className="flex items-center shrink-0">
+          {/* Desktop: authenticated */}
+          {isAuthenticated && (
+            <div className="hidden md:flex">
+              <Button
+                variant="outline"
+                color="gray"
+                size="md"
+                iconLeft={<Github />}
+              >
+                gearboard
+              </Button>
+            </div>
+          )}
 
-        {/* Mobile Icons (Search & Menu) */}
-        <div className="md:hidden flex items-center gap-4">
-          <button
-            type="button"
-            className="p-1 focus-visible:ring-2 focus-visible:ring-primary-red focus-visible:ring-offset-2 outline-none rounded-sm"
-            aria-label="Search"
-            onClick={() => setIsSearchOpen(!isSearchOpen)}
-          >
-            <Search className="h-6 w-6 text-primary-red" />
-          </button>
-          <button
-            type="button"
-            className="p-1 focus-visible:ring-2 focus-visible:ring-primary-red focus-visible:ring-offset-2 outline-none rounded-sm"
-            aria-label="Menu"
-          >
-            <Menu className="h-6 w-6 text-primary-red" />
-          </button>
+          {/* Desktop: unauthenticated */}
+          {!isAuthenticated && (
+            <div className="hidden md:flex items-center gap-[15px]">
+              <Button variant="outline" color="red" size="md" className="font-bold">
+                Log in
+              </Button>
+              <Button color="red" size="md" className="font-bold">
+                Sign up
+              </Button>
+            </div>
+          )}
+
+          {/* Mobile icons */}
+          <div className="flex items-center gap-4 md:hidden">
+            <button
+              type="button"
+              className="p-1 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-primary-red focus-visible:ring-offset-2"
+              aria-label="Search"
+              onClick={() => setIsSearchOpen(!isSearchOpen)}
+            >
+              <Search className="w-6 h-6 text-primary-red" />
+            </button>
+            <button
+              type="button"
+              className="p-1 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-primary-red focus-visible:ring-offset-2"
+              aria-label="Menu"
+            >
+              <Menu className="w-6 h-6 text-primary-red" />
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Mobile Search Bar Toggle */}
+      {/* Mobile search bar — expands below navbar on search icon click */}
       {isSearchOpen && (
-        <div className="md:hidden flex justify-center mt-[10px]">
-          <div className="w-[374px] max-w-full">
-            <Input
-              type="text"
-              placeholder="ค้นหาวิชา, อาจารย์ หรือข้อสอบ"
-              aria-label="ค้นหา"
-              icon={<Search className="text-primary-red" />}
-              autoFocus
-            />
-          </div>
+        <div className="md:hidden px-6 pb-[10px]">
+          <Input
+            type="text"
+            placeholder="ค้นหาวิชา, อาจารย์ หรือข้อสอบ"
+            aria-label="ค้นหา"
+            icon={<Search />}
+            autoFocus
+          />
         </div>
       )}
     </nav>
