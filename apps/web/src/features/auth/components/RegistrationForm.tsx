@@ -42,7 +42,7 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
         },
         {
           onSuccess: () => {
-            router.push("/");
+            router.push("/onboarding");
           },
           onError: (ctx: { error: { message: string } }) => {
             mapError(ctx.error.message);
@@ -61,7 +61,7 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
     try {
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: `${window.location.origin}/`,
+        callbackURL: `${window.location.origin}/onboarding`,
       });
     } finally {
       setIsGoogleLoading(false);
@@ -69,7 +69,7 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
   };
 
   return (
-    <div className="bg-white rounded-xl border-[1.5px] border-gray shadow-primary-red px-6 py-6 md:px-8 md:py-8 flex flex-col gap-4 md:gap-5 w-full">
+    <div className="bg-white rounded-xl border-[1.5px] border-gray shadow-primary-red px-6 py-6 md:px-8 md:py-8 flex flex-col gap-4 md:gap-5 w-full max-w-[480px]">
       <div>
         <h1 className="text-[32px] md:text-4xl font-bold text-primary-red">ลงทะเบียน</h1>
         <p className="text-sm md:text-base text-black font-medium mt-1">
