@@ -11,3 +11,5 @@ export { Modal } from "./ui/modal";
 export type { ModalProps } from "./ui/modal";
 
 export { Sidebar } from "./Sidebar";
+
+export { AppLayout } from "./AppLayout";

@@ -9,9 +9,10 @@ import { Input } from "@/shared/components/ui/input";
 
 interface NavbarProps {
   isAuthenticated?: boolean;
+  onMenuClick?: () => void;
 }
 
-export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
+export const Navbar = ({ isAuthenticated = false, onMenuClick }: NavbarProps) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   return (
@@ -87,6 +88,7 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
               type="button"
               className="p-1 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-primary-red focus-visible:ring-offset-2"
               aria-label="Menu"
+              onClick={onMenuClick}
             >
               <Menu className="w-6 h-6 text-primary-red" />
             </button>

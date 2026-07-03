@@ -16,6 +16,7 @@ interface SidebarProps {
     name: string;
   };
   onLogout?: () => void;
+  onClose?: () => void;
 }
 
 const NAV_ITEMS = [
