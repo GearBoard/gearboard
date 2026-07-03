@@ -28,7 +28,7 @@ export const Navbar = ({ isAuthenticated = false, onMenuClick }: NavbarProps) =>
             className="w-8 h-[31px] md:w-[47px] md:h-[46px]"
           />
           <span className="font-black text-base md:text-2xl text-primary-red">
-            GEARBOARD
+            gearboard
           </span>
         </Link>
 
@@ -37,7 +37,7 @@ export const Navbar = ({ isAuthenticated = false, onMenuClick }: NavbarProps) =>
           <div className="w-full max-w-[478px]">
             <Input
               type="text"
-              placeholder="ค้นหาวิชา, อาจารย์ หรือข้อสอบ"
+              placeholder="ค้นหา"
               aria-label="ค้นหา"
               icon={<Search />}
             />
@@ -65,10 +65,10 @@ export const Navbar = ({ isAuthenticated = false, onMenuClick }: NavbarProps) =>
           {!isAuthenticated && (
             <div className="hidden md:flex items-center gap-[15px]">
               <Button variant="outline" color="red" size="md" className="font-bold">
-                Log in
+                เข้าสู่ระบบ
               </Button>
               <Button color="red" size="md" className="font-bold">
-                Sign up
+                ลงทะเบียน
               </Button>
             </div>
           )}
@@ -102,7 +102,7 @@ export const Navbar = ({ isAuthenticated = false, onMenuClick }: NavbarProps) =>
         <div id="mobile-search-bar" className="md:hidden px-6 pb-[10px]">
           <Input
             type="text"
-            placeholder="ค้นหาวิชา, อาจารย์ หรือข้อสอบ"
+            placeholder="ค้นหา"
             aria-label="ค้นหา"
             icon={<Search />}
             autoFocus
