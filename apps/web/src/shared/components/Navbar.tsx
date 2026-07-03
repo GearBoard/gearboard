@@ -77,6 +77,8 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
               type="button"
               className="p-1 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-primary-red focus-visible:ring-offset-2"
               aria-label="Search"
+              aria-expanded={isSearchOpen}
+              aria-controls="mobile-search-bar"
               onClick={() => setIsSearchOpen(!isSearchOpen)}
             >
               <Search className="w-6 h-6 text-primary-red" />
@@ -94,7 +96,7 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
 
       {/* Mobile search bar — expands below navbar on search icon click */}
       {isSearchOpen && (
-        <div className="md:hidden px-6 pb-[10px]">
+        <div id="mobile-search-bar" className="md:hidden px-6 pb-[10px]">
           <Input
             type="text"
             placeholder="ค้นหาวิชา, อาจารย์ หรือข้อสอบ"

@@ -26,14 +26,14 @@ export const DesktopAuthenticated: Story = {
 
 export const MobileUnauthenticated: Story = {
   args: { isAuthenticated: false },
-  parameters: {
-    viewport: { defaultViewport: "mobile1" },
+  globals: {
+    viewport: { value: "mobile1", isRotated: false },
   },
 };
 
 export const MobileAuthenticated: Story = {
   args: { isAuthenticated: true },
-  parameters: {
-    viewport: { defaultViewport: "mobile1" },
+  globals: {
+    viewport: { value: "mobile1", isRotated: false },
   },
 };
