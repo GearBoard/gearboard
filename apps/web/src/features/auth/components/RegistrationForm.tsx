@@ -1,11 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import { z } from "zod";
 import { Button, Input } from "@/shared/components";
 import { GoogleIcon } from "@/shared/components/icons/GoogleIcon";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/shared/libs/auth-client";
 import type { RegistrationFormProps } from "../types/types";
+
+const registerSchema = z.object({
+  name: z.string().regex(/^[a-z0-9.]+$/, "ใช้ได้เฉพาะ a-z, 0-9 และ . เท่านั้น"),
+  password: z.string().min(8, "กรุณากรอกรหัสผ่านอย่างน้อย 8 ตัว"),
+});
 
 export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormProps) {
   const [formData, setFormData] = useState({ name: "", email: "", password: "" });
@@ -31,6 +37,7 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
       case "PASSWORD_TOO_LONG":
         setErrors((prev) => ({ ...prev, password: "รหัสผ่านต้องไม่เกิน 128 ตัว" }));
         break;
+      // Backend crashes (500) or any code we don't explicitly handle fall through here.
       default:
         setErrors((prev) => ({ ...prev, name: "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง" }));
     }
@@ -39,6 +46,21 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
   const handleSubmit = async (e: { preventDefault(): void }) => {
     e.preventDefault();
     clearErrors();
+
+    const validation = registerSchema.safeParse({
+      name: formData.name,
+      password: formData.password,
+    });
+    if (!validation.success) {
+      const fieldErrors = validation.error.flatten().fieldErrors;
+      setErrors((prev) => ({
+        ...prev,
+        name: fieldErrors.name?.[0] ?? "",
+        password: fieldErrors.password?.[0] ?? "",
+      }));
+      return;
+    }
+
     setIsLoading(true);
     try {
       await authClient.signUp.email(
