@@ -10,7 +10,7 @@ export default function AuthPage() {
   const [currentView, setCurrentView] = useState<"register" | "login">("register");
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-primary-red flex items-center justify-center p-4 font-sans">
+    <div className="relative z-0 min-h-screen overflow-hidden bg-primary-red flex items-center justify-center p-4 font-sans">
       <Image
         src="/auth-bg-gears.svg"
         alt=""
