@@ -2,7 +2,7 @@
 import "dotenv/config";
 import { prisma } from "../src/config/prisma.js";
 
-const departments = [ //ใส่ข้อมูลให้หมดทุกภาควิชา Check...
+const departments = [
   { name: "วิศวกรรมโยธา" },
   { name: "วิศวกรรมไฟฟ้า" },
   { name: "วิศวกรรมเครื่องกล" },
