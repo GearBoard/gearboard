@@ -54,6 +54,7 @@ export const Navbar = ({ isAuthenticated = false, onMenuClick }: NavbarProps) =>
                 color="gray"
                 size="md"
                 iconLeft={<Github />}
+                disabled
               >
                 gearboard
               </Button>

@@ -1,13 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { Navbar } from "./Navbar";
-import { Sidebar } from "./Sidebar";
+import { useState, useEffect } from "react";
+import { Navbar } from "@/shared/components/Navbar";
+import { Sidebar } from "@/shared/components/Sidebar";
+import type { ActivePage } from "@/shared/components/Sidebar";
 import { cn } from "@/shared/libs/utils";
 
-type ActivePage = "home" | "posts" | "saved";
-
-interface AppLayoutProps {
+export interface AppLayoutProps {
   children: React.ReactNode;
   isAuthenticated?: boolean;
   activePage?: ActivePage;
@@ -23,6 +22,24 @@ export const AppLayout = ({
   onLogout,
 }: AppLayoutProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Close drawer on Escape key
+  useEffect(() => {
+    if (!isSidebarOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsSidebarOpen(false);
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isSidebarOpen]);
+
+  // Lock body scroll while mobile drawer is open
+  useEffect(() => {
+    document.body.style.overflow = isSidebarOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isSidebarOpen]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -54,8 +71,9 @@ export const AppLayout = ({
           onClick={() => setIsSidebarOpen(false)}
         />
 
-        {/* Mobile sidebar drawer — slides in from left */}
+        {/* Mobile sidebar drawer — slides in from left; inert when closed to remove from tab order */}
         <div
+          inert={!isSidebarOpen || undefined}
           className={cn(
             "fixed top-0 left-0 h-full z-50 md:hidden transition-transform duration-300",
             isSidebarOpen ? "translate-x-0" : "-translate-x-full"

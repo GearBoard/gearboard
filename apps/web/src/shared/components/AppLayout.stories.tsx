@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import AppLayout from "./AppLayout";
+import { within, userEvent } from "storybook/test";
+import AppLayout from "@/shared/components/AppLayout";
 
 const meta: Meta<typeof AppLayout> = {
   title: "Shared/UI/AppLayout",
@@ -56,6 +57,10 @@ export const MobileUnauthenticated: Story = {
   globals: {
     viewport: { value: "mobile1", isRotated: false },
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole("button", { name: "Menu" }));
+  },
 };
 
 export const MobileAuthenticated: Story = {
@@ -66,5 +71,9 @@ export const MobileAuthenticated: Story = {
   },
   globals: {
     viewport: { value: "mobile1", isRotated: false },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole("button", { name: "Menu" }));
   },
 };

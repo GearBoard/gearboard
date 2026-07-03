@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
-import Sidebar from "./Sidebar";
+import Sidebar from "@/shared/components/Sidebar";
 
 const meta: Meta<typeof Sidebar> = {
   title: "Shared/UI/Sidebar",

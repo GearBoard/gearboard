@@ -7,9 +7,9 @@ import { House, StickyNote, Bookmark, ChevronRight, LogOut } from "lucide-react"
 import { Button } from "@/shared/components/ui/button";
 import { cn } from "@/shared/libs/utils";
 
-type ActivePage = "home" | "posts" | "saved";
+export type ActivePage = "home" | "posts" | "saved";
 
-interface SidebarProps {
+export interface SidebarProps {
   isAuthenticated?: boolean;
   activePage?: ActivePage;
   user?: {
@@ -30,13 +30,14 @@ export const Sidebar = ({
   activePage = "home",
   user,
   onLogout,
+  onClose,
 }: SidebarProps) => {
   return (
     <aside className="flex flex-col justify-between bg-white border-b border-l border-r border-gray w-60 md:w-80 px-3 pt-4 pb-9 md:px-4 md:py-9 h-full">
       {/* Top section — mobile includes logo, desktop is nav buttons only */}
       <div className="flex flex-col gap-6">
         {/* Logo — mobile only */}
-        <Link href="/" className="flex items-center gap-2 md:hidden shrink-0">
+        <Link href="/" onClick={onClose} className="flex items-center gap-2 md:hidden shrink-0">
           <Image
             src="/logo.svg"
             width={41}
@@ -76,7 +77,7 @@ export const Sidebar = ({
             }
 
             return (
-              <Link key={id} href={href} className={navClass}>
+              <Link key={id} href={href} onClick={onClose} className={navClass}>
                 <Icon className="w-6 h-6 shrink-0" />
                 {label}
               </Link>
@@ -94,11 +95,12 @@ export const Sidebar = ({
           {/* User pane — links to profile */}
           <Link
             href="/profile"
+            onClick={onClose}
             className="flex items-center justify-between px-4 py-3 h-[60px] md:h-[72px] rounded-lg hover:bg-light-gray active:bg-gray transition-colors"
           >
             <div className="flex items-center gap-[10px]">
               {/* Avatar placeholder */}
-              <div className="w-9 h-9 md:w-12 md:h-12 rounded-full bg-[#C01300] shrink-0" />
+              <div className="w-9 h-9 md:w-12 md:h-12 rounded-full bg-avatar-red shrink-0" />
               <div className="flex flex-col">
                 <span className="text-sm md:text-base font-medium text-black leading-[135%]">
                   {user?.name}
@@ -114,8 +116,8 @@ export const Sidebar = ({
           {/* Logout button */}
           <button
             type="button"
-            onClick={onLogout}
-            className="flex items-center gap-3 w-full rounded-lg px-4 py-2 md:py-3 h-10 md:h-12 bg-[#FFF2F2] text-[#CE0000] font-semibold text-sm md:text-lg cursor-pointer hover:bg-[#FFE5E5] active:bg-[#FFCCCC] transition-colors"
+            onClick={() => { onLogout?.(); onClose?.(); }}
+            className="flex items-center gap-3 w-full rounded-lg px-4 py-2 md:py-3 h-10 md:h-12 bg-red-tint text-logout-red font-semibold text-sm md:text-lg cursor-pointer hover:bg-red-tint-hover active:bg-red-tint-active transition-colors"
           >
             <LogOut className="w-6 h-6 shrink-0" />
             ออกจากระบบ
@@ -127,10 +129,10 @@ export const Sidebar = ({
           <hr className="border-gray" />
           <div className="flex flex-col gap-3">
             <Button variant="outline" color="red" className="w-full font-bold" asChild>
-              <Link href="/login">Log in</Link>
+              <Link href="/login" onClick={onClose}>Log in</Link>
             </Button>
             <Button color="red" className="w-full font-bold" asChild>
-              <Link href="/register">Sign up</Link>
+              <Link href="/register" onClick={onClose}>Sign up</Link>
             </Button>
           </div>
         </div>

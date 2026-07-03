@@ -25,6 +25,12 @@
   --color-light-gray: var(--light-gray);
   --color-dark-gray: var(--dark-gray);
 
+  --color-avatar-red: var(--avatar-red);
+  --color-logout-red: var(--logout-red);
+  --color-red-tint: var(--red-tint);
+  --color-red-tint-hover: var(--red-tint-hover);
+  --color-red-tint-active: var(--red-tint-active);
+
   /* ----------------------------------------------------------
      TYPOGRAPHY — font families
      ---------------------------------------------------------- */
@@ -101,6 +107,12 @@
   --gray: #d9d9d9;
   --light-gray: #eaeaea;
   --dark-gray: #8b9096;
+
+  --avatar-red: #c01300;
+  --logout-red: #ce0000;
+  --red-tint: #fff2f2;
+  --red-tint-hover: #ffe5e5;
+  --red-tint-active: #ffcccc;
 
   --shadow-primary-red: 0 0 30px 0 rgba(38, 38, 38, 0.08);
 }
