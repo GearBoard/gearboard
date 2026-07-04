@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import type { Preview } from "@storybook/nextjs-vite";
 import { Noto_Sans_Thai } from "next/font/google";
 import "../src/app/globals.css";
@@ -11,11 +11,16 @@ const notoSansThai = Noto_Sans_Thai({
 
 const preview: Preview = {
   decorators: [
-    (Story) => (
-      <div className={notoSansThai.variable}>
-        <Story />
-      </div>
-    ),
+    (Story) => {
+      useEffect(() => {
+        document.documentElement.classList.add(notoSansThai.variable);
+        return () => {
+          document.documentElement.classList.remove(notoSansThai.variable);
+        };
+      }, []);
+
+      return <Story />;
+    },
   ],
   parameters: {
     controls: {
