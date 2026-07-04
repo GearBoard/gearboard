@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Search, Menu, Github } from "lucide-react";
+import { Search, Menu } from "lucide-react";
+import GithubIcon from "@/shared/components/icons/GithubIcon";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 
@@ -53,8 +54,7 @@ export const Navbar = ({ isAuthenticated = false, onMenuClick }: NavbarProps) =>
                 variant="outline"
                 color="gray"
                 size="md"
-                iconLeft={<Github />}
-                disabled
+                iconLeft={<GithubIcon />}
               >
                 gearboard
               </Button>
