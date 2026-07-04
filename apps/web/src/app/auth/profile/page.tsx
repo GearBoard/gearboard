@@ -1,7 +1,7 @@
-export default function OnboardingPage() {
-  return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <p className="text-dark-gray">Onboarding — coming soon</p>
-    </div>
-  );
+"use client";
+
+import { ProfileForm } from "@/features/auth";
+
+export default function ProfilePage() {
+  return <ProfileForm />;
 }
