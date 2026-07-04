@@ -9,3 +9,5 @@ export type { InputProps } from "./ui/input";
 
 export { Modal } from "./ui/modal";
 export type { ModalProps } from "./ui/modal";
+
+export { Sidebar } from "./Sidebar";
