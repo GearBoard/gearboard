@@ -7,10 +7,11 @@ import { Textarea } from "@/shared/components/ui/textarea";
 import { DEPARTMENTS } from "../constants/departments";
 import { useRouter } from "next/navigation";
 import { cn } from "@/shared/libs/utils";
+import { SquarePen } from "lucide-react";
 
 // Inline SVG for the decorative gear to avoid extra files
 function GearDecoration({ className }: { className?: string }) {
-  return (
+  return ( //ปรับให้ตรง Figma
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 512 512"
@@ -77,41 +78,36 @@ export default function ProfileForm() {
   }));
 
   return (
-    <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-primary-red p-4 md:p-8">
- 
-      {/* ── Card ── */}
-      <div className="relative z-10 w-full sm:w-[353px] md:w-[480px] ">
-        <div className="bg-white rounded-xl border-[1.5px] border-gray shadow-primary-red px-6 py-6 md:px-8 md:py-8 flex flex-col gap-4 md:gap-5 w-full">
-          <div>
-            <h1 className="text-[32px] md:text-4xl font-bold text-primary-red">
+        <div className="bg-white rounded-xl md:border-[1px] md:border-[1.5px] border-gray shadow-primary-red md:w-[480px] w-[353px] md:px-8 px-6 md:py-8 py-6 md:gap-5 gap-4 flex flex-col">
+
+          <div className="md:gap-5 gap-4 flex flex-col items-center justify-center">
+            <h1 className="md:w-[416px] w-[305px] md:h-[38px] h-[32px] md:text-[28px] text-[24px] font-satoshi-variable font-bold text-primary-red leading-[135%]">
               กรอกข้อมูลผู้ใช้
             </h1>
-          </div>
-
-          <form id="profile-form" onSubmit={handleSubmit} className="flex flex-col gap-3">
-            {/* Avatar Upload inline */}
-            <div className="mt-2 mb-2 flex flex-col items-center justify-center">
-              <div className="relative">
-                <div className="flex size-32 items-center justify-center overflow-hidden rounded-full bg-[#E5A599] text-white">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="relative block cursor-pointer"
+                aria-label="อัปโหลดรูปโปรไฟล์"
+              >
                   {previewUrl ? (
                     <img
                       src={previewUrl}
                       alt="Avatar Preview"
-                      className="size-full object-cover"
+                      className="size-24 object-cover rounded-full"
                     />
                   ) : (
-                    <User className="size-16" strokeWidth={1.5} />
+                    <img 
+                      src="/profile.svg"
+                      alt="Default Avatar"
+                      className="size-full object-cover"
+                     />
+                     
                   )}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="absolute bottom-0 right-0 flex size-8 items-center justify-center rounded-full bg-primary-red text-white shadow-md transition-transform hover:scale-105 active:scale-95 cursor-pointer"
-                  aria-label="Upload profile picture"
-                >
-                  <Pencil className="size-4" strokeWidth={2.5} />
-                </button>
-              </div>
+                  <div className="absolute -bottom-1 -right-0.5 flex size-9 items-center justify-center rounded-full bg-primary-red text-white">
+                    <SquarePen className="size-4" />
+                  </div>
+              </button>
               <input
                 type="file"
                 ref={fileInputRef}
@@ -120,6 +116,9 @@ export default function ProfileForm() {
                 onChange={handleFileChange}
               />
             </div>
+
+          <form id="profile-form" onSubmit={handleSubmit} className="flex flex-col gap-3">
+            {/* Avatar Upload inline */}
 
             <Input
               label="ชื่อผู้ใช้"
@@ -163,7 +162,5 @@ export default function ProfileForm() {
             ยืนยัน
           </Button>
         </div>
-      </div>
-    </div>
   );
 }
