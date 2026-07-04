@@ -2,11 +2,12 @@
 
 import { LoginForm, RegistrationForm } from "@/features/auth";
 import { useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function AuthPage() {
+  const router = useRouter();
   const [currentView, setCurrentView] = useState<"register" | "login">("register");
 
   return (
@@ -20,13 +21,14 @@ export default function AuthPage() {
         className="pointer-events-none -z-10 hidden object-cover md:block"
       />
 
-      <Link
-        href="/"
+      <button
+        type="button"
+        onClick={() => router.back()}
         aria-label="กลับสู่หน้าแรก"
-        className="absolute top-12 left-12 z-10 hidden h-[38px] w-[46px] items-center justify-center rounded-lg bg-white text-primary-red md:flex"
+        className="cursor-pointer absolute top-12 left-12 z-10 hidden h-[38px] w-[46px] items-center justify-center rounded-lg bg-white text-primary-red md:flex"
       >
-        <ArrowLeft aria-hidden="true" className="size-3.5" strokeWidth={2} />
-      </Link>
+        <ArrowLeft aria-hidden="true" />
+      </button>
 
       {currentView === "login" ? (
         <LoginForm onSwitchToRegister={() => setCurrentView("register")} />
