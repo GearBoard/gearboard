@@ -6,24 +6,9 @@ import { Sidebar } from "@/shared/components/Sidebar";
 import type { ActivePage } from "@/shared/components/Sidebar";
 import { cn } from "@/shared/libs/utils";
 
-export interface AppLayoutProps {
-  children: React.ReactNode;
-  isAuthenticated?: boolean;
-  activePage?: ActivePage;
-  user?: { name: string };
-  onLogout?: () => void;
-}
-
-export const AppLayout = ({
-  children,
-  isAuthenticated,
-  activePage,
-  user,
-  onLogout,
-}: AppLayoutProps) => {
+export default function MainLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // Close drawer on Escape key
   useEffect(() => {
     if (!isSidebarOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -33,7 +18,6 @@ export const AppLayout = ({
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isSidebarOpen]);
 
-  // Lock body scroll while mobile drawer is open
   useEffect(() => {
     document.body.style.overflow = isSidebarOpen ? "hidden" : "";
     return () => {
@@ -43,23 +27,13 @@ export const AppLayout = ({
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar
-        isAuthenticated={isAuthenticated}
-        onMenuClick={() => setIsSidebarOpen(true)}
-      />
+      <Navbar onMenuClick={() => setIsSidebarOpen(true)} />
 
       <div className="flex flex-1">
-        {/* Desktop sidebar — always visible in normal flow */}
         <div className="hidden md:block shrink-0">
-          <Sidebar
-            isAuthenticated={isAuthenticated}
-            activePage={activePage}
-            user={user}
-            onLogout={onLogout}
-          />
+          <Sidebar />
         </div>
 
-        {/* Mobile overlay — always in DOM so opacity transition works */}
         <div
           aria-hidden="true"
           className={cn(
@@ -71,7 +45,6 @@ export const AppLayout = ({
           onClick={() => setIsSidebarOpen(false)}
         />
 
-        {/* Mobile sidebar drawer — slides in from left; inert when closed to remove from tab order */}
         <div
           inert={!isSidebarOpen || undefined}
           className={cn(
@@ -79,19 +52,11 @@ export const AppLayout = ({
             isSidebarOpen ? "translate-x-0" : "-translate-x-full"
           )}
         >
-          <Sidebar
-            isAuthenticated={isAuthenticated}
-            activePage={activePage}
-            user={user}
-            onLogout={onLogout}
-            onClose={() => setIsSidebarOpen(false)}
-          />
+          <Sidebar onClose={() => setIsSidebarOpen(false)} />
         </div>
 
         <main className="flex-1">{children}</main>
       </div>
     </div>
   );
-};
-
-export default AppLayout;
+}

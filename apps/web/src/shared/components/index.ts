@@ -13,5 +13,3 @@ export type { ModalProps } from "./ui/modal";
 export { Sidebar } from "./Sidebar";
 export type { SidebarProps, ActivePage } from "./Sidebar";
 
-export { AppLayout } from "@/shared/layout/AppLayout";
-export type { AppLayoutProps } from "@/shared/layout/AppLayout";
