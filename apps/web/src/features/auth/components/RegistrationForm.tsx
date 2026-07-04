@@ -16,16 +16,23 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
 
   const clearErrors = () => setErrors({ name: "", email: "", password: "" });
 
-  const mapError = (message: string) => {
-    const msg = message.toLowerCase();
-    if (msg.includes("email") && msg.includes("exist")) {
-      setErrors((prev) => ({ ...prev, email: "อีเมลนี้ถูกใช้ไปแล้ว" }));
-    } else if (msg.includes("email")) {
-      setErrors((prev) => ({ ...prev, email: "อีเมลนี้ถูกใช้ไปแล้ว" }));
-    } else if (msg.includes("password")) {
-      setErrors((prev) => ({ ...prev, password: "กรุณากรอกรหัสผ่านอย่างน้อย 8 ตัว" }));
-    } else {
-      setErrors((prev) => ({ ...prev, name: "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง" }));
+  const mapError = (code: string | undefined) => {
+    switch (code) {
+      case "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL":
+      case "USER_ALREADY_EXISTS":
+        setErrors((prev) => ({ ...prev, email: "อีเมลนี้ถูกใช้ไปแล้ว" }));
+        break;
+      case "INVALID_EMAIL":
+        setErrors((prev) => ({ ...prev, email: "รูปแบบอีเมลไม่ถูกต้อง" }));
+        break;
+      case "PASSWORD_TOO_SHORT":
+        setErrors((prev) => ({ ...prev, password: "กรุณากรอกรหัสผ่านอย่างน้อย 8 ตัว" }));
+        break;
+      case "PASSWORD_TOO_LONG":
+        setErrors((prev) => ({ ...prev, password: "รหัสผ่านต้องไม่เกิน 128 ตัว" }));
+        break;
+      default:
+        setErrors((prev) => ({ ...prev, name: "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง" }));
     }
   };
 
@@ -42,10 +49,10 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
         },
         {
           onSuccess: () => {
-            router.push("/");
+            router.push("/onboarding");
           },
-          onError: (ctx: { error: { message: string } }) => {
-            mapError(ctx.error.message);
+          onError: (ctx: { error: { code?: string; message: string } }) => {
+            mapError(ctx.error.code);
           },
         }
       );
@@ -57,19 +64,29 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
   };
 
   const handleGoogleSignIn = async () => {
+    clearErrors();
     setIsGoogleLoading(true);
     try {
-      await authClient.signIn.social({
-        provider: "google",
-        callbackURL: `${window.location.origin}/`,
-      });
+      await authClient.signIn.social(
+        { provider: "google", callbackURL: `${window.location.origin}/onboarding` },
+        {
+          onError: () => {
+            setErrors((prev) => ({
+              ...prev,
+              name: "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง",
+            }));
+          },
+        }
+      );
+    } catch {
+      setErrors((prev) => ({ ...prev, name: "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง" }));
     } finally {
       setIsGoogleLoading(false);
     }
   };
 
   return (
-    <div className="bg-white rounded-xl border-[1.5px] border-gray shadow-primary-red px-6 py-6 md:px-8 md:py-8 flex flex-col gap-4 md:gap-5 w-full">
+    <div className="bg-white rounded-xl border-[1.5px] border-gray shadow-primary-red px-6 py-6 md:px-8 md:py-8 flex flex-col gap-4 md:gap-5 w-full max-w-[480px]">
       <div>
         <h1 className="text-[32px] md:text-4xl font-bold text-primary-red">ลงทะเบียน</h1>
         <p className="text-sm md:text-base text-black font-medium mt-1">
