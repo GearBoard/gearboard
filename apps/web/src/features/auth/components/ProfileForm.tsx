@@ -4,12 +4,16 @@ import { useState, useRef } from "react";
 import Image from "next/image";
 import { Button, Input, Dropdown } from "@/shared/components";
 import { Textarea } from "@/shared/components/ui/textarea";
-import { DEPARTMENTS } from "../constants/departments";
 import { useRouter } from "next/navigation";
 import { SquarePen } from "lucide-react";
+import { useSession } from "@/shared/libs/auth-client";
+import { useGetDepartments, useUpdateUser } from "@/shared/hooks";
 
 export default function ProfileForm() {
   const router = useRouter();
+  const { data: session } = useSession();
+  const { data: departments = [] } = useGetDepartments();
+  const { trigger: updateUser, isMutating: isLoading } = useUpdateUser(session?.user.id || "");
 
   // Form state
   const [formData, setFormData] = useState({
@@ -22,8 +26,6 @@ export default function ProfileForm() {
   const [avatar, setAvatar] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const [isLoading, setIsLoading] = useState(false);
 
   // Validation
   const isFormValid = formData.username.trim().length > 0 && formData.department.length > 0;
@@ -39,26 +41,25 @@ export default function ProfileForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isFormValid) return;
+    if (!isFormValid || !session?.user.id) return;
 
-    setIsLoading(true);
     try {
-      // Simulate API call
-      console.log("Submitting profile:", { ...formData, avatar });
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await updateUser({
+        name: formData.username,
+        departmentId: formData.department,
+        description: formData.about,
+      });
 
       // Redirect to home after successful onboarding
       router.push("/");
     } catch (error) {
       console.error("Failed to update profile", error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  const departmentOptions = DEPARTMENTS.map((dept) => ({
-    value: dept,
-    label: dept,
+  const departmentOptions = departments.map((dept) => ({
+    value: dept.id,
+    label: dept.name,
   }));
 
   return (
