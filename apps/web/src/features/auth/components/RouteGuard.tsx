@@ -1,0 +1,53 @@
+"use client";
+
+import { useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useSession } from "@/shared/libs/auth-client";
+import { useGetMe } from "@/shared/hooks/users";
+
+const LOGIN_PATH = "/auth";
+const ONBOARDING_PATH = "/auth/profile";
+const HOME_PATH = "/";
+
+export default function RouteGuard({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const { data: session, isPending: isSessionPending } = useSession();
+  const isAuthenticated = !!session;
+
+  const { data: me, isLoading: isMeLoading } = useGetMe(isAuthenticated);
+  const isProfileComplete = !!me?.name && !!me?.departmentId;
+
+  const isPending = isSessionPending || (isAuthenticated && isMeLoading);
+
+  useEffect(() => {
+    if (isPending) return;
+
+    if (!isAuthenticated) {
+      if (pathname !== LOGIN_PATH) router.replace(LOGIN_PATH);
+      return;
+    }
+
+    if (!isProfileComplete) {
+      if (pathname !== ONBOARDING_PATH) router.replace(ONBOARDING_PATH);
+      return;
+    }
+
+    if (pathname === LOGIN_PATH || pathname === ONBOARDING_PATH) {
+      router.replace(HOME_PATH);
+    }
+  }, [isPending, isAuthenticated, isProfileComplete, pathname, router]);
+
+  if (isPending) return null;
+
+  if (!isAuthenticated && pathname !== LOGIN_PATH) return null;
+  if (isAuthenticated && !isProfileComplete && pathname !== ONBOARDING_PATH) return null;
+  if (
+    isAuthenticated &&
+    isProfileComplete &&
+    (pathname === LOGIN_PATH || pathname === ONBOARDING_PATH)
+  )
+    return null;
+
+  return children;
+}
