@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { Navbar } from "@/shared/components/Navbar";
 import { Sidebar } from "@/shared/components/Sidebar";
-import type { ActivePage } from "@/shared/components/Sidebar";
 import { cn } from "@/shared/libs/utils";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
@@ -38,9 +37,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
           aria-hidden="true"
           className={cn(
             "fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity duration-300",
-            isSidebarOpen
-              ? "opacity-100 pointer-events-auto"
-              : "opacity-0 pointer-events-none"
+            isSidebarOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
           )}
           onClick={() => setIsSidebarOpen(false)}
         />

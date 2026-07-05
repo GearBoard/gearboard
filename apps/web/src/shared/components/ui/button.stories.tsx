@@ -48,8 +48,12 @@ export const AllColors: Story = {
 export const Outline: Story = {
   render: () => (
     <div className="flex flex-wrap gap-4">
-      <Button variant="outline" color="red">Red</Button>
-      <Button variant="outline" color="gray">Gray</Button>
+      <Button variant="outline" color="red">
+        Red
+      </Button>
+      <Button variant="outline" color="gray">
+        Gray
+      </Button>
     </div>
   ),
 };

@@ -63,13 +63,7 @@ export const Sidebar = ({
 
             if (isActive) {
               return (
-                <button
-                  key={id}
-                  type="button"
-                  disabled
-                  aria-current="page"
-                  className={navClass}
-                >
+                <button key={id} type="button" disabled aria-current="page" className={navClass}>
                   <Icon className="w-6 h-6 shrink-0" />
                   {label}
                 </button>
@@ -116,7 +110,10 @@ export const Sidebar = ({
           {/* Logout button */}
           <button
             type="button"
-            onClick={() => { onLogout?.(); onClose?.(); }}
+            onClick={() => {
+              onLogout?.();
+              onClose?.();
+            }}
             className="flex items-center gap-3 w-full rounded-lg px-4 py-2 md:py-3 h-10 md:h-12 bg-red-tint text-logout-red font-semibold text-sm md:text-lg cursor-pointer hover:bg-red-tint-hover active:bg-red-tint-active transition-colors"
           >
             <LogOut className="w-6 h-6 shrink-0" />
@@ -129,10 +126,14 @@ export const Sidebar = ({
           <hr className="border-gray" />
           <div className="flex flex-col gap-3">
             <Button variant="outline" color="red" className="w-full font-bold" asChild>
-              <Link href="/login" onClick={onClose}>Log in</Link>
+              <Link href="/login" onClick={onClose}>
+                Log in
+              </Link>
             </Button>
             <Button color="red" className="w-full font-bold" asChild>
-              <Link href="/register" onClick={onClose}>Sign up</Link>
+              <Link href="/register" onClick={onClose}>
+                Sign up
+              </Link>
             </Button>
           </div>
         </div>

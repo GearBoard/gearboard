@@ -12,4 +12,3 @@ export type { ModalProps } from "./ui/modal";
 
 export { Sidebar } from "./Sidebar";
 export type { SidebarProps, ActivePage } from "./Sidebar";
-
