@@ -37,7 +37,7 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
         { email: formData.email, password: formData.password },
         {
           onSuccess: () => {
-            router.push("/");
+            router.push("/auth/profile");
           },
           onError: (ctx: { error: { code?: string; message: string } }) => {
             switch (ctx.error.code) {
@@ -70,7 +70,7 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
       await authClient.signIn.social(
         {
           provider: "google",
-          callbackURL: `${window.location.origin}/`,
+          callbackURL: `${window.location.origin}/auth/profile`,
           errorCallbackURL: `${window.location.origin}/auth`,
         },
         {

@@ -85,7 +85,7 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
         },
         {
           onSuccess: () => {
-            router.push("/onboarding");
+            router.push("/auth/profile");
           },
           onError: (ctx: { error: { code?: string; message: string } }) => {
             mapError(ctx.error.code);
@@ -106,7 +106,7 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
       await authClient.signIn.social(
         {
           provider: "google",
-          callbackURL: `${window.location.origin}/`,
+          callbackURL: `${window.location.origin}/auth/profile`,
           errorCallbackURL: `${window.location.origin}/auth`,
         },
         {
