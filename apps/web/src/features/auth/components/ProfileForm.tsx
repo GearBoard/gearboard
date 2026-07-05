@@ -12,8 +12,8 @@ import { useGetDepartments, useUpdateUser } from "@/shared/hooks";
 export default function ProfileForm() {
   const router = useRouter();
   const { data: session } = useSession();
-  const { data: departments = [] } = useGetDepartments();
-  const { trigger: updateUser, isMutating: isLoading } = useUpdateUser(session?.user.id || "");
+  const { data: departments = [], error: departmentsError } = useGetDepartments();
+  const { trigger: updateUser, isMutating: isLoading } = useUpdateUser(session?.user.id);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -25,6 +25,7 @@ export default function ProfileForm() {
   // Avatar state
   const [avatar, setAvatar] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Validation
@@ -41,6 +42,8 @@ export default function ProfileForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError(null);
+
     if (!isFormValid || !session?.user.id) return;
 
     try {
@@ -54,6 +57,7 @@ export default function ProfileForm() {
       router.push("/");
     } catch (error) {
       console.error("Failed to update profile", error);
+      setSubmitError("ไม่สามารถอัปเดตโปรไฟล์ได้ กรุณาลองใหม่อีกครั้ง");
     }
   };
 
@@ -126,6 +130,12 @@ export default function ProfileForm() {
           required
         />
 
+        {departmentsError ? (
+          <p role="alert" className="text-sm text-primary-red">
+            ไม่สามารถโหลดรายชื่อภาควิชาขณะนี้ โปรดลองใหม่อีกครั้ง
+          </p>
+        ) : null}
+
         <Textarea
           label="เกี่ยวกับ"
           id="profile-about"
@@ -135,6 +145,12 @@ export default function ProfileForm() {
           className="min-h-[120px]"
         />
       </form>
+
+      {submitError ? (
+        <p role="alert" className="text-sm text-primary-red">
+          {submitError}
+        </p>
+      ) : null}
 
       <Button
         form="profile-form"
