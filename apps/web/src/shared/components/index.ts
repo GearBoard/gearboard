@@ -12,3 +12,6 @@ export type { ModalProps } from "./ui/modal";
 
 export { Sidebar } from "./Sidebar";
 export type { SidebarProps, ActivePage } from "./Sidebar";
+
+export { default as PostCard } from "./PostCard";
+export type { PostCardProps, PostCardAuthor } from "./PostCard";
