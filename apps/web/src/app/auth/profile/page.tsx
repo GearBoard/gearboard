@@ -21,7 +21,7 @@ export default function ProfilePage() {
 
       <button
         type="button"
-        onClick={() => router.back()}
+        onClick={() => router.push("/auth")}
         aria-label="กลับสู่หน้าแรก"
         className="absolute left-12 top-12 z-10 hidden h-[38px] w-[46px] cursor-pointer items-center justify-center rounded-lg bg-white text-primary-red md:flex"
       >
