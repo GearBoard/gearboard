@@ -8,6 +8,6 @@ export const apiRoutes = new Hono()
   .route("/api/posts", postRoute)
   .route("/api/comments", commentRoute)
   .route("/api/users", userRoute)
-  .route("/api/departments", departmentRoute)
+  .route("/api/departments", departmentRoute);
 
 export type AppType = typeof apiRoutes;

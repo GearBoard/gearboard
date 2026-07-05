@@ -1,20 +1,40 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { z } from "zod";
 import { Button, Input } from "@/shared/components";
 import { GoogleIcon } from "@/shared/components/icons/GoogleIcon";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/shared/libs/auth-client";
 import type { RegistrationFormProps } from "../types/types";
+
+const registerSchema = z.object({
+  name: z.string().regex(/^[a-z0-9.]+$/, "ใช้ได้เฉพาะ a-z, 0-9 และ . เท่านั้น"),
+  password: z.string().min(8, "กรุณากรอกรหัสผ่านอย่างน้อย 8 ตัว"),
+});
 
 export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormProps) {
   const [formData, setFormData] = useState({ name: "", email: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [errors, setErrors] = useState({ name: "", email: "", password: "" });
   const router = useRouter();
+  const searchParams = useSearchParams();
+  // Google OAuth errors that happen after the redirect back from the provider
+  // land here as an `error` query param (set via errorCallbackURL below).
+  const [errors, setErrors] = useState(() =>
+    searchParams.get("error")
+      ? { name: "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง", email: "", password: "" }
+      : { name: "", email: "", password: "" }
+  );
 
   const clearErrors = () => setErrors({ name: "", email: "", password: "" });
+
+  useEffect(() => {
+    if (searchParams.get("error")) {
+      router.replace("/auth", { scroll: false });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const mapError = (code: string | undefined) => {
     switch (code) {
@@ -31,6 +51,7 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
       case "PASSWORD_TOO_LONG":
         setErrors((prev) => ({ ...prev, password: "รหัสผ่านต้องไม่เกิน 128 ตัว" }));
         break;
+      // Backend crashes (500) or any code we don't explicitly handle fall through here.
       default:
         setErrors((prev) => ({ ...prev, name: "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง" }));
     }
@@ -39,6 +60,21 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
   const handleSubmit = async (e: { preventDefault(): void }) => {
     e.preventDefault();
     clearErrors();
+
+    const validation = registerSchema.safeParse({
+      name: formData.name,
+      password: formData.password,
+    });
+    if (!validation.success) {
+      const fieldErrors = validation.error.flatten().fieldErrors;
+      setErrors((prev) => ({
+        ...prev,
+        name: fieldErrors.name?.[0] ?? "",
+        password: fieldErrors.password?.[0] ?? "",
+      }));
+      return;
+    }
+
     setIsLoading(true);
     try {
       await authClient.signUp.email(
@@ -49,7 +85,7 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
         },
         {
           onSuccess: () => {
-            router.push("/onboarding");
+            router.push("/auth/profile");
           },
           onError: (ctx: { error: { code?: string; message: string } }) => {
             mapError(ctx.error.code);
@@ -68,7 +104,11 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
     setIsGoogleLoading(true);
     try {
       await authClient.signIn.social(
-        { provider: "google", callbackURL: `${window.location.origin}/onboarding` },
+        {
+          provider: "google",
+          callbackURL: `${window.location.origin}/auth/profile`,
+          errorCallbackURL: `${window.location.origin}/auth`,
+        },
         {
           onError: () => {
             setErrors((prev) => ({

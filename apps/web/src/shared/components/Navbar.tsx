@@ -10,9 +10,10 @@ import { Input } from "@/shared/components/ui/input";
 
 interface NavbarProps {
   isAuthenticated?: boolean;
+  onMenuClick?: () => void;
 }
 
-export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
+export const Navbar = ({ isAuthenticated = false, onMenuClick }: NavbarProps) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   return (
@@ -27,20 +28,13 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
             alt="GearBoard Logo"
             className="w-8 h-[31px] md:w-[47px] md:h-[46px]"
           />
-          <span className="font-black text-base md:text-2xl text-primary-red">
-            gearboard
-          </span>
+          <span className="font-black text-base md:text-2xl text-primary-red">gearboard</span>
         </Link>
 
         {/* Search Bar — desktop only, fills space between logo and actions */}
         <div className="hidden md:flex flex-1 justify-center mx-8">
           <div className="w-full max-w-[478px]">
-            <Input
-              type="text"
-              placeholder="ค้นหา"
-              aria-label="ค้นหา"
-              icon={<Search />}
-            />
+            <Input type="text" placeholder="ค้นหา" aria-label="ค้นหา" icon={<Search />} />
           </div>
         </div>
 
@@ -49,12 +43,7 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
           {/* Desktop: authenticated */}
           {isAuthenticated && (
             <div className="hidden md:flex">
-              <Button
-                variant="outline"
-                color="gray"
-                size="md"
-                iconLeft={<GithubIcon />}
-              >
+              <Button variant="outline" color="gray" size="md" iconLeft={<GithubIcon />}>
                 gearboard
               </Button>
             </div>
@@ -88,6 +77,7 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
               type="button"
               className="p-1 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-primary-red focus-visible:ring-offset-2"
               aria-label="Menu"
+              onClick={onMenuClick}
             >
               <Menu className="w-6 h-6 text-primary-red" />
             </button>
@@ -98,13 +88,7 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
       {/* Mobile search bar — expands below navbar on search icon click */}
       {isSearchOpen && (
         <div id="mobile-search-bar" className="md:hidden px-6 pb-[10px]">
-          <Input
-            type="text"
-            placeholder="ค้นหา"
-            aria-label="ค้นหา"
-            icon={<Search />}
-            autoFocus
-          />
+          <Input type="text" placeholder="ค้นหา" aria-label="ค้นหา" icon={<Search />} autoFocus />
         </div>
       )}
     </nav>

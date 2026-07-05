@@ -1,11 +1,24 @@
 import type { Metadata } from "next";
 import { Noto_Sans_Thai } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
 const notoSansThai = Noto_Sans_Thai({
   subsets: ["thai", "latin"],
   variable: "--font-noto-thai",
   weight: ["300", "400", "500", "700"],
+});
+
+const satoshi = localFont({
+  src: [
+    { path: "./fonts/satoshi/Satoshi-Light.woff2", weight: "300", style: "normal" },
+    { path: "./fonts/satoshi/Satoshi-Regular.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/satoshi/Satoshi-Medium.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/satoshi/Satoshi-Bold.woff2", weight: "700", style: "normal" },
+    { path: "./fonts/satoshi/Satoshi-Black.woff2", weight: "900", style: "normal" },
+  ],
+  variable: "--font-satoshi-local",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -19,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={notoSansThai.variable}>
+    <html lang="en" className={`${notoSansThai.variable} ${satoshi.variable}`}>
       <body className="antialiased">{children}</body>
     </html>
   );

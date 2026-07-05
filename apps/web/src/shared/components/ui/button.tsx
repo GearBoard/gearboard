@@ -27,10 +27,28 @@ const buttonVariants = cva(
       },
     },
     compoundVariants: [
-      { variant: "default", color: "red", className: "bg-primary-red text-white hover:bg-dark-red active:bg-darker-red" },
-      { variant: "default", color: "gray", className: "bg-dark-gray text-white hover:bg-[#5D636B] active:bg-[#4D5054]" },
-      { variant: "outline", color: "red", className: "border-primary-red text-primary-red hover:bg-[#fff0f0] hover:border-dark-red hover:text-dark-red active:bg-[#ffdede] active:border-darker-red active:text-darker-red" },
-      { variant: "outline", color: "gray", className: "border-gray text-dark-gray hover:bg-[#f5f5f5] hover:border-[#5D636B] hover:text-[#5D636B] active:bg-[#ebebeb] active:border-[#4D5054] active:text-[#4D5054]" },
+      {
+        variant: "default",
+        color: "red",
+        className: "bg-primary-red text-white hover:bg-dark-red active:bg-darker-red",
+      },
+      {
+        variant: "default",
+        color: "gray",
+        className: "bg-dark-gray text-white hover:bg-[#5D636B] active:bg-[#4D5054]",
+      },
+      {
+        variant: "outline",
+        color: "red",
+        className:
+          "border-primary-red text-primary-red hover:bg-[#fff0f0] hover:border-dark-red hover:text-dark-red active:bg-[#ffdede] active:border-darker-red active:text-darker-red",
+      },
+      {
+        variant: "outline",
+        color: "gray",
+        className:
+          "border-gray text-dark-gray hover:bg-[#f5f5f5] hover:border-[#5D636B] hover:text-[#5D636B] active:bg-[#ebebeb] active:border-[#4D5054] active:text-[#4D5054]",
+      },
     ],
     defaultVariants: {
       variant: "default",

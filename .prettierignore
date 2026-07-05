@@ -6,3 +6,4 @@ out
 build
 *.min.js
 package-lock.json
+docs
