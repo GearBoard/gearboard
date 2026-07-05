@@ -25,7 +25,7 @@ function Textarea({
       aria-invalid={hasError || undefined}
       required={required}
       className={cn(
-        "w-full min-h-[132px] gap-2.5 rounded-lg border-[1.5px] border-gray bg-white px-3 py-2 md:px-4text-sm md:text-base transition-colors outline-none",
+        "w-full min-h-[132px] gap-2.5 rounded-lg border-[1.5px] border-gray bg-white px-3 py-2 md:px-4 text-sm md:text-base transition-colors outline-none",
         "placeholder:text-dark-gray",
 
         "enabled:hover:border-primary-red",
@@ -41,7 +41,7 @@ function Textarea({
   if (!label && !errorMessage) return textareaEl;
 
   return (
-    <div className={cn("flex flex-col gap-2", className)}>
+    <div className={cn("flex flex-col gap-1.5 md:gap-2", className)}>
       {label && (
         <label htmlFor={id} className="text-sm sm:text-base font-medium">
           {label}
