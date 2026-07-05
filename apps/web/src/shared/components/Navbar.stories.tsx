@@ -8,17 +8,32 @@ const meta: Meta<typeof Navbar> = {
   parameters: {
     layout: "fullscreen",
   },
+  argTypes: {
+    isAuthenticated: { control: "boolean" },
+  },
 };
 
 export default meta;
 type Story = StoryObj<typeof Navbar>;
 
-export const Default: Story = {};
+export const DesktopUnauthenticated: Story = {
+  args: { isAuthenticated: false },
+};
 
-export const Mobile: Story = {
-  parameters: {
-    viewport: {
-      defaultViewport: "mobile1",
-    },
+export const DesktopAuthenticated: Story = {
+  args: { isAuthenticated: true },
+};
+
+export const MobileUnauthenticated: Story = {
+  args: { isAuthenticated: false },
+  globals: {
+    viewport: { value: "mobile1", isRotated: false },
+  },
+};
+
+export const MobileAuthenticated: Story = {
+  args: { isAuthenticated: true },
+  globals: {
+    viewport: { value: "mobile1", isRotated: false },
   },
 };

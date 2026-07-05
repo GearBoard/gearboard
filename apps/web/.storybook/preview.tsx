@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import type { Preview } from "@storybook/nextjs-vite";
 import { Noto_Sans_Thai } from "next/font/google";
+import localFont from "next/font/local";
 import "../src/app/globals.css";
 
 const notoSansThai = Noto_Sans_Thai({
@@ -9,13 +10,30 @@ const notoSansThai = Noto_Sans_Thai({
   weight: ["300", "400", "500", "700"],
 });
 
+const satoshi = localFont({
+  src: [
+    { path: "../src/app/fonts/satoshi/Satoshi-Light.woff2", weight: "300", style: "normal" },
+    { path: "../src/app/fonts/satoshi/Satoshi-Regular.woff2", weight: "400", style: "normal" },
+    { path: "../src/app/fonts/satoshi/Satoshi-Medium.woff2", weight: "500", style: "normal" },
+    { path: "../src/app/fonts/satoshi/Satoshi-Bold.woff2", weight: "700", style: "normal" },
+    { path: "../src/app/fonts/satoshi/Satoshi-Black.woff2", weight: "900", style: "normal" },
+  ],
+  variable: "--font-satoshi-local",
+  display: "swap",
+});
+
 const preview: Preview = {
   decorators: [
-    (Story) => (
-      <div className={notoSansThai.variable}>
-        <Story />
-      </div>
-    ),
+    (Story) => {
+      useEffect(() => {
+        document.documentElement.classList.add(notoSansThai.variable, satoshi.variable);
+        return () => {
+          document.documentElement.classList.remove(notoSansThai.variable, satoshi.variable);
+        };
+      }, []);
+
+      return <Story />;
+    },
   ],
   parameters: {
     controls: {
