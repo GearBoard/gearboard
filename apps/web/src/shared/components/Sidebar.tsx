@@ -45,7 +45,7 @@ export const Sidebar = ({
             alt="GearBoard Logo"
             className="w-[41px] h-10"
           />
-          <span className="font-black text-xl text-primary-red">GEARBOARD</span>
+          <span className="font-black text-xl text-primary-red">gearboard</span>
         </Link>
 
         {/* Nav buttons */}
@@ -127,12 +127,12 @@ export const Sidebar = ({
           <div className="flex flex-col gap-3">
             <Button variant="outline" color="red" className="w-full font-bold" asChild>
               <Link href="/login" onClick={onClose}>
-                Log in
+                เข้าสู่ระบบ
               </Link>
             </Button>
             <Button color="red" className="w-full font-bold" asChild>
               <Link href="/register" onClick={onClose}>
-                Sign up
+                ลงทะเบียน
               </Link>
             </Button>
           </div>
