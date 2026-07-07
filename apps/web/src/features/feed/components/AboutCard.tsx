@@ -26,7 +26,7 @@ export default function AboutCard({
   return (
     <div
       className={cn(
-        "bg-white rounded-lg flex flex-col items-start gap-3 px-[19px] py-6 font-poppins w-[296px] h-[250px]",
+        "bg-white rounded-lg flex flex-col items-start gap-3 px-[19px] py-6 w-[296px] h-[250px]",
         className
       )}
     >

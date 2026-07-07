@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Noto_Sans_Thai, Poppins } from "next/font/google";
+import { Noto_Sans_Thai } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -7,12 +7,6 @@ const notoSansThai = Noto_Sans_Thai({
   subsets: ["thai", "latin"],
   variable: "--font-noto-thai",
   weight: ["300", "400", "500", "700"],
-});
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  variable: "--font-poppins",
-  weight: ["400", "500", "600", "700"],
 });
 
 const satoshi = localFont({
@@ -38,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${notoSansThai.variable} ${satoshi.variable} ${poppins.variable}`}>
+    <html lang="en" className={`${notoSansThai.variable} ${satoshi.variable}`}>
       <body className="antialiased">{children}</body>
     </html>
   );
