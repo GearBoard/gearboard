@@ -64,12 +64,12 @@ export default function PostCard({
     <article
       onClick={onClick}
       className={cn(
-        "bg-white rounded-lg flex flex-col gap-3 w-full px-5 py-4",
+        "bg-white rounded-lg overflow-hidden flex flex-col gap-3.5 w-full py-4",
         onClick && "cursor-pointer",
         className
       )}
     >
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex items-center justify-between gap-2 px-5">
         <div className="flex items-center gap-2.5 min-w-0">
           <div className="relative size-10 shrink-0 rounded-full overflow-hidden">
             <Image
@@ -81,7 +81,7 @@ export default function PostCard({
               unoptimized={!!authorInfo.image}
             />
           </div>
-          <div className="flex flex-col min-w-0">
+          <div className="flex flex-col min-w-0 mt-1">
             <span className="font-poppins font-medium text-sm leading-[135%] text-black truncate">
               {authorInfo.name}
             </span>
@@ -90,7 +90,7 @@ export default function PostCard({
             </span>
           </div>
         </div>
-        <div className="flex items-center gap-6 shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
           <time
             className="font-poppins font-medium text-xs leading-[135%] text-dark-gray"
             dateTime={createdAt}
@@ -101,36 +101,34 @@ export default function PostCard({
             <button
               type="button"
               onClick={stop(onMenuClick)}
-              className="text-dark-gray hover:text-black cursor-pointer"
+              className="-mr-1.5 text-black cursor-pointer"
               aria-label="ตัวเลือกเพิ่มเติม"
             >
-              <MoreVertical className="size-5" />
+              <MoreVertical className="size-6" />
             </button>
           )}
         </div>
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1.5 -mb-1 px-5">
         <h3 className="font-inter font-semibold text-xl leading-[135%] text-black">{title}</h3>
-        <p className="font-inter font-medium text-base leading-[135%] text-black line-clamp-2">
+        <p className="font-inter font-medium text-base leading-[135%] text-black line-clamp-3">
           {description}
         </p>
       </div>
 
       {imageUrl && (
-        <div className="relative w-full aspect-[16/10] md:aspect-[16/9] rounded-lg overflow-hidden">
-          <Image
-            src={imageUrl}
-            alt=""
-            fill
-            sizes="(min-width: 768px) 640px, 100vw"
-            className="object-cover"
-            unoptimized
-          />
+        <div className="px-5">
+          {/* eslint-disable-next-line @next/next/no-img-element -- post image dimensions aren't known ahead of time (not stored in the schema), so next/image's required width/height can't be set; a plain img lets the browser size it to its natural aspect ratio */}
+          <img src={imageUrl} alt="" className="w-full h-auto" />
         </div>
       )}
 
-      <div className="border-t border-gray pt-3 flex items-center justify-between gap-2.5">
+      <div className="px-5">
+        <div className="border-t border-gray" />
+      </div>
+
+      <div className="flex items-center justify-between gap-2.5 px-5 -mt-1">
         <div className="flex items-center gap-2 flex-wrap min-w-0">
           {tags.map((tag, i) => (
             <span
@@ -149,23 +147,26 @@ export default function PostCard({
           <button
             type="button"
             onClick={stop(onLikeClick)}
-            className={cn(
-              "flex items-center gap-2 cursor-pointer transition-colors hover:text-primary-red",
-              isLiked ? "text-primary-red" : "text-black"
-            )}
+            className="group flex items-center gap-2 text-black cursor-pointer"
             aria-label="ถูกใจ"
             aria-pressed={isLiked}
           >
-            <Heart className="size-5" fill={isLiked ? "currentColor" : "none"} />
+            <Heart
+              className={cn(
+                "size-5 transition-colors",
+                isLiked ? "text-primary-red" : "text-black group-hover:text-primary-red"
+              )}
+              fill={isLiked ? "currentColor" : "none"}
+            />
             <span className="font-inter font-semibold text-base leading-[135%]">{likeCount}</span>
           </button>
           <button
             type="button"
             onClick={stop(onCommentClick)}
-            className="flex items-center gap-2 text-black cursor-pointer transition-colors hover:text-primary-red"
+            className="group flex items-center gap-2 text-black cursor-pointer"
             aria-label="แสดงความคิดเห็น"
           >
-            <MessageCircle className="size-5" />
+            <MessageCircle className="size-5 text-black transition-colors group-hover:text-primary-red" />
             <span className="font-inter font-semibold text-base leading-[135%]">
               {commentCount}
             </span>

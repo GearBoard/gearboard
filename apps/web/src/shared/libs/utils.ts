@@ -5,22 +5,21 @@ export function cn(...classes: (string | undefined | false)[]): string {
   return twMerge(classes.filter(Boolean).join(" "));
 }
 
-const relativeTimeFormatter = new Intl.RelativeTimeFormat("th", { numeric: "auto" });
-const RELATIVE_TIME_UNITS: [Intl.RelativeTimeFormatUnit, number][] = [
-  ["year", 60 * 60 * 24 * 365],
-  ["month", 60 * 60 * 24 * 30],
-  ["week", 60 * 60 * 24 * 7],
-  ["day", 60 * 60 * 24],
-  ["hour", 60 * 60],
-  ["minute", 60],
+const RELATIVE_TIME_UNITS: [string, number][] = [
+  ["ปี", 60 * 60 * 24 * 365],
+  ["เดือน", 60 * 60 * 24 * 30],
+  ["สัปดาห์", 60 * 60 * 24 * 7],
+  ["วัน", 60 * 60 * 24],
+  ["ชั่วโมง", 60 * 60],
+  ["นาที", 60],
 ];
 
 export function formatRelativeTime(date: string | Date): string {
-  const seconds = (new Date(date).getTime() - Date.now()) / 1000;
-  for (const [unit, secondsInUnit] of RELATIVE_TIME_UNITS) {
-    if (Math.abs(seconds) >= secondsInUnit) {
-      return relativeTimeFormatter.format(Math.round(seconds / secondsInUnit), unit);
+  const seconds = (Date.now() - new Date(date).getTime()) / 1000;
+  for (const [label, secondsInUnit] of RELATIVE_TIME_UNITS) {
+    if (seconds >= secondsInUnit) {
+      return `${Math.round(seconds / secondsInUnit)} ${label}ที่แล้ว`;
     }
   }
-  return relativeTimeFormatter.format(Math.round(seconds), "second");
+  return "เมื่อสักครู่";
 }
