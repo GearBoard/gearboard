@@ -15,13 +15,14 @@ export default function RouteGuard({ children }: { children: React.ReactNode }) 
   const { data: session, isPending: isSessionPending } = useSession();
   const isAuthenticated = !!session;
 
-  const { data: me, isLoading: isMeLoading } = useGetMe(isAuthenticated);
+  const { data: me, isLoading: isMeLoading, error: meError } = useGetMe(isAuthenticated);
   const isProfileComplete = !!me?.name && !!me?.departmentId;
 
   const isPending = isSessionPending || (isAuthenticated && isMeLoading);
+  const hasMeError = isAuthenticated && !!meError;
 
   useEffect(() => {
-    if (isPending) return;
+    if (isPending || hasMeError) return;
 
     if (!isAuthenticated) {
       if (pathname !== LOGIN_PATH) router.replace(LOGIN_PATH);
@@ -36,9 +37,17 @@ export default function RouteGuard({ children }: { children: React.ReactNode }) 
     if (pathname === LOGIN_PATH || pathname === ONBOARDING_PATH) {
       router.replace(HOME_PATH);
     }
-  }, [isPending, isAuthenticated, isProfileComplete, pathname, router]);
+  }, [isPending, hasMeError, isAuthenticated, isProfileComplete, pathname, router]);
 
-  if (isPending) return null;
+  if (isPending) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-current border-t-transparent" />
+      </div>
+    );
+  }
+
+  if (hasMeError) return children;
 
   if (!isAuthenticated && pathname !== LOGIN_PATH) return null;
   if (isAuthenticated && !isProfileComplete && pathname !== ONBOARDING_PATH) return null;
