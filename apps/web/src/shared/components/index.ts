@@ -1,6 +1,9 @@
 export { Button, buttonVariants } from "./ui/button";
 export type { ButtonProps } from "./ui/button";
 
+export { ConfirmModal } from "./ui/confirm-modal";
+export type { ConfirmModalProps } from "./ui/confirm-modal";
+
 export { Dropdown } from "./ui/dropdown";
 export type { DropdownProps, DropdownOption } from "./ui/dropdown";
 
