@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { useState } from "react";
-import { ConfirmModal } from "./ConfirmModal";
+import { ConfirmModal } from "@/shared/components/ConfirmModal";
 
 const meta: Meta<typeof ConfirmModal> = {
   title: "Shared/UI/ConfirmModal",
