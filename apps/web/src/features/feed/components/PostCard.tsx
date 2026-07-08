@@ -82,19 +82,16 @@ export default function PostCard({
             />
           </div>
           <div className="flex flex-col min-w-0 mt-1">
-            <span className="font-poppins font-medium text-sm leading-[135%] text-black truncate">
+            <span className="font-medium text-sm leading-[135%] text-black truncate">
               {authorInfo.name}
             </span>
-            <span className="font-poppins font-medium text-xs leading-[135%] text-dark-gray truncate">
+            <span className="font-medium text-xs leading-[135%] text-dark-gray truncate">
               @{authorInfo.name}
             </span>
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <time
-            className="font-poppins font-medium text-xs leading-[135%] text-dark-gray"
-            dateTime={createdAt}
-          >
+          <time className="font-medium text-xs leading-[135%] text-dark-gray" dateTime={createdAt}>
             {formatRelativeTime(createdAt)}
           </time>
           {isOwner && (
@@ -111,8 +108,8 @@ export default function PostCard({
       </div>
 
       <div className="flex flex-col gap-1.5 -mb-1 px-5">
-        <h3 className="font-inter font-semibold text-xl leading-[135%] text-black">{title}</h3>
-        <p className="font-inter font-medium text-base leading-[135%] text-black line-clamp-3">
+        <h3 className="font-semibold text-xl leading-[135%] text-black">{title}</h3>
+        <p className="font-medium text-base leading-[135%] text-black line-clamp-3">
           {description}
         </p>
       </div>
@@ -134,7 +131,7 @@ export default function PostCard({
             <span
               key={tag}
               className={cn(
-                "px-2 py-1 rounded-lg font-inter font-semibold text-base leading-[135%]",
+                "px-2 py-1 rounded-lg font-semibold text-base leading-[135%]",
                 TAG_COLOR_CLASSES[i % TAG_COLOR_CLASSES.length]
               )}
             >
