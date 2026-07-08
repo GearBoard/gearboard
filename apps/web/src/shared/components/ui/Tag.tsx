@@ -1,5 +1,4 @@
 import { cn } from "@/shared/libs/utils";
-import type { TagProps } from "./Tag.types";
 
 export function Tag({
   label,
@@ -26,4 +25,11 @@ export function Tag({
       {label}
     </div>
   );
+}
+
+export interface TagProps {
+  label: string;
+  color?: string;
+  backgroundColor?: string;
+  className?: string;
 }
