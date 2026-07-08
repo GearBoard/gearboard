@@ -36,8 +36,6 @@
   --font-satoshi: var(--font-satoshi-local), sans-serif;
   --font-noto: var(--font-noto-thai), sans-serif;
   --font-sans: var(--font-satoshi-local), var(--font-noto-thai), sans-serif;
-  --font-poppins: var(--font-poppins), var(--font-noto-thai), sans-serif;
-  --font-inter: var(--font-inter), var(--font-noto-thai), sans-serif;
 
   /* Font weights */
   --font-weight-light: 300;
