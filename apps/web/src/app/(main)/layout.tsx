@@ -24,12 +24,8 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   const user = session?.user ? { name: session.user.name } : undefined;
 
   async function handleLogout() {
-    try {
-      await authClient.signOut();
-      router.push("/");
-    } catch {
-      // Sign-out failed; keep the user on the current page so they can retry.
-    }
+    await authClient.signOut();
+    router.push("/");
   }
 
   useEffect(() => {

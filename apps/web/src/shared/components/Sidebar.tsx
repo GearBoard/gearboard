@@ -40,10 +40,13 @@ export const Sidebar = ({
     setIsLoggingOut(true);
     try {
       await onLogout?.();
-    } finally {
-      setIsLoggingOut(false);
       setShowLogoutConfirm(false);
       onClose?.();
+    } catch {
+      // Logout failed — keep the modal open so the user knows it didn't
+      // succeed and can retry, instead of silently closing as if it did.
+    } finally {
+      setIsLoggingOut(false);
     }
   }
 
