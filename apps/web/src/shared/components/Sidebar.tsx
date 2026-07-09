@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { House, StickyNote, Bookmark, ChevronRight, LogOut } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
+import { ConfirmModal } from "@/shared/components/ConfirmModal";
 import { cn } from "@/shared/libs/utils";
 
 export type ActivePage = "home" | "posts" | "saved";
@@ -15,7 +16,7 @@ export interface SidebarProps {
   user?: {
     name: string;
   };
-  onLogout?: () => void;
+  onLogout?: () => void | Promise<void>;
   onClose?: () => void;
 }
 
@@ -32,6 +33,20 @@ export const Sidebar = ({
   onLogout,
   onClose,
 }: SidebarProps) => {
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  async function handleConfirmLogout() {
+    setIsLoggingOut(true);
+    try {
+      await onLogout?.();
+    } finally {
+      setIsLoggingOut(false);
+      setShowLogoutConfirm(false);
+      onClose?.();
+    }
+  }
+
   return (
     <aside className="flex flex-col justify-between bg-white border-b border-l border-r border-gray w-60 md:w-80 px-3 pt-4 pb-9 md:px-4 md:py-9 h-full">
       {/* Top section — mobile includes logo, desktop is nav buttons only */}
@@ -110,15 +125,23 @@ export const Sidebar = ({
           {/* Logout button */}
           <button
             type="button"
-            onClick={() => {
-              onLogout?.();
-              onClose?.();
-            }}
+            onClick={() => setShowLogoutConfirm(true)}
             className="flex items-center gap-3 w-full rounded-lg px-4 py-2 md:py-3 h-10 md:h-12 bg-red-tint text-logout-red font-semibold text-sm md:text-lg cursor-pointer hover:bg-red-tint-hover active:bg-red-tint-active transition-colors"
           >
             <LogOut className="w-6 h-6 shrink-0" />
             ออกจากระบบ
           </button>
+
+          <ConfirmModal
+            open={showLogoutConfirm}
+            onOpenChange={setShowLogoutConfirm}
+            title="ออกจากระบบ"
+            message="คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ"
+            confirmLabel="ออกจากระบบ"
+            cancelLabel="ยกเลิก"
+            onConfirm={handleConfirmLogout}
+            isLoading={isLoggingOut}
+          />
         </div>
       ) : (
         /* Unauthenticated: Log in + Sign up — mobile only, desktop has no bottom panel */

@@ -1,12 +1,27 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Navbar } from "@/shared/components/Navbar";
 import { Sidebar } from "@/shared/components/Sidebar";
+import { authClient } from "@/shared/libs/auth-client";
 import { cn } from "@/shared/libs/utils";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const router = useRouter();
+  const { data: session } = authClient.useSession();
+  const isAuthenticated = !!session?.user;
+  const user = session?.user ? { name: session.user.name } : undefined;
+
+  async function handleLogout() {
+    try {
+      await authClient.signOut();
+      router.push("/");
+    } catch {
+      // Sign-out failed; keep the user on the current page so they can retry.
+    }
+  }
 
   useEffect(() => {
     if (!isSidebarOpen) return;
@@ -30,7 +45,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
       <div className="flex flex-1">
         <div className="hidden md:block shrink-0">
-          <Sidebar />
+          <Sidebar isAuthenticated={isAuthenticated} user={user} onLogout={handleLogout} />
         </div>
 
         <div
@@ -49,7 +64,12 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
             isSidebarOpen ? "translate-x-0" : "-translate-x-full"
           )}
         >
-          <Sidebar onClose={() => setIsSidebarOpen(false)} />
+          <Sidebar
+            isAuthenticated={isAuthenticated}
+            user={user}
+            onLogout={handleLogout}
+            onClose={() => setIsSidebarOpen(false)}
+          />
         </div>
 
         <main className="flex-1">{children}</main>
