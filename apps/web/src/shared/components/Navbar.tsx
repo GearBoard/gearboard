@@ -52,11 +52,11 @@ export const Navbar = ({ isAuthenticated = false, onMenuClick }: NavbarProps) =>
           {/* Desktop: unauthenticated */}
           {!isAuthenticated && (
             <div className="hidden md:flex items-center gap-[15px]">
-              <Button variant="outline" color="red" size="md" className="font-bold">
-                เข้าสู่ระบบ
+              <Button variant="outline" color="red" size="md" className="font-bold" asChild>
+                <Link href="/auth?view=login">เข้าสู่ระบบ</Link>
               </Button>
-              <Button color="red" size="md" className="font-bold">
-                ลงทะเบียน
+              <Button color="red" size="md" className="font-bold" asChild>
+                <Link href="/auth?view=register">ลงทะเบียน</Link>
               </Button>
             </div>
           )}

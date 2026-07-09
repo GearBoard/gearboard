@@ -4,11 +4,14 @@ import { LoginForm, RegistrationForm } from "@/features/auth";
 import { useState } from "react";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function AuthPage() {
   const router = useRouter();
-  const [currentView, setCurrentView] = useState<"register" | "login">("register");
+  const searchParams = useSearchParams();
+  const [currentView, setCurrentView] = useState<"register" | "login">(
+    searchParams.get("view") === "login" ? "login" : "register"
+  );
 
   return (
     <div className="relative z-0 min-h-screen overflow-hidden bg-primary-red flex items-center justify-center p-4 font-sans">
