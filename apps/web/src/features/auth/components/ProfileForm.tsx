@@ -31,6 +31,21 @@ export default function ProfileForm() {
   // Validation
   const isFormValid = formData.username.trim().length > 0 && formData.department.length > 0;
 
+  const convertFileToDataUrl = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === "string") {
+          resolve(reader.result);
+          return;
+        }
+
+        reject(new Error("Failed to read image file"));
+      };
+      reader.onerror = () => reject(new Error("Failed to read image file"));
+      reader.readAsDataURL(file);
+    });
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -47,10 +62,13 @@ export default function ProfileForm() {
     if (!isFormValid || !session?.user.id) return;
 
     try {
+      const image = avatar ? await convertFileToDataUrl(avatar) : undefined;
+
       await updateUser({
         name: formData.username,
         departmentId: formData.department,
         description: formData.about,
+        ...(image ? { image } : {}),
       });
 
       // Redirect to home after successful onboarding
