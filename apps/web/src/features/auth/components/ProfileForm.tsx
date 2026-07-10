@@ -127,6 +127,7 @@ export default function ProfileForm() {
           options={departmentOptions}
           value={formData.department}
           onChange={(val) => setFormData({ ...formData, department: val as string })}
+          maxVisibleItems={5}
           required
         />
 

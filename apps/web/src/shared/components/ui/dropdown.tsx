@@ -18,6 +18,8 @@ interface BaseProps {
   error?: boolean;
   errorMessage?: string;
   required?: boolean;
+  /** Number of items to show before enabling scroll */
+  maxVisibleItems?: number;
 }
 
 interface SingleProps extends BaseProps {
@@ -43,6 +45,7 @@ export function Dropdown(props: DropdownProps) {
     error,
     errorMessage,
     required,
+    maxVisibleItems,
   } = props;
   const hasError = error || !!errorMessage;
   const [open, setOpen] = useState(false);
@@ -108,9 +111,15 @@ export function Dropdown(props: DropdownProps) {
         <Popover.Content
           align="start"
           sideOffset={10}
-          style={{ width: "var(--radix-popover-trigger-width)" }}
+          style={{
+            width: "var(--radix-popover-trigger-width)",
+            ...(maxVisibleItems
+              ? { maxHeight: `${maxVisibleItems * 40 + 16}px` }
+              : {}),
+          }}
           className={cn(
-            "z-50 flex flex-col gap-1 overflow-hidden rounded-lg bg-white p-2 shadow-primary-red",
+            "z-50 flex flex-col gap-1 rounded-lg bg-white p-2 shadow-primary-red",
+            maxVisibleItems ? "overflow-y-auto" : "overflow-hidden",
             "data-[state=open]:animate-in data-[state=closed]:animate-out",
             "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
             "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
