@@ -35,16 +35,19 @@ export const Sidebar = ({
 }: SidebarProps) => {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [logoutError, setLogoutError] = useState<string | null>(null);
 
   async function handleConfirmLogout() {
     setIsLoggingOut(true);
+    setLogoutError(null);
     try {
       await onLogout?.();
       setShowLogoutConfirm(false);
       onClose?.();
     } catch {
-      // Logout failed — keep the modal open so the user knows it didn't
-      // succeed and can retry, instead of silently closing as if it did.
+      // Logout failed — keep the modal open and show an error so the user
+      // knows it didn't succeed, instead of silently closing as if it did.
+      setLogoutError("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
     } finally {
       setIsLoggingOut(false);
     }
@@ -137,13 +140,17 @@ export const Sidebar = ({
 
           <ConfirmModal
             open={showLogoutConfirm}
-            onOpenChange={setShowLogoutConfirm}
+            onOpenChange={(open) => {
+              setShowLogoutConfirm(open);
+              if (!open) setLogoutError(null);
+            }}
             title="ออกจากระบบ"
             message="คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ"
             confirmLabel="ออกจากระบบ"
             cancelLabel="ยกเลิก"
             onConfirm={handleConfirmLogout}
             isLoading={isLoggingOut}
+            errorMessage={logoutError ?? undefined}
           />
         </div>
       ) : (
