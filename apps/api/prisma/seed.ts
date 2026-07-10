@@ -38,6 +38,29 @@ async function main() {
   } else {
     console.log(`Departments already exist (${existing}), skipping.`);
   }
+
+  console.log("Seeding tags...");
+  const createdTags = await prisma.tag.createMany({
+    data: [
+      {
+        name: "Calculus",
+        color: "#008ACF",
+        backgroundColor: "#44ADE280",
+      },
+      {
+        name: "Physics",
+        color: "#9B51E0",
+        backgroundColor: "#9B51E080",
+      },
+      {
+        name: "Chemistry",
+        color: "#248F53",
+        backgroundColor: "#248F5380",
+      },
+    ],
+    skipDuplicates: true,
+  });
+  console.log(`Created ${createdTags.count} tag(s).`);
 }
 
 main()
