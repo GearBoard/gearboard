@@ -152,12 +152,12 @@ export const Sidebar = ({
           <hr className="border-gray" />
           <div className="flex flex-col gap-3">
             <Button variant="outline" color="red" className="w-full font-bold" asChild>
-              <Link href="/login" onClick={onClose}>
+              <Link href="/auth/login" onClick={onClose}>
                 เข้าสู่ระบบ
               </Link>
             </Button>
             <Button color="red" className="w-full font-bold" asChild>
-              <Link href="/register" onClick={onClose}>
+              <Link href="/auth/register" onClick={onClose}>
                 ลงทะเบียน
               </Link>
             </Button>
