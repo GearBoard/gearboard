@@ -4,16 +4,7 @@ import { userRepository } from "../../modules/user/user.repository.js";
 import type { AppVariables } from "../types/index.js";
 
 export const requireAuth = createMiddleware<{ Variables: AppVariables }>(async (c, next) => {
-  // Debug: log incoming cookie header to help trace Unauthorized issues
-  try {
-    const incomingCookie = c.req.raw.headers.get("cookie");
-    console.debug("requireAuth: incoming cookie:", incomingCookie);
-  } catch (e) {
-    console.debug("requireAuth: failed to read cookie header", e);
-  }
-
   const session = await auth.api.getSession({ headers: c.req.raw.headers });
-  console.debug("requireAuth: better-auth session:", session ? "present" : "missing");
 
   if (!session?.user) {
     return c.json({ success: false, message: "Unauthorized" }, 401);
