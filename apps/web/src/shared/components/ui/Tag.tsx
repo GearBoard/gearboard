@@ -1,5 +1,13 @@
 import { cn } from "@/shared/libs/utils";
 
+
+export interface TagProps {
+  label: string;
+  color?: string;
+  backgroundColor?: string;
+  className?: string;
+}
+
 export function Tag({
   label,
   color = "#008ACF",
@@ -25,11 +33,4 @@ export function Tag({
       {label}
     </div>
   );
-}
-
-export interface TagProps {
-  label: string;
-  color?: string;
-  backgroundColor?: string;
-  className?: string;
 }
