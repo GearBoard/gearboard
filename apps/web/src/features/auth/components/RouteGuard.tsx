@@ -26,7 +26,9 @@ export default function RouteGuard({ children }: { children: React.ReactNode }) 
     if (isPending || hasMeError) return;
 
     if (!isAuthenticated) {
-      if (pathname !== LOGIN_PATH && pathname !== REGISTER_PATH) router.replace(LOGIN_PATH);
+      if (pathname !== LOGIN_PATH && pathname !== REGISTER_PATH && pathname !== HOME_PATH) {
+        router.replace(LOGIN_PATH);
+      }
       return;
     }
 
@@ -50,7 +52,8 @@ export default function RouteGuard({ children }: { children: React.ReactNode }) 
 
   if (hasMeError) return children;
 
-  if (!isAuthenticated && pathname !== LOGIN_PATH && pathname !== REGISTER_PATH) return null;
+  if (!isAuthenticated && pathname !== LOGIN_PATH && pathname !== REGISTER_PATH && pathname !== HOME_PATH)
+    return null;
   if (isAuthenticated && !isProfileComplete && pathname !== ONBOARDING_PATH) return null;
   if (
     isAuthenticated &&
