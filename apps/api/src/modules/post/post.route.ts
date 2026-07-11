@@ -23,6 +23,10 @@ import {
   deletePostService,
   getCommentsByPostIdService,
   createCommentByPostIdService,
+  likePostService,
+  unlikePostService,
+  savePostService,
+  unsavePostService,
 } from "./service/index.js";
 
 export const postRoute = new Hono<{ Variables: AppVariables }>()
@@ -66,6 +70,50 @@ export const postRoute = new Hono<{ Variables: AppVariables }>()
       return c.json(successResponse(null, "Post deleted successfully"), 200);
     }
   )
+  .post(
+    "/:id/like",
+    requireAuth,
+    zValidator("param", GetPostByIdParamsInputDTO, validationHook),
+    async (c) => {
+      const user = c.get("user");
+      const { id } = c.req.valid("param");
+      await likePostService(id, user.id);
+      return c.json(successResponse(null, "Post liked"), 200);
+    }
+  )
+  .delete(
+    "/:id/like",
+    requireAuth,
+    zValidator("param", GetPostByIdParamsInputDTO, validationHook),
+    async (c) => {
+      const user = c.get("user");
+      const { id } = c.req.valid("param");
+      await unlikePostService(id, user.id);
+      return c.json(successResponse(null, "Post unliked"), 200);
+    }
+  )
+  .post(
+    "/:id/save",
+    requireAuth,
+    zValidator("param", GetPostByIdParamsInputDTO, validationHook),
+    async (c) => {
+      const user = c.get("user");
+      const { id } = c.req.valid("param");
+      await savePostService(id, user.id);
+      return c.json(successResponse(null, "Post saved"), 200);
+    }
+  )
+  .delete(
+    "/:id/save",
+    requireAuth,
+    zValidator("param", GetPostByIdParamsInputDTO, validationHook),
+    async (c) => {
+      const user = c.get("user");
+      const { id } = c.req.valid("param");
+      await unsavePostService(id, user.id);
+      return c.json(successResponse(null, "Post unsaved"), 200);
+    }
+  )
   .get(
     "/:postId/comments",
     zValidator("param", GetCommentsByPostIdParamsInputDTO, validationHook),
@@ -88,3 +136,5 @@ export const postRoute = new Hono<{ Variables: AppVariables }>()
       return c.json(successResponse(result, "Comment created"), 201);
     }
   );
+
+  

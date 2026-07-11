@@ -5,3 +5,7 @@ export * from "./update-post.service.js";
 export * from "./delete-post.service.js";
 export * from "./get-comments-by-post-id.service.js";
 export * from "./create-comment-by-post-id.service.js";
+export * from "./like-post.service.js";
+export * from "./unlike-post.service.js";
+export * from "./save-post.service.js";
+export * from "./unsave-post.service.js";

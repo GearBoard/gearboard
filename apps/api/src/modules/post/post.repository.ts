@@ -16,8 +16,14 @@ const postInclude = {
   },
   images: true,
 };
+export const bookmarkInclude = {
+  post: {
+    include: postInclude,
+  },
+} satisfies Prisma.BookmarkInclude;
 
 export type Post = Prisma.PostGetPayload<{ include: typeof postInclude }>;
+export type Bookmark = Prisma.BookmarkGetPayload<{ include: typeof bookmarkInclude }>;
 
 type CreatePostData = {
   title: string;
@@ -119,7 +125,11 @@ export const postRepository = {
             tag: {
               connectOrCreate: {
                 where: { name: tagName },
-                create: { name: tagName },
+                create: {
+                  name: tagName,
+                  color: "#000000",
+                  backgroundColor: "#ffffff",
+                },
               },
             },
           })),
@@ -155,7 +165,11 @@ export const postRepository = {
                   tag: {
                     connectOrCreate: {
                       where: { name: tagName },
-                      create: { name: tagName },
+                      create: {
+                        name: tagName,
+                        color: "#000000",
+                        backgroundColor: "#ffffff", //who have to edit it GOOD LUCK
+                      },
                     },
                   },
                 },
@@ -178,5 +192,115 @@ export const postRepository = {
       where: { id, deletedAt: null },
       data: { deletedAt: new Date() },
     });
+  },
+
+  async isLiked(postId: string, userId: string): Promise<boolean> {
+    const like = await prisma.like.findUnique({
+      where: {
+        userId_postId: {
+          userId,
+          postId,
+        },
+      },
+    });
+
+    return !!like;
+  },
+
+  async likePost(postId: string, userId: string): Promise<void> {
+    await prisma.$transaction([
+      prisma.like.create({
+        data: {
+          userId,
+          postId,
+        },
+      }),
+      prisma.post.update({
+        where: {
+          id: postId,
+          deletedAt: null,
+        },
+        data: {
+          likeCount: {
+            increment: 1,
+          },
+        },
+      }),
+    ]);
+  },
+
+  async unlikePost(postId: string, userId: string): Promise<void> {
+    await prisma.$transaction([
+      prisma.like.delete({
+        where: {
+          userId_postId: {
+            userId,
+            postId,
+          },
+        },
+      }),
+      prisma.post.update({
+        where: {
+          id: postId,
+          deletedAt: null,
+        },
+        data: {
+          likeCount: {
+            decrement: 1,
+          },
+        },
+      }),
+    ]);
+  },
+
+  async isSaved(postId: string, userId: string): Promise<boolean> {
+    const bookmark = await prisma.bookmark.findUnique({
+      where: {
+        userId_postId: {
+          userId,
+          postId,
+        },
+      },
+    });
+
+    return !!bookmark;
+  },
+
+  async savePost(postId: string, userId: string): Promise<void> {
+    await prisma.bookmark.create({
+      data: {
+        userId,
+        postId,
+      },
+    });
+  },
+
+  async unsavePost(postId: string, userId: string): Promise<void> {
+    await prisma.bookmark.delete({
+      where: {
+        userId_postId: {
+          userId,
+          postId,
+        },
+      },
+    });
+  },
+
+  async getSavedPosts(userId: string): Promise<Post[]> {
+    const bookmarks = await prisma.bookmark.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        post: {
+          include: postInclude,
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return bookmarks.map((bookmark : Bookmark) => bookmark.post);
   },
 };
