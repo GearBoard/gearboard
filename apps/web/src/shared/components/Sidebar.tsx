@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { House, StickyNote, Bookmark, ChevronRight, LogOut } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { ConfirmModal } from "@/shared/components/ConfirmModal";
@@ -33,6 +34,7 @@ export const Sidebar = ({
   onLogout,
   onClose,
 }: SidebarProps) => {
+  const router = useRouter();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [logoutError, setLogoutError] = useState<string | null>(null);
@@ -158,15 +160,26 @@ export const Sidebar = ({
         <div className="flex flex-col gap-4 md:hidden">
           <hr className="border-gray" />
           <div className="flex flex-col gap-3">
-            <Button variant="outline" color="red" className="w-full font-bold" asChild>
-              <Link href="/auth/login" onClick={onClose}>
-                เข้าสู่ระบบ
-              </Link>
+            <Button
+              variant="outline"
+              color="red"
+              className="w-full font-bold"
+              onClick={() => {
+                router.push("/auth/login");
+                onClose?.();
+              }}
+            >
+              เข้าสู่ระบบ
             </Button>
-            <Button color="red" className="w-full font-bold" asChild>
-              <Link href="/auth/register" onClick={onClose}>
-                ลงทะเบียน
-              </Link>
+            <Button
+              color="red"
+              className="w-full font-bold"
+              onClick={() => {
+                router.push("/auth/register");
+                onClose?.();
+              }}
+            >
+              ลงทะเบียน
             </Button>
           </div>
         </div>
