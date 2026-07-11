@@ -18,6 +18,7 @@ interface BaseProps {
   error?: boolean;
   errorMessage?: string;
   required?: boolean;
+  disabled?: boolean;
   /** Number of items to show before enabling scroll */
   maxVisibleItems?: number;
 }
@@ -45,6 +46,7 @@ export function Dropdown(props: DropdownProps) {
     error,
     errorMessage,
     required,
+    disabled,
     maxVisibleItems,
   } = props;
   const hasError = error || !!errorMessage;
@@ -88,12 +90,14 @@ export function Dropdown(props: DropdownProps) {
       <Popover.Trigger asChild>
         <button
           type="button"
+          disabled={disabled}
           className={cn(
             "cursor-pointer flex w-full items-center justify-between rounded-lg border-[1.5px] border-gray px-3 py-2 md:px-4 h-10",
             "text-sm bg-white text-black outline-none transition-colors md:text-base",
             "hover:border-primary-red focus-visible:border-primary-red",
             open && "border-primary-red",
             hasError && "border-primary-red bg-primary-red/10",
+            disabled && "cursor-not-allowed opacity-50 bg-gray/10 hover:border-gray focus-visible:border-gray",
             !label && !errorMessage ? className : undefined
           )}
         >

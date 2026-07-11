@@ -1,19 +1,22 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { useEffect } from "react";
 import Image from "next/image";
 import { Button, Input, Dropdown } from "@/shared/components";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { SquarePen } from "lucide-react";
 import { useSession } from "@/shared/libs/auth-client";
-import { useGetDepartments, useUpdateUser } from "@/shared/hooks";
+import { useGetDepartments, useUpdateUser, useGetMe, useUploadAvatar } from "@/shared/hooks";
 
 export default function ProfileForm() {
   const router = useRouter();
   const { data: session } = useSession();
+  const { data: me } = useGetMe();
   const { data: departments = [], error: departmentsError } = useGetDepartments();
   const { trigger: updateUser, isMutating: isLoading } = useUpdateUser(session?.user.id);
+  const { trigger: uploadAvatar, isMutating: isUploading } = useUploadAvatar();
 
   // Form state
   const [formData, setFormData] = useState({
@@ -28,27 +31,41 @@ export default function ProfileForm() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Sync with user data
+  useEffect(() => {
+    if (me) {
+      setFormData((prev) => ({
+        username: prev.username || me.name || "",
+        department: prev.department || me.departmentId || "",
+        about: prev.about || me.description || "",
+      }));
+      if (me.image && !previewUrl) {
+        setPreviewUrl(me.image);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [me]);
+
+  // Cleanup object URL
+  useEffect(() => {
+    return () => {
+      if (previewUrl && previewUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
+
   // Validation
-  const isFormValid = formData.username.trim().length > 0 && formData.department.length > 0;
+  const isFormValid =
+    formData.username.trim().length > 0 && formData.department.length > 0 && !departmentsError;
 
-  const convertFileToDataUrl = (file: File): Promise<string> =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (typeof reader.result === "string") {
-          resolve(reader.result);
-          return;
-        }
-
-        reject(new Error("Failed to read image file"));
-      };
-      reader.onerror = () => reject(new Error("Failed to read image file"));
-      reader.readAsDataURL(file);
-    });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (previewUrl && previewUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(previewUrl);
+      }
       const objectUrl = URL.createObjectURL(file);
       setPreviewUrl(objectUrl);
       setAvatar(file);
@@ -62,13 +79,17 @@ export default function ProfileForm() {
     if (!isFormValid || !session?.user.id) return;
 
     try {
-      const image = avatar ? await convertFileToDataUrl(avatar) : undefined;
+      let imageUrl = me?.image;
+      if (avatar) {
+        const result = await uploadAvatar(avatar);
+        imageUrl = result.url;
+      }
 
       await updateUser({
         name: formData.username,
         departmentId: formData.department,
         description: formData.about,
-        ...(image ? { image } : {}),
+        ...(imageUrl ? { image: imageUrl } : {}),
       });
 
       // Redirect to home after successful onboarding
@@ -147,6 +168,7 @@ export default function ProfileForm() {
           onChange={(val) => setFormData({ ...formData, department: val as string })}
           maxVisibleItems={5}
           required
+          disabled={!!departmentsError}
         />
 
         {departmentsError ? (
@@ -174,8 +196,8 @@ export default function ProfileForm() {
       <Button
         form="profile-form"
         type="submit"
-        loading={isLoading}
-        disabled={!isFormValid || isLoading}
+        loading={isLoading || isUploading}
+        disabled={!isFormValid || isLoading || isUploading || !!departmentsError}
         size="lg"
       >
         ยืนยัน
