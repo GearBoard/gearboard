@@ -14,6 +14,7 @@ export interface ConfirmModalProps {
   onConfirm: () => void;
   onCancel?: () => void;
   isLoading?: boolean;
+  errorMessage?: string;
 }
 
 export function ConfirmModal({
@@ -26,6 +27,7 @@ export function ConfirmModal({
   onConfirm,
   onCancel,
   isLoading = false,
+  errorMessage,
 }: ConfirmModalProps) {
   function handleCancel() {
     if (onCancel) {
@@ -46,6 +48,7 @@ export function ConfirmModal({
         <div className="flex flex-col gap-2">
           <h2 className="text-lg font-bold text-black">{title}</h2>
           <p className="text-sm text-dark-gray">{message}</p>
+          {errorMessage && <p className="text-xs sm:text-sm text-primary-red">{errorMessage}</p>}
         </div>
         <div className="flex justify-end gap-3">
           <Button color="red" onClick={onConfirm} loading={isLoading}>

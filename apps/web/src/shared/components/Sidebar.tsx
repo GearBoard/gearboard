@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { House, StickyNote, Bookmark, ChevronRight, LogOut } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { ConfirmModal } from "@/shared/components/ConfirmModal";
@@ -33,18 +34,22 @@ export const Sidebar = ({
   onLogout,
   onClose,
 }: SidebarProps) => {
+  const router = useRouter();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [logoutError, setLogoutError] = useState<string | null>(null);
 
   async function handleConfirmLogout() {
     setIsLoggingOut(true);
+    setLogoutError(null);
     try {
       await onLogout?.();
       setShowLogoutConfirm(false);
       onClose?.();
     } catch {
-      // Logout failed — keep the modal open so the user knows it didn't
-      // succeed and can retry, instead of silently closing as if it did.
+      // Logout failed — keep the modal open and show an error so the user
+      // knows it didn't succeed, instead of silently closing as if it did.
+      setLogoutError("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
     } finally {
       setIsLoggingOut(false);
     }
@@ -137,13 +142,17 @@ export const Sidebar = ({
 
           <ConfirmModal
             open={showLogoutConfirm}
-            onOpenChange={setShowLogoutConfirm}
+            onOpenChange={(open) => {
+              setShowLogoutConfirm(open);
+              if (!open) setLogoutError(null);
+            }}
             title="ออกจากระบบ"
             message="คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ"
             confirmLabel="ออกจากระบบ"
             cancelLabel="ยกเลิก"
             onConfirm={handleConfirmLogout}
             isLoading={isLoggingOut}
+            errorMessage={logoutError ?? undefined}
           />
         </div>
       ) : (
@@ -151,15 +160,26 @@ export const Sidebar = ({
         <div className="flex flex-col gap-4 md:hidden">
           <hr className="border-gray" />
           <div className="flex flex-col gap-3">
-            <Button variant="outline" color="red" className="w-full font-bold" asChild>
-              <Link href="/login" onClick={onClose}>
-                เข้าสู่ระบบ
-              </Link>
+            <Button
+              variant="outline"
+              color="red"
+              className="w-full font-bold"
+              onClick={() => {
+                router.push("/auth/login");
+                onClose?.();
+              }}
+            >
+              เข้าสู่ระบบ
             </Button>
-            <Button color="red" className="w-full font-bold" asChild>
-              <Link href="/register" onClick={onClose}>
-                ลงทะเบียน
-              </Link>
+            <Button
+              color="red"
+              className="w-full font-bold"
+              onClick={() => {
+                router.push("/auth/register");
+                onClose?.();
+              }}
+            >
+              ลงทะเบียน
             </Button>
           </div>
         </div>

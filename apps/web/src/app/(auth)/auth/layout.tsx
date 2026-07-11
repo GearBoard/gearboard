@@ -1,17 +1,11 @@
 "use client";
 
-import { LoginForm, RegistrationForm } from "@/features/auth";
-import { useState } from "react";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
-export default function AuthPage() {
+export default function AuthLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const [currentView, setCurrentView] = useState<"register" | "login">(
-    searchParams.get("view") === "login" ? "login" : "register"
-  );
 
   return (
     <div className="relative z-0 min-h-screen overflow-hidden bg-primary-red flex items-center justify-center p-4 font-sans">
@@ -33,11 +27,7 @@ export default function AuthPage() {
         <ArrowLeft aria-hidden="true" />
       </button>
 
-      {currentView === "login" ? (
-        <LoginForm onSwitchToRegister={() => setCurrentView("register")} />
-      ) : (
-        <RegistrationForm onSwitchToLogin={() => setCurrentView("login")} />
-      )}
+      {children}
     </div>
   );
 }
