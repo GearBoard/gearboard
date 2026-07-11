@@ -46,7 +46,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar onMenuClick={() => setIsSidebarOpen(true)} />
+      <Navbar isAuthenticated={isAuthenticated} onMenuClick={() => setIsSidebarOpen(true)} />
 
       <div className="flex flex-1">
         <div className="hidden md:block shrink-0">
