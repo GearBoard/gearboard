@@ -21,7 +21,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   const activePage = getActivePage(pathname);
   const { data: session } = authClient.useSession();
   const isAuthenticated = !!session?.user;
-  const user = session?.user ? { name: session.user.name } : undefined;
+  const user = session?.user ? { name: session.user.name, image: session.user.image } : undefined;
 
   async function handleLogout() {
     await authClient.signOut();

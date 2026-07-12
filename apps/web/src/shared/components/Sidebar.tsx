@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -16,6 +16,7 @@ export interface SidebarProps {
   activePage?: ActivePage;
   user?: {
     name: string;
+    image?: string | null;
   };
   onLogout?: () => void | Promise<void>;
   onClose?: () => void;
@@ -116,8 +117,14 @@ export const Sidebar = ({
             className="flex items-center justify-between px-4 py-3 h-[60px] md:h-[72px] rounded-lg hover:bg-light-gray active:bg-gray transition-colors"
           >
             <div className="flex items-center gap-[10px]">
-              {/* Avatar placeholder */}
-              <div className="w-9 h-9 md:w-12 md:h-12 rounded-full bg-avatar-red shrink-0" />
+              <Image
+                src={user?.image || "/profile.svg"}
+                alt=""
+                width={48}
+                height={48}
+                unoptimized={!!user?.image}
+                className="w-9 h-9 md:w-12 md:h-12 rounded-full object-cover shrink-0"
+              />
               <div className="flex flex-col">
                 <span className="text-sm md:text-base font-medium text-black leading-[135%]">
                   {user?.name}
