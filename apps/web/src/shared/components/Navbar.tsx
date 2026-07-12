@@ -45,7 +45,15 @@ export const Navbar = ({ isAuthenticated = false, onMenuClick }: NavbarProps) =>
           {/* Desktop: authenticated */}
           {isAuthenticated && (
             <div className="hidden md:flex">
-              <Button variant="outline" color="gray" size="md" iconLeft={<GithubIcon />}>
+              <Button
+                variant="outline"
+                color="gray"
+                size="md"
+                iconLeft={<GithubIcon />}
+                onClick={() =>
+                  window.open(process.env.NEXT_PUBLIC_GITHUB_URL, "_blank", "noopener,noreferrer")
+                }
+              >
                 gearboard
               </Button>
             </div>
