@@ -5,7 +5,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "@/shared/libs/auth-client";
 import { useGetMe } from "@/shared/hooks/users";
 
-const LOGIN_PATH = "/auth";
+const LOGIN_PATH = "/auth/login";
+const REGISTER_PATH = "/auth/register";
 const ONBOARDING_PATH = "/auth/profile";
 const HOME_PATH = "/";
 
@@ -25,7 +26,9 @@ export default function RouteGuard({ children }: { children: React.ReactNode }) 
     if (isPending || hasMeError) return;
 
     if (!isAuthenticated) {
-      if (pathname !== LOGIN_PATH) router.replace(LOGIN_PATH);
+      if (pathname !== LOGIN_PATH && pathname !== REGISTER_PATH && pathname !== HOME_PATH) {
+        router.replace(LOGIN_PATH);
+      }
       return;
     }
 
@@ -34,7 +37,7 @@ export default function RouteGuard({ children }: { children: React.ReactNode }) 
       return;
     }
 
-    if (pathname === LOGIN_PATH || pathname === ONBOARDING_PATH) {
+    if (pathname === LOGIN_PATH || pathname === REGISTER_PATH || pathname === ONBOARDING_PATH) {
       router.replace(HOME_PATH);
     }
   }, [isPending, hasMeError, isAuthenticated, isProfileComplete, pathname, router]);
@@ -49,12 +52,13 @@ export default function RouteGuard({ children }: { children: React.ReactNode }) 
 
   if (hasMeError) return children;
 
-  if (!isAuthenticated && pathname !== LOGIN_PATH) return null;
+  if (!isAuthenticated && pathname !== LOGIN_PATH && pathname !== REGISTER_PATH && pathname !== HOME_PATH)
+    return null;
   if (isAuthenticated && !isProfileComplete && pathname !== ONBOARDING_PATH) return null;
   if (
     isAuthenticated &&
     isProfileComplete &&
-    (pathname === LOGIN_PATH || pathname === ONBOARDING_PATH)
+    (pathname === LOGIN_PATH || pathname === REGISTER_PATH || pathname === ONBOARDING_PATH)
   )
     return null;
 

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Search, Menu } from "lucide-react";
 import GithubIcon from "@/shared/components/icons/GithubIcon";
 import { Button } from "@/shared/components/ui/button";
@@ -15,6 +16,7 @@ interface NavbarProps {
 
 export const Navbar = ({ isAuthenticated = false, onMenuClick }: NavbarProps) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const router = useRouter();
 
   return (
     <nav className="bg-white border-b border-gray">
@@ -43,7 +45,15 @@ export const Navbar = ({ isAuthenticated = false, onMenuClick }: NavbarProps) =>
           {/* Desktop: authenticated */}
           {isAuthenticated && (
             <div className="hidden md:flex">
-              <Button variant="outline" color="gray" size="md" iconLeft={<GithubIcon />}>
+              <Button
+                variant="outline"
+                color="gray"
+                size="md"
+                iconLeft={<GithubIcon />}
+                onClick={() =>
+                  window.open(process.env.NEXT_PUBLIC_GITHUB_URL, "_blank", "noopener,noreferrer")
+                }
+              >
                 gearboard
               </Button>
             </div>
@@ -52,10 +62,21 @@ export const Navbar = ({ isAuthenticated = false, onMenuClick }: NavbarProps) =>
           {/* Desktop: unauthenticated */}
           {!isAuthenticated && (
             <div className="hidden md:flex items-center gap-[15px]">
-              <Button variant="outline" color="red" size="md" className="font-bold">
+              <Button
+                variant="outline"
+                color="red"
+                size="md"
+                className="font-bold"
+                onClick={() => router.push("/auth/login")}
+              >
                 เข้าสู่ระบบ
               </Button>
-              <Button color="red" size="md" className="font-bold">
+              <Button
+                color="red"
+                size="md"
+                className="font-bold"
+                onClick={() => router.push("/auth/register")}
+              >
                 ลงทะเบียน
               </Button>
             </div>

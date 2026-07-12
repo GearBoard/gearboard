@@ -31,7 +31,7 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
 
   useEffect(() => {
     if (searchParams.get("error")) {
-      router.replace("/auth", { scroll: false });
+      router.replace("/auth/register", { scroll: false });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -107,7 +107,7 @@ export default function RegistrationForm({ onSwitchToLogin }: RegistrationFormPr
         {
           provider: "google",
           callbackURL: `${window.location.origin}/auth/profile`,
-          errorCallbackURL: `${window.location.origin}/auth`,
+          errorCallbackURL: `${window.location.origin}/auth/register`,
         },
         {
           onError: () => {
