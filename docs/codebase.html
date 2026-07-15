@@ -239,6 +239,7 @@ app.onError((err, c) =&gt; {
         <h3>Routes — <span class="path-chip">apps/api/src/routes.ts</span></h3>
         <pre><span class="kw">export const</span> apiRoutes = <span class="kw">new</span> <span class="ty">Hono</span>()
   .route(<span class="str">"/api/posts"</span>, postRoute)
+  .route(<span class="str">"/api/uploads"</span>, uploadRoute)
   .route(<span class="str">"/api/comments"</span>, commentRoute)
   .route(<span class="str">"/api/users"</span>, userRoute);
 
@@ -438,7 +439,7 @@ prisma.post.findUnique({ where: { id, <span class="kw">deletedAt</span>: <span c
             <tr><td><code>Account</code></td><td>providerId, accountId, userId</td><td>OAuth account linking.</td></tr>
             <tr><td><code>Post</code></td><td>title, description, isClosed, likeCount, commentCount, userId, deletedAt</td><td>Soft delete.</td></tr>
             <tr><td><code>PostImage</code></td><td>url, postId</td><td><code>onDelete: Cascade</code></td></tr>
-            <tr><td><code>Tag</code></td><td>name (unique)</td><td>Global tag registry.</td></tr>
+            <tr><td><code>Tag</code></td><td>name (unique), color, backgroundColor</td><td>Global tag registry.</td></tr>
             <tr><td><code>PostTag</code></td><td>postId + tagId (composite PK)</td><td>Join table. Tag upsert via <code>connectOrCreate</code>.</td></tr>
             <tr><td><code>Comment</code></td><td>content, userId, postId, parentId (self-ref), deletedAt</td><td>Replies via self-reference. Cascade delete on post.</td></tr>
             <tr><td><code>Like</code></td><td>userId + postId (composite PK)</td><td>—</td></tr>
@@ -551,6 +552,8 @@ prisma.post.findUnique({ where: { id, <span class="kw">deletedAt</span>: <span c
             <tr><td><code>useGetPostById(id)</code></td><td>useSWR</td><td><code>["post", id]</code></td></tr>
             <tr><td><code>useGetPostList(query?)</code></td><td>useSWR</td><td><code>["posts", query]</code></td></tr>
             <tr><td><code>useGetPostComments(postId)</code></td><td>useSWR</td><td><code>["post-comments", postId]</code></td></tr>
+            <tr><td><code>useGetTags()</code></td><td>useSWR</td><td><code>"tags"</code></td></tr>
+            <tr><td><code>useUploadImage()</code></td><td>useSWRMutation</td><td><code>"upload-image"</code></td></tr>
             <tr><td><code>useCreatePost()</code></td><td>useSWRMutation</td><td><code>"posts"</code></td></tr>
             <tr><td><code>useUpdatePost(id)</code></td><td>useSWRMutation</td><td><code>["post", id]</code></td></tr>
             <tr><td><code>useDeletePost(id)</code></td><td>useSWRMutation</td><td><code>["post", id]</code></td></tr>

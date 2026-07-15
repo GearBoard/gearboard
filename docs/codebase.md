@@ -367,7 +367,7 @@ Query param validation coerces `page`/`limit` from strings, enforces 1–100 ran
 | Account    | providerId, accountId, userId                                            | OAuth account linking            |
 | Post       | title, description, likeCount, commentCount, isClosed, userId, deletedAt | Soft delete                      |
 | PostImage  | url, postId                                                              | cascade delete                   |
-| Tag        | name (unique)                                                            | Global tag registry              |
+| Tag        | name (unique), color, backgroundColor                                    | Global tag registry              |
 | PostTag    | postId + tagId (composite PK)                                            | Join table                       |
 | Comment    | content, userId, postId, parentId (self-ref for replies), deletedAt      | Cascade delete on post           |
 | Like       | userId + postId (composite PK)                                           | —                                |
@@ -407,6 +407,8 @@ Optional: Google OAuth (`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`), AWS S3, GCS
 | GET      | /api/users/:id                   | ✓       | `getUserByIdService`           |
 | PATCH    | /api/users/:id                   | ✓       | `updateUserService`            |
 | DELETE   | /api/users/:id                   | ✓       | `deleteUserService`            |
+| GET      | /api/tags                        | —       | `getTagsService`               |
+| POST     | /api/uploads/images              | ✓       | `uploadImageService`           |
 | POST/GET | /api/auth/\*\*                   | —       | Better-Auth handler            |
 
 ---
@@ -510,6 +512,18 @@ export function useCreatePost() {
     ) => unwrap(client.api.posts.$post({ json: arg }))
   );
 }
+
+// hooks/tags.ts
+export function useGetTags() {
+  return useSWR("tags", () => unwrap(client.api.tags.$get()));
+}
+
+// hooks/uploads.ts
+export function useUploadImage() {
+  return useSWRMutation("upload-image", (_key, { arg }: { arg: File }) =>
+    unwrap(client.api.uploads.images.$post({ form: { file: arg } }))
+  );
+}
 ```
 
 SWR cache key conventions:
@@ -518,6 +532,8 @@ SWR cache key conventions:
 - List: `["posts", query]`
 - Nested: `["post-comments", postId]`
 - Current user: `"me"`
+- Tags: `"tags"`
+- Image upload: `"upload-image"`
 
 Calling a mutation:
 

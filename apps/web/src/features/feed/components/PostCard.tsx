@@ -14,11 +14,12 @@ export interface PostCardProps {
   title: string;
   description: string;
   tags: string[];
-  likeCount: number;
-  commentCount: number;
   authorInfo: PostCardAuthor;
   createdAt: string;
   imageUrl?: string | null;
+  tagStyles?: Record<string, { color: string; backgroundColor: string }>;
+  likeCount: number;
+  commentCount: number;
   isLiked?: boolean;
   isSaved?: boolean;
   isOwner?: boolean;
@@ -40,14 +41,15 @@ export default function PostCard({
   title,
   description,
   tags,
-  likeCount,
-  commentCount,
   authorInfo,
   createdAt,
   imageUrl,
+  likeCount,
+  commentCount,
   isLiked = false,
   isSaved = false,
   isOwner = false,
+  tagStyles,
   className,
   onClick,
   onLikeClick,
@@ -98,7 +100,7 @@ export default function PostCard({
             <button
               type="button"
               onClick={stop(onMenuClick)}
-              className="-mr-1.5 text-black cursor-pointer"
+              className="-mr-1.5 hidden text-black cursor-pointer"
               aria-label="ตัวเลือกเพิ่มเติม"
             >
               <MoreVertical className="size-6" />
@@ -127,20 +129,24 @@ export default function PostCard({
 
       <div className="flex items-center justify-between gap-2.5 px-5 -mt-1">
         <div className="flex items-center gap-2 flex-wrap min-w-0">
-          {tags.map((tag, i) => (
-            <span
-              key={tag}
-              className={cn(
-                "px-2 py-1 rounded-lg font-semibold text-base leading-[135%]",
-                TAG_COLOR_CLASSES[i % TAG_COLOR_CLASSES.length]
-              )}
-            >
-              {tag}
-            </span>
-          ))}
+          {tags.map((tag, i) => {
+            const tagStyle = tagStyles?.[tag];
+            return (
+              <span
+                key={tag}
+                className={cn(
+                  "px-2 py-1 rounded-lg font-semibold text-base leading-[135%]",
+                  !tagStyle && TAG_COLOR_CLASSES[i % TAG_COLOR_CLASSES.length]
+                )}
+                style={tagStyle}
+              >
+                {tag}
+              </span>
+            );
+          })}
         </div>
 
-        <div className="flex items-center gap-4 shrink-0">
+        <div className="hidden items-center gap-4 shrink-0">
           <button
             type="button"
             onClick={stop(onLikeClick)}

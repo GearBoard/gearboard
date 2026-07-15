@@ -19,7 +19,7 @@ export const Navbar = ({ isAuthenticated = false, onMenuClick }: NavbarProps) =>
   const router = useRouter();
 
   return (
-    <nav className="bg-white border-b border-gray">
+    <nav className="sticky top-0 z-30 border-b border-gray bg-white">
       <div className="flex items-center justify-between px-6 h-12 md:px-16 md:h-16">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-[9px] md:gap-3 shrink-0">

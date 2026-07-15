@@ -114,6 +114,10 @@ Read it in the handler with `c.get("user")` — type is `AuthenticatedUser` from
 
 **Never edit** anything inside `apps/api/generated/`. Regenerate with `yarn db:generate`.
 
+### Image uploads
+
+`POST /api/uploads/images` accepts an authenticated multipart `file` field and stores JPEG/PNG images in GCS. The returned public URL is passed to post creation in `images`.
+
 ---
 
 ## Frontend conventions

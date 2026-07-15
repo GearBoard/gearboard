@@ -49,7 +49,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       <Navbar isAuthenticated={isAuthenticated} onMenuClick={() => setIsSidebarOpen(true)} />
 
       <div className="flex flex-1">
-        <div className="hidden md:block shrink-0">
+          <div className="hidden shrink-0 md:sticky md:top-16 md:block md:h-[calc(100vh-4rem)]">
           <Sidebar
             isAuthenticated={isAuthenticated}
             activePage={activePage}
