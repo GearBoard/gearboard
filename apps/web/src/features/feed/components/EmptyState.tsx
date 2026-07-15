@@ -1,7 +1,8 @@
 import Image from "next/image";
+import { cn } from "@/shared/libs/utils";
 
 type EmptyStateProps = {
-  title: string;
+  title?: string;
   description?: string;
   imageSrc?: string;
   imageWidth?: number;
@@ -22,12 +23,10 @@ export default function EmptyState({
         alt="Empty state illustration"
         width={imageWidth}
         height={imageHeight}
-        className="mb-4 h-auto w-full max-w-[220px]"
+        className={cn("h-auto w-full max-w-[220px]", title && "mb-4")}
       />
 
-      <h2 className="text-[20px] font-bold text-primary-red">
-        {title}
-      </h2>
+      {title && <h2 className="text-[20px] font-bold text-primary-red">{title}</h2>}
 
       {description && (
         <p className="text-[14px] font-medium text-dark-gray">
