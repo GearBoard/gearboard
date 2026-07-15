@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { Button, Input, Dropdown } from "@/shared/components";
 import { Textarea } from "@/shared/components/ui/textarea";
@@ -18,56 +17,46 @@ export default function ProfileForm() {
   const { trigger: updateUser, isMutating: isLoading } = useUpdateUser(session?.user.id);
   const { trigger: uploadAvatar, isMutating: isUploading } = useUploadAvatar();
 
-  // Form state
-  const [formData, setFormData] = useState({
-    username: "",
-    department: "",
-    about: "",
-  });
+  const [edits, setEdits] = useState<{
+    username?: string;
+    department?: string;
+    about?: string;
+  }>({});
+
+  const formData = {
+    username: edits.username ?? me?.name ?? "",
+    department: edits.department ?? me?.departmentId ?? "",
+    about: edits.about ?? me?.description ?? "",
+  };
 
   // Avatar state
   const [avatar, setAvatar] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const previewUrl = avatarPreview ?? me?.image ?? null;
   const [submitError, setSubmitError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Sync with user data
-  useEffect(() => {
-    if (me) {
-      setFormData((prev) => ({
-        username: prev.username || me.name || "",
-        department: prev.department || me.departmentId || "",
-        about: prev.about || me.description || "",
-      }));
-      if (me.image && !previewUrl) {
-        setPreviewUrl(me.image);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [me]);
 
   // Cleanup object URL
   useEffect(() => {
     return () => {
-      if (previewUrl && previewUrl.startsWith("blob:")) {
-        URL.revokeObjectURL(previewUrl);
+      if (avatarPreview) {
+        URL.revokeObjectURL(avatarPreview);
       }
     };
-  }, [previewUrl]);
+  }, [avatarPreview]);
 
   // Validation
   const isFormValid =
     formData.username.trim().length > 0 && formData.department.length > 0 && !departmentsError;
 
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (previewUrl && previewUrl.startsWith("blob:")) {
-        URL.revokeObjectURL(previewUrl);
+      if (avatarPreview) {
+        URL.revokeObjectURL(avatarPreview);
       }
       const objectUrl = URL.createObjectURL(file);
-      setPreviewUrl(objectUrl);
+      setAvatarPreview(objectUrl);
       setAvatar(file);
     }
   };
@@ -156,7 +145,7 @@ export default function ProfileForm() {
           id="profile-username"
           placeholder="john.doe"
           value={formData.username}
-          onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+          onChange={(e) => setEdits({ ...edits, username: e.target.value })}
           required
         />
 
@@ -165,7 +154,7 @@ export default function ProfileForm() {
           placeholder="เลือกภาควิชา"
           options={departmentOptions}
           value={formData.department}
-          onChange={(val) => setFormData({ ...formData, department: val as string })}
+          onChange={(val) => setEdits({ ...edits, department: val as string })}
           maxVisibleItems={5}
           required
           disabled={!!departmentsError}
@@ -182,7 +171,7 @@ export default function ProfileForm() {
           id="profile-about"
           placeholder="บอกเล่าเกี่ยวกับตัวคุณ..."
           value={formData.about}
-          onChange={(e) => setFormData({ ...formData, about: e.target.value })}
+          onChange={(e) => setEdits({ ...edits, about: e.target.value })}
           className="min-h-[120px]"
         />
       </form>
