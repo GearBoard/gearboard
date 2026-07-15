@@ -11,7 +11,7 @@ export default function MyPosts() {
   const { data: session } = useSession();
   const userId = session?.user?.id;
 
-  const { data, isLoading } = useGetPostList(userId ? { userId } : undefined);
+  const { data, isLoading } = useGetPostList(userId ? { userId } : null);
 
   const myPosts: (PostCardProps & { id: string })[] = (data?.data ?? []).map((post) => ({
     id: post.id,
@@ -22,7 +22,7 @@ export default function MyPosts() {
     commentCount: post.commentCount,
     authorInfo: post.authorInfo,
     createdAt: post.createdAt,
-    imageUrl: post.images[0] ?? null,
+    imageUrl: post.images?.[0] ?? null,
     isOwner: true,
   }));
 
