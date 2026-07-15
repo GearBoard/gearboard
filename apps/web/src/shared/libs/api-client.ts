@@ -1,9 +1,6 @@
 import { hc } from "hono/client";
 import type { AppType } from "../../../../api/src/routes";
 
-// Ensure fetch includes credentials so browser cookies (Better Auth session)
-// are sent with API requests (e.g., GET /api/users/me, PATCH /api/users/:id).
-// Hono's `hc` accepts an `init` option which is merged into `fetch` calls.
 export const client = hc<AppType>(process.env.NEXT_PUBLIC_API_URL!, {
   init: { credentials: "include" },
 });

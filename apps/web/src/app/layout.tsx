@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Noto_Sans_Thai } from "next/font/google";
 import localFont from "next/font/local";
+import { RouteGuard } from "@/features/auth";
 import "./globals.css";
 
 const notoSansThai = Noto_Sans_Thai({
@@ -33,7 +34,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${notoSansThai.variable} ${satoshi.variable}`}>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <RouteGuard>{children}</RouteGuard>
+      </body>
     </html>
   );
 }

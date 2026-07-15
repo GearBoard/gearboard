@@ -2,8 +2,8 @@ import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 import { client, unwrap } from "../libs/api-client";
 
-export function useGetMe() {
-  return useSWR("me", () => unwrap(client.api.users.me.$get()));
+export function useGetMe(enabled = true) {
+  return useSWR(enabled ? "me" : null, () => unwrap(client.api.users.me.$get()));
 }
 
 export function useGetUserList(query?: {

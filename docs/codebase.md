@@ -576,6 +576,7 @@ All in `apps/web/src/shared/components/ui/`. Import via `@/shared/components`.
 | Button    | color: red\|navy\|yellow; size: lg\|md\|sm\|xs; loading, asChild, iconLeft, iconRight |
 | Input     | type, icon, error, disabled, password toggle                                          |
 | Modal     | open, onOpenChange, title, description                                                |
+| ConfirmModal | open, onOpenChange, title, message, confirmLabel, cancelLabel, onConfirm, onCancel, isLoading |
 | Dropdown  | options, value, onChange, multi-select                                                |
 | Textarea  | standard                                                                              |
 | Navbar    | logo, search, login/signup                                                            |

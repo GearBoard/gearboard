@@ -10,5 +10,8 @@ export type { InputProps } from "./ui/input";
 export { Modal } from "./ui/modal";
 export type { ModalProps } from "./ui/modal";
 
+export { ConfirmModal } from "./ConfirmModal";
+export type { ConfirmModalProps } from "./ConfirmModal";
+
 export { Sidebar } from "./Sidebar";
 export type { SidebarProps, ActivePage } from "./Sidebar";
