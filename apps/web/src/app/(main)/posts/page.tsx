@@ -41,7 +41,7 @@ export default function MyPosts() {
         ) : hasPosts ? (
           myPosts.map((post) => <PostCard key={post.id} {...post} className="w-full" />)
         ) : (
-          <EmptyState imageSrc="/no-post.svg" imageWidth={250} imageHeight={265} />
+          <EmptyState title="ไม่มีโพสต์" description="เริ่มสร้างโพสต์แรกกันเลย" />
         )}
       </section>
 
