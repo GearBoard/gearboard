@@ -3,7 +3,6 @@ import { v4 as uuidv4 } from "uuid";
 import type { Readable } from "stream";
 import { pipeline } from "stream/promises";
 import path from "path";
-import fs from "fs";
 
 import { env } from "../../config/env.js";
 
@@ -23,20 +22,16 @@ const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png"];
 
 let gcsStorage: Storage | null = null;
 let gcsBucket: ReturnType<Storage["bucket"]> | null = null;
-let useLocalFallback = false;
 
 function getGCSBucket() {
   if (gcsBucket) return gcsBucket;
-  if (useLocalFallback) return null;
 
   const bucketName = env.GCS_BUCKET_NAME;
   const projectId = env.GCS_PROJECT_ID;
   const keyFilename = env.GCS_KEY_FILE;
 
-  if (!bucketName || !projectId || !keyFilename || !fs.existsSync(keyFilename)) {
-    console.warn("GCS credentials or key file missing. Using local fallback.");
-    useLocalFallback = true;
-    return null;
+  if (!bucketName || !projectId || !keyFilename) {
+    throw new Error("Missing GCS credentials in environment variables");
   }
 
   gcsStorage ??= new Storage({ projectId, keyFilename });
@@ -81,31 +76,8 @@ export async function uploadToGCS(input: GCSUploadInput): Promise<GCSUploadSucce
 
   const bucket = getGCSBucket();
 
-  if (useLocalFallback) {
-    const uploadDir = path.join(process.cwd(), "uploads", year, month);
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    const localFilename = `${uuid}-${sanitizedFilename}`;
-    const localPath = path.join(uploadDir, localFilename);
-
-    try {
-      if (Buffer.isBuffer(file)) {
-        fs.writeFileSync(localPath, file);
-      } else {
-        await pipeline(file as NodeJS.ReadableStream, fs.createWriteStream(localPath));
-      }
-      // Assuming server runs on localhost:PORT
-      const url = `http://localhost:${env.PORT}/uploads/${year}/${month}/${localFilename}`;
-      return { url };
-    } catch (error) {
-      console.error("Local Upload Error:", error);
-      throw new Error("Failed to upload file locally");
-    }
-  }
-
   try {
-    const gcsFile = bucket!.file(key);
+    const gcsFile = bucket.file(key);
     const metadata = { contentType: finalMimeType };
 
     if (Buffer.isBuffer(file)) {
@@ -113,7 +85,6 @@ export async function uploadToGCS(input: GCSUploadInput): Promise<GCSUploadSucce
         contentType: finalMimeType,
         resumable: false,
         metadata,
-        predefinedAcl: "publicRead",
       });
     } else {
       await pipeline(
@@ -122,7 +93,6 @@ export async function uploadToGCS(input: GCSUploadInput): Promise<GCSUploadSucce
           contentType: finalMimeType,
           resumable: false,
           metadata,
-          predefinedAcl: "publicRead",
         })
       );
     }
@@ -130,7 +100,9 @@ export async function uploadToGCS(input: GCSUploadInput): Promise<GCSUploadSucce
     const url = `https://storage.googleapis.com/${env.GCS_BUCKET_NAME}/${key}`;
     return { url };
   } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Unknown error";
     console.error("GCS Upload Error:", error);
-    throw new Error("Failed to upload file to GCS");
+    throw new Error(`Failed to upload file to GCS: ${message}`);
   }
 }
