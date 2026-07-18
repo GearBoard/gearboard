@@ -15,13 +15,22 @@ export interface Comment extends CommentWithUser {
 type CommentData = { content: string; images?: string | null };
 
 function buildCommentTree(flat: CommentWithUser[]): Comment[] {
-  const byId = new Map<string, Comment>();
-  for (const comment of flat) byId.set(comment.id, { ...comment, replies: [] });
-
+  const nodeById = new Map<string, Comment>();
+  const visibleById = new Map<string, boolean>();
   const roots: Comment[] = [];
+
+  // flat is ordered by createdAt asc, so a parent is always visited before its
+  // children - visibleById.get(parentId) is populated by the time we need it.
   for (const comment of flat) {
-    const node = byId.get(comment.id)!;
-    const parent = comment.parentId ? byId.get(comment.parentId) : undefined;
+    const parentVisible = comment.parentId ? (visibleById.get(comment.parentId) ?? false) : true;
+    const visible = comment.deletedAt === null && parentVisible;
+    visibleById.set(comment.id, visible);
+    if (!visible) continue;
+
+    const node: Comment = { ...comment, replies: [] };
+    nodeById.set(comment.id, node);
+
+    const parent = comment.parentId ? nodeById.get(comment.parentId) : undefined;
     if (parent) {
       parent.replies!.push(node);
     } else {
@@ -44,8 +53,10 @@ export const commentRepository = {
   },
 
   async findManyByPostId(postId: string): Promise<Comment[]> {
+    // Deleted comments are fetched too (and filtered out in buildCommentTree)
+    // so a deleted ancestor doesn't sever the link to its still-active descendants.
     const comments = await prisma.comment.findMany({
-      where: { postId, deletedAt: null },
+      where: { postId },
       include: commentInclude,
       orderBy: { createdAt: "asc" },
     });
