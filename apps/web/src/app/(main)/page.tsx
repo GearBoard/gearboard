@@ -1,6 +1,6 @@
 "use client";
 
-import CommentComposer from "@/features/comment/components/CommentComposer";
+import CreateComment from "@/features/comment/components/CreateComment";
 
 export default function Home() {
   return (
@@ -11,7 +11,7 @@ export default function Home() {
           <p className="mt-1 text-sm text-neutral-600">ตัวอย่างคอมโพเนนต์ที่แสดงอยู่บนหน้าจอ</p>
         </div>
 
-        <CommentComposer
+        <CreateComment
           user={{
             name: "John doe",
             username: "john.doe",
