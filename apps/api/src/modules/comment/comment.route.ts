@@ -9,6 +9,7 @@ import {
   CreateReplyBodyInputDTO,
   DeleteCommentParamsInputDTO,
   LikeCommentParamsInputDTO,
+  UnlikeCommentParamsInputDTO,
 } from "./dto/index.js";
 import {
   createReplyService,
@@ -56,7 +57,7 @@ export const commentRoute = new Hono<{ Variables: AppVariables }>()
   .delete(
     "/:commentId/like",
     requireAuth,
-    zValidator("param", LikeCommentParamsInputDTO, validationHook),
+    zValidator("param", UnlikeCommentParamsInputDTO, validationHook),
     async (c) => {
       const user = c.get("user");
       const { commentId } = c.req.valid("param");
