@@ -119,7 +119,11 @@ export const postRepository = {
             tag: {
               connectOrCreate: {
                 where: { name: tagName },
-                create: { name: tagName },
+                create: {
+                  name: tagName,
+                  color: "#C01300",
+                  backgroundColor: "#C0130020",
+                },
               },
             },
           })),
@@ -155,7 +159,11 @@ export const postRepository = {
                   tag: {
                     connectOrCreate: {
                       where: { name: tagName },
-                      create: { name: tagName },
+                      create: {
+                        name: tagName,
+                        color: "#C01300",
+                        backgroundColor: "#C0130020",
+                      },
                     },
                   },
                 },

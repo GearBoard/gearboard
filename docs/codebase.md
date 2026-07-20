@@ -407,7 +407,13 @@ Optional: Google OAuth (`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`), AWS S3, GCS
 | GET      | /api/users/:id                   | ✓       | `getUserByIdService`           |
 | PATCH    | /api/users/:id                   | ✓       | `updateUserService`            |
 | DELETE   | /api/users/:id                   | ✓       | `deleteUserService`            |
+| GET      | /api/tags                        | —       | `getTagsService`               |
+| POST     | /api/uploads/image               | ✓       | `uploadImageService`           |
 | POST/GET | /api/auth/\*\*                   | —       | Better-Auth handler            |
+
+Profile and post-image uploads both send a multipart `file` to `/api/uploads/image`,
+which validates JPEG/PNG up to 10 MB and returns a public GCS URL. Create Post includes
+that URL in the `images` array sent to `POST /api/posts`.
 
 ---
 
@@ -436,6 +442,8 @@ apps/web/src/
     │   ├── posts.ts         ← useGetPostById, useGetPostList, useCreatePost, ...
     │   ├── comments.ts      ← useCreateReply, useDeleteComment
     │   ├── users.ts         ← useGetMe, useGetUserList, useGetUserById, ...
+    │   ├── tags.ts          ← useGetTags
+    │   ├── uploads.ts       ← useUploadImage
     │   └── index.ts         ← re-exports all
     └── components/
         └── ui/

@@ -1,11 +1,17 @@
 "use client";
 
-import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import Image from "next/image";
 import { Image as ImageIcon, Tag, SquarePen, X } from "lucide-react";
 import { Popover } from "radix-ui";
 import { Button } from "@/shared/components";
-import { useGetMe, useGetTags, useUploadImage, type TagOption } from "@/shared/hooks";
+import {
+  useCreatePost,
+  useGetMe,
+  useGetTags,
+  useUploadImage,
+  type TagOption,
+} from "@/shared/hooks";
 import { cn } from "@/shared/libs/utils";
 
 interface CreatePostCardProps {
@@ -13,12 +19,6 @@ interface CreatePostCardProps {
   initialImage?: string | null;
   initialTags?: string[];
   className?: string;
-  onSubmit?: (input: {
-    title: string;
-    description: string;
-    tags?: string[];
-    images?: string[];
-  }) => Promise<void> | void;
   loading?: boolean;
 }
 
@@ -35,7 +35,6 @@ export function CreatePostCard({
   initialImage = null,
   initialTags = [],
   className,
-  onSubmit,
   loading = false,
 }: CreatePostCardProps) {
   const { data: me } = useGetMe();
@@ -50,17 +49,38 @@ export function CreatePostCard({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { data: availableTags, isLoading: isLoadingTags } = useGetTags();
   const { trigger: uploadImage, isMutating: isUploadingImage } = useUploadImage();
+  const { trigger: createPost, isMutating: isCreatingPost } = useCreatePost();
 
   const name = me?.name || "John doe";
   const username = me?.name ? me.name.toLowerCase().replace(/\s+/g, ".") : "john.doe";
   const avatarUrl = me?.image;
 
+  useEffect(() => {
+    return () => {
+      if (previewImage?.startsWith("blob:")) {
+        URL.revokeObjectURL(previewImage);
+      }
+    };
+  }, [previewImage]);
+
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    if (previewImage?.startsWith("blob:")) {
+      URL.revokeObjectURL(previewImage);
+    }
     setImageFile(file);
     setPreviewImage(URL.createObjectURL(file));
+  };
+
+  const clearImage = () => {
+    if (previewImage?.startsWith("blob:")) {
+      URL.revokeObjectURL(previewImage);
+    }
+    setPreviewImage(null);
+    setImageFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const toggleTag = (tagName: string) => {
@@ -80,7 +100,7 @@ export function CreatePostCard({
 
     try {
       const uploadedImage = imageFile ? await uploadImage(imageFile) : null;
-      await onSubmit?.({
+      await createPost({
         title: title.trim(),
         description: content.trim(),
         tags: tags.map((tag) => tag.trim()).filter(Boolean),
@@ -89,8 +109,7 @@ export function CreatePostCard({
       setTitle("");
       setContent("");
       setTags([]);
-      setPreviewImage(null);
-      setImageFile(null);
+      clearImage();
       setIsExpanded(false);
     } catch {
       setSubmitError("Unable to publish your post right now.");
@@ -169,7 +188,7 @@ export function CreatePostCard({
                 />
                 <button
                   type="button"
-                  onClick={() => setPreviewImage(null)}
+                  onClick={clearImage}
                   className="absolute top-2 right-2 bg-black/60 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   <X className="size-4 md:size-5" />
@@ -229,7 +248,7 @@ export function CreatePostCard({
                   ref={fileInputRef}
                   type="file"
                   className="hidden"
-                  accept="image/*"
+                  accept="image/jpeg,image/png"
                   onChange={handleFileChange}
                 />
                 <Popover.Root open={isTagMenuOpen} onOpenChange={setIsTagMenuOpen}>
@@ -281,8 +300,14 @@ export function CreatePostCard({
               <Button
                 type="submit"
                 iconLeft={<SquarePen className="size-4" />}
-                loading={loading || isUploadingImage}
-                disabled={!title.trim() || !content.trim() || loading || isUploadingImage}
+                loading={loading || isUploadingImage || isCreatingPost}
+                disabled={
+                  !title.trim() ||
+                  !content.trim() ||
+                  loading ||
+                  isUploadingImage ||
+                  isCreatingPost
+                }
               >
                 โพสต์
               </Button>
