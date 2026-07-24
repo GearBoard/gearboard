@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Heart, MessageCircle, Bookmark, MoreVertical, Pencil } from "lucide-react";
+import { Heart, MessageCircle, Bookmark, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { Popover } from "radix-ui";
 import { cn, formatRelativeTime } from "@/shared/libs/utils";
 
@@ -30,6 +30,7 @@ export interface PostCardProps {
   onSaveClick?: () => void;
   onMenuClick?: () => void;
   onEditClick?: () => void;
+  onDeleteClick?: () => void;
 }
 
 const TAG_COLOR_CLASSES = [
@@ -57,6 +58,7 @@ export default function PostCard({
   onSaveClick,
   onMenuClick,
   onEditClick,
+  onDeleteClick,
 }: PostCardProps) {
   const stop = (handler?: () => void) => (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -131,7 +133,15 @@ export default function PostCard({
                     className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-black transition-colors hover:bg-light-gray"
                   >
                     <Pencil className="size-4" />
-                    แก้ไขโพสต์
+                    แก้ไขข้อมูล
+                  </button>
+                  <button
+                    type="button"
+                    onClick={stop(onDeleteClick)}
+                    className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-primary-red transition-colors hover:bg-primary-red/10"
+                  >
+                    <Trash2 className="size-4" />
+                    ลบโพสต์
                   </button>
                 </Popover.Content>
               </Popover.Portal>

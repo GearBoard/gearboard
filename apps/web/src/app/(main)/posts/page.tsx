@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { PostCard } from "@/features/feed";
 import { CreatePostCard } from "@/features/post/components/CreatePostCard";
-import { useGetMe, useGetPostList, useUpdatePost } from "@/shared/hooks";
+import { ConfirmModal } from "@/shared/components/ConfirmModal";
+import { useDeletePost, useGetMe, useGetPostList, useUpdatePost } from "@/shared/hooks";
 
 export default function MyPosts() {
   const { data: me } = useGetMe();
@@ -13,6 +14,7 @@ export default function MyPosts() {
     mutate,
   } = useGetPostList(me?.id ? { userId: me.id } : undefined);
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [deletingPostId, setDeletingPostId] = useState<string | null>(null);
 
   const posts = postList?.data ?? [];
 
@@ -47,11 +49,59 @@ export default function MyPosts() {
               imageUrl={post.images[0] ?? null}
               isOwner
               onEditClick={() => setEditingPostId(post.id)}
+              onDeleteClick={() => setDeletingPostId(post.id)}
             />
           )
         )
       )}
+
+      <DeletePostConfirmModal
+        postId={deletingPostId}
+        onCancel={() => setDeletingPostId(null)}
+        onDeleted={() => {
+          setDeletingPostId(null);
+          mutate();
+        }}
+      />
     </div>
+  );
+}
+
+interface DeletePostConfirmModalProps {
+  postId: string | null;
+  onCancel: () => void;
+  onDeleted: () => void;
+}
+
+function DeletePostConfirmModal({ postId, onCancel, onDeleted }: DeletePostConfirmModalProps) {
+  const { trigger: deletePost, isMutating } = useDeletePost(postId ?? "");
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleConfirm() {
+    setError(null);
+    try {
+      await deletePost();
+      onDeleted();
+    } catch {
+      setError("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
+    }
+  }
+
+  return (
+    <ConfirmModal
+      open={!!postId}
+      onOpenChange={(open) => {
+        if (!open) onCancel();
+      }}
+      title="ลบโพสต์"
+      message="คุณแน่ใจหรือไม่ว่าต้องการลบโพสต์นี้? การกระทำนี้ไม่สามารถย้อนกลับได้"
+      confirmLabel="ลบ"
+      cancelLabel="ยกเลิก"
+      onConfirm={handleConfirm}
+      onCancel={onCancel}
+      isLoading={isMutating}
+      errorMessage={error ?? undefined}
+    />
   );
 }
 
