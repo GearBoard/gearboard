@@ -24,6 +24,22 @@ export const Default: Story = {
   ],
 };
 
+export const EditMode: Story = {
+  args: {
+    mode: "edit",
+    initialTitle: "หัวข้อโพสต์เดิม",
+    initialDescription: "เนื้อหาโพสต์เดิมที่ต้องการแก้ไข",
+    initialTags: ["ตัวอย่าง"],
+  },
+  decorators: [
+    (Story) => (
+      <div className="w-[800px] max-w-full">
+        <Story />
+      </div>
+    ),
+  ],
+};
+
 export const Mobile: Story = {
   args: {},
   parameters: {
