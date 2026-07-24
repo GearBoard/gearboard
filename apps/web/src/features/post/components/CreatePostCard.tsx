@@ -9,7 +9,10 @@ import { useGetMe, useGetTags, useUploadImage, type TagOption } from "@/shared/h
 import { cn } from "@/shared/libs/utils";
 
 interface CreatePostCardProps {
+  mode?: "create" | "edit";
   initialExpanded?: boolean;
+  initialTitle?: string;
+  initialDescription?: string;
   initialImage?: string | null;
   initialTags?: string[];
   className?: string;
@@ -31,7 +34,10 @@ const TAG_COLORS = [
 ];
 
 export function CreatePostCard({
+  mode = "create",
   initialExpanded = false,
+  initialTitle = "",
+  initialDescription = "",
   initialImage = null,
   initialTags = [],
   className,
@@ -39,9 +45,9 @@ export function CreatePostCard({
   loading = false,
 }: CreatePostCardProps) {
   const { data: me } = useGetMe();
-  const [isExpanded, setIsExpanded] = useState(initialExpanded);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const [isExpanded, setIsExpanded] = useState(initialExpanded || mode === "edit");
+  const [title, setTitle] = useState(initialTitle);
+  const [content, setContent] = useState(initialDescription);
   const [previewImage, setPreviewImage] = useState<string | null>(initialImage);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [tags, setTags] = useState<string[]>(initialTags);
@@ -86,12 +92,14 @@ export function CreatePostCard({
         tags: tags.map((tag) => tag.trim()).filter(Boolean),
         images: uploadedImage ? [uploadedImage.url] : previewImage ? [previewImage] : [],
       });
-      setTitle("");
-      setContent("");
-      setTags([]);
-      setPreviewImage(null);
-      setImageFile(null);
-      setIsExpanded(false);
+      if (mode !== "edit") {
+        setTitle("");
+        setContent("");
+        setTags([]);
+        setPreviewImage(null);
+        setImageFile(null);
+        setIsExpanded(false);
+      }
     } catch {
       setSubmitError("Unable to publish your post right now.");
     }
@@ -284,7 +292,7 @@ export function CreatePostCard({
                 loading={loading || isUploadingImage}
                 disabled={!title.trim() || !content.trim() || loading || isUploadingImage}
               >
-                โพสต์
+                {mode === "edit" ? "แก้ไข" : "โพสต์"}
               </Button>
             </div>
           </form>

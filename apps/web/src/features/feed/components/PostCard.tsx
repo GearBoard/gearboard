@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { Heart, MessageCircle, Bookmark, MoreVertical } from "lucide-react";
+import { Heart, MessageCircle, Bookmark, MoreVertical, Pencil } from "lucide-react";
+import { Popover } from "radix-ui";
 import { cn, formatRelativeTime } from "@/shared/libs/utils";
 
 export interface PostCardAuthor {
@@ -28,6 +29,7 @@ export interface PostCardProps {
   onCommentClick?: () => void;
   onSaveClick?: () => void;
   onMenuClick?: () => void;
+  onEditClick?: () => void;
 }
 
 const TAG_COLOR_CLASSES = [
@@ -54,6 +56,7 @@ export default function PostCard({
   onCommentClick,
   onSaveClick,
   onMenuClick,
+  onEditClick,
 }: PostCardProps) {
   const stop = (handler?: () => void) => (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -95,14 +98,44 @@ export default function PostCard({
             {formatRelativeTime(createdAt)}
           </time>
           {isOwner && (
-            <button
-              type="button"
-              onClick={stop(onMenuClick)}
-              className="-mr-1.5 text-black cursor-pointer"
-              aria-label="ตัวเลือกเพิ่มเติม"
+            <Popover.Root
+              onOpenChange={(open) => {
+                if (open) onMenuClick?.();
+              }}
             >
-              <MoreVertical className="size-6" />
-            </button>
+              <Popover.Trigger asChild>
+                <button
+                  type="button"
+                  onClick={stop()}
+                  className="-mr-1.5 text-black cursor-pointer"
+                  aria-label="ตัวเลือกเพิ่มเติม"
+                >
+                  <MoreVertical className="size-6" />
+                </button>
+              </Popover.Trigger>
+              <Popover.Portal>
+                <Popover.Content
+                  align="end"
+                  sideOffset={8}
+                  onClick={(e) => e.stopPropagation()}
+                  className={cn(
+                    "z-50 w-40 rounded-lg bg-white p-2 shadow-primary-red",
+                    "data-[state=open]:animate-in data-[state=closed]:animate-out",
+                    "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+                    "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
+                  )}
+                >
+                  <button
+                    type="button"
+                    onClick={stop(onEditClick)}
+                    className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm text-black transition-colors hover:bg-light-gray"
+                  >
+                    <Pencil className="size-4" />
+                    แก้ไขโพสต์
+                  </button>
+                </Popover.Content>
+              </Popover.Portal>
+            </Popover.Root>
           )}
         </div>
       </div>
